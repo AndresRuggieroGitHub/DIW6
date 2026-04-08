@@ -70,7 +70,7 @@ Incluye:
 
 ## Demo
 
-Video de validacion en dos navegadores: AQUI_TU_ENLACE_DE_VIDEO
+Video de validacion en dos navegadores: De momento no hay
 
 ## Autor
 
