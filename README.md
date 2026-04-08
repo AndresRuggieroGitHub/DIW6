@@ -6,7 +6,7 @@
 ![Bootstrap](https://img.shields.io/badge/UI-Bootstrap%205-purple)
 ![Status](https://img.shields.io/badge/Project-DIW%20Final-green)
 
-Aplicacion web desarrollada para la asignatura DIW (Diseno de Interfaces Web), orientada a la practica de ingles mediante ejercicios e interacciones simples y usables.
+Aplicacion web desarrollada para la asignatura DIW (Diseño de Interfaces Web), orientada a la practica de idiomas mediante ejercicios practicos.
 
 ## Descripcion
 
