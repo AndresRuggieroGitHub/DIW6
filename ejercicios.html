@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -26,77 +26,523 @@
     </button>
     <nav class="nav-left" id="mainNav">
       <a href="index.html">Inicio</a>
-      <a class="active" href="ejercicios.html">Ejercicios</a>
-      <a href="producto.html">Producto</a>
-      <a href="busqueda.html">Busqueda</a>
-      <a href="contacto.html">Contacto</a>
-      <a href="info.html">Info</a>
+      <a href="biblioteca.html">Biblioteca</a>
+      <a class="active" href="ejercicios.html">Práctica</a>
     </nav>
   </div>
 
   <div class="header-right">
-    <button class="icon-btn" type="button" aria-label="Progreso">
-      <img src="icons/progress.svg" alt="Progreso" class="icono-oscilante">
+    <button class="icon-btn" type="button" aria-label="Progreso" data-progress-trigger>
+      <i class="bi bi-rocket-takeoff" style="font-size:1.45rem;"></i>
     </button>
-    <button class="icon-btn" type="button" aria-label="Idioma ingles">
-      <img src="icons/united_kingdom_flag.svg" alt="Bandera de idioma" class="icono-parpadeante">
-    </button>
-    <button class="icon-btn" type="button" aria-label="Perfil">
+    <div class="lang-dropdown-wrap" data-lang-wrap>
+      <button class="icon-btn" type="button" aria-label="Seleccionar idioma" data-lang-trigger aria-haspopup="true" aria-expanded="false">
+        <img src="" alt="Idioma seleccionado" id="activeLangFlag">
+      </button>
+      <div class="lang-dropdown" id="langDropdown" hidden></div>
+    </div>
+    <script>(function(){var f={en:"icons/flags/united_kingdom_flag.svg",fr:"icons/flags/france_flag.svg",de:"icons/flags/germany_flag.svg",es:"icons/flags/spain_flag.svg",it:"icons/flags/italy_flag.svg",pt:"icons/flags/brazil_flag.svg",no:"icons/flags/norway_flag.svg",sv:"icons/flags/sweden_flag.svg",dk:"icons/flags/denmark_flag.svg",fi:"icons/flags/finland_flag.svg",ko:"icons/flags/south_korea_flag.svg",ja:"icons/flags/japan_flag.svg",zh:"icons/flags/china_flag.svg",ru:"icons/flags/russia_flag.svg",ua:"icons/flags/ukraine_flag.svg",bg:"icons/flags/bulgaria_flag.svg",ro:"icons/flags/romania_flag.svg",cs:"icons/flags/czech_republic_flag.svg",sk:"icons/flags/slovakia_flag.svg",hu:"icons/flags/hungary_flag.svg",gr:"icons/flags/greece_flag.svg",ar:"icons/flags/saudi_arabia_flag.svg",vi:"icons/flags/vietnam_flag.svg",pl:"icons/flags/poland_flag.svg",tr:"icons/flags/turkey_flag.svg",id:"icons/flags/indonesia_flag.svg",he:"icons/flags/israel_flag.svg",hi:"icons/flags/india_flag.svg",th:"icons/flags/thailand_flag.svg",nl:"icons/flags/netherlands_flag.svg"};var img=document.getElementById("activeLangFlag");if(img)img.src=f[localStorage.getItem("lexiLang")||"en"]||f.en;})();</script>
+    <a href="perfil.html" class="icon-btn" aria-label="Mi perfil">
       <img src="icons/profile.svg" alt="Perfil">
-    </button>
-    <button class="icon-btn cart-trigger" type="button" data-cart-trigger aria-label="Abrir carrito">
-      <i class="bi bi-cart3"></i>
-      <span class="cart-count-badge" data-cart-count>0</span>
+    </a>
+
+    <button class="icon-btn utility-trigger" type="button" data-utility-trigger aria-label="Abrir menu secundario" aria-expanded="false">
+      <img src="icons/menu.svg" alt="" aria-hidden="true">
     </button>
   </div>
 </header>
 
 <main id="mainContent" class="exercises page-main">
-  <h1 class="exercises-title">Como te gustaria repasar?</h1>
 
-  <section class="exercise-grid">
-    <article class="exercise-card">
-      <a href="images/reading_large.webp" target="_blank">
+  <!-- Vista de seleccion de modo -->
+  <div id="exerciseMenu">
+    <div class="exercises-hero">
+      <p class="exercises-eyebrow">Sesión de hoy</p>
+      <h1 class="exercises-title">¿Qué quieres practicar?</h1>
+      <p class="exercises-subtitle">Elige un modo y empieza — cada ejercicio dura menos de 5 minutos.</p>
+    </div>
+    <section class="exercise-grid">
+      <article class="exercise-card" data-mode="reading" role="button" tabindex="0" aria-label="Ejercicios de reading">
+        <div class="exercise-card-icon" style="--card-color:#4f8ef7"><i class="bi bi-book-half"></i></div>
         <img src="images/reading_small.webp" srcset="images/reading_small.webp 300w, images/reading_medium.webp 600w, images/reading_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio de reading">
-      </a>
-      <p>Lee</p>
-    </article>
-
-    <article class="exercise-card">
-      <a href="images/listening_large.webp" target="_blank">
+        <p class="exercise-card-label">Lectura</p>
+        <span class="exercise-card-badge">Reading</span>
+      </article>
+      <article class="exercise-card" data-mode="listening" role="button" tabindex="0" aria-label="Ejercicios de listening">
+        <div class="exercise-card-icon" style="--card-color:#f76b4f"><i class="bi bi-headphones"></i></div>
         <img src="images/listening_small.webp" srcset="images/listening_small.webp 300w, images/listening_medium.webp 600w, images/listening_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio de listening">
-      </a>
-      <p>Escucha</p>
-    </article>
-
-    <article class="exercise-card">
-      <a href="images/speaking_large.webp" target="_blank">
+        <p class="exercise-card-label">Escucha</p>
+        <span class="exercise-card-badge">Listening</span>
+      </article>
+      <article class="exercise-card" data-mode="speaking" role="button" tabindex="0" aria-label="Ejercicios de speaking">
+        <div class="exercise-card-icon" style="--card-color:#2dc98b"><i class="bi bi-mic-fill"></i></div>
         <img src="images/speaking_small.webp" srcset="images/speaking_small.webp 300w, images/speaking_medium.webp 600w, images/speaking_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio de speaking">
-      </a>
-      <p>Habla</p>
-    </article>
-
-    <article class="exercise-card">
-      <a href="images/writing_large.webp" target="_blank">
+        <p class="exercise-card-label">Habla</p>
+        <span class="exercise-card-badge">Speaking</span>
+      </article>
+      <article class="exercise-card" data-mode="writing" role="button" tabindex="0" aria-label="Ejercicios de writing">
+        <div class="exercise-card-icon" style="--card-color:#a855f7"><i class="bi bi-pencil-fill"></i></div>
         <img src="images/writing_small.webp" srcset="images/writing_small.webp 300w, images/writing_medium.webp 600w, images/writing_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio de writing">
-      </a>
-      <p>Escribe</p>
-    </article>
+        <p class="exercise-card-label">Escribe</p>
+        <span class="exercise-card-badge">Writing</span>
+      </article>
+      <article class="exercise-card" data-mode="mix" role="button" tabindex="0" aria-label="Ejercicios combinados">
+        <div class="exercise-card-icon" style="--card-color:#f9b233"><i class="bi bi-shuffle"></i></div>
+        <img src="images/mix_small.webp" srcset="images/mix_small.webp 300w, images/mix_medium.webp 600w, images/mix_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio combinado">
+        <p class="exercise-card-label">Combinado</p>
+        <span class="exercise-card-badge">Mix</span>
+      </article>
+    </section>
+  </div>
 
-    <article class="exercise-card">
-      <a href="images/mix_large.webp" target="_blank">
-        <img src="images/mix_small.webp" srcset="images/mix_small.webp 300w, images/mix_medium.webp 600w, images/mix_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio mixto de ingles">
-      </a>
-      <p>Mix</p>
-    </article>
-  </section>
+  <!-- Panel de ejercicios (oculto por defecto) -->
+  <div id="exercisePanel" class="ex-panel" hidden>
+    <div class="ex-panel-header">
+      <button class="ex-back-btn" id="btnBack">
+        <i class="bi bi-arrow-left"></i> Volver
+      </button>
+      <div class="ex-panel-meta">
+        <h2 class="ex-panel-title" id="exPanelTitle"></h2>
+        <span class="ex-panel-progress" id="exProgress"></span>
+      </div>
+    </div>
+    <div class="ex-progress-bar-wrap">
+      <div class="ex-progress-bar" id="exProgressBar"></div>
+    </div>
+    <div id="exerciseContent" class="ex-content"></div>
+    <div class="ex-nav-btns">
+      <button class="btn btn-outline-secondary" id="btnPrevEx" disabled>
+        <i class="bi bi-arrow-left"></i> Anterior
+      </button>
+      <button class="btn btn-primary" id="btnNextEx">
+        Siguiente <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal de completado -->
+  <div id="exCompleteModal" class="ex-complete-modal" hidden>
+    <div class="ex-complete-box">
+      <div class="ex-complete-icon">🎉</div>
+      <h2>¡Sección completada!</h2>
+      <p id="exCompleteMsg"></p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-outline-secondary" id="btnRepeat">Repetir</button>
+        <button class="btn btn-primary" id="btnBackFromComplete">Elegir otro modo</button>
+      </div>
+    </div>
+  </div>
+
 </main>
-
-<footer class="footer">
-  <p>Lexi &copy; 2026 &middot; <a href="info.html">Informacion</a></p>
-</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/script.js"></script>
-</body>
+<script>
+(function () {
+  // Términos de habilidad en cada idioma disponible
+  const SKILL_LABELS = {
+    en: ['Reading',     'Listening', 'Speaking',   'Writing',    'Mix'],
+    fr: ['Lecture',     'Écoute',    'Expression',  'Écriture',   'Mix'],
+    de: ['Lesen',       'Hören',     'Sprechen',    'Schreiben',  'Mix'],
+    it: ['Lettura',     'Ascolto',   'Parlare',     'Scrittura',  'Mix'],
+    no: ['Lesing',      'Lytting',   'Snakking',    'Skriving',   'Mix'],
+    dk: ['Læsning',     'Lytning',   'Tale',        'Skrivning',  'Mix'],
+    fi: ['Lukeminen',   'Kuuntelu',  'Puhuminen',   'Kirjoitus',  'Mix'],
+    ko: ['읽기', '듣기', '말하기', '쓰기', 'Mix'],
+    zh: ['阅读', '听力', '口语', '写作', 'Mix'],
+    ru: ['Чтение', 'Слушание', 'Говорение', 'Письмо', 'Mix'],
+    ua: ['Читання', 'Слухання', 'Говоріння', 'Письмо', 'Mix'],
+    gr: ['Ανάγνωση', 'Ακρόαση', 'Ομιλία', 'Γραφή', 'Mix'],
+    es: ['Lectura',     'Escucha',   'Habla',       'Escritura',  'Mix'],
+  };
+  const BADGE_MODES = ['reading', 'listening', 'speaking', 'writing', 'mix'];
+
+  // Actualizar badges según el idioma activo
+  (function updateBadges() {
+    const lang = localStorage.getItem('lexiLang') || 'en';
+    const labels = SKILL_LABELS[lang] || SKILL_LABELS['en'];
+    document.querySelectorAll('.exercise-card[data-mode]').forEach(card => {
+      const idx = BADGE_MODES.indexOf(card.dataset.mode);
+      if (idx === -1) return;
+      const badge = card.querySelector('.exercise-card-badge');
+      if (badge) badge.textContent = labels[idx];
+    });
+  })();
+
+  const EXERCISES = {
+    reading: {
+      title: "Reading",
+      items: [
+        {
+          type: "mcq",
+          passage: "Every morning, Sarah wakes up at 6am and goes for a run before work. She believes that starting the day with exercise helps her focus and feel more energetic throughout the day. Her colleagues often ask her secret, and she always says the same thing: consistency.",
+          question: "What does Sarah believe helps her focus during the day?",
+          options: ["Drinking coffee", "Morning exercise", "Reading the news", "A cold shower"],
+          correct: 1
+        },
+        {
+          type: "mcq",
+          passage: "The company announced that it would be expanding to three new countries next year, creating over 500 new jobs in the process. The CEO stated that this move was part of a long-term strategy to become a global leader in the industry.",
+          question: "According to the announcement, how many new jobs will be created?",
+          options: ["Over 300", "Over 400", "Over 500", "Over 600"],
+          correct: 2
+        },
+        {
+          type: "mcq",
+          passage: "Deadlines can be stressful, but they also push us to manage our time more effectively. Many professionals say that working under pressure actually helps them produce better results, as long as the deadlines are realistic.",
+          question: "What do many professionals say about working under pressure?",
+          options: ["It always lowers quality", "It helps them produce better results", "It causes burnout", "It is never productive"],
+          correct: 1
+        }
+      ]
+    },
+    listening: {
+      title: "Listening",
+      items: [
+        {
+          type: "fillin",
+          transcript: "Good morning everyone. Today's meeting has been moved from the main conference room to room 204 on the second floor. We will start at half past nine instead of nine o'clock. Please bring your project updates.",
+          question: "Completa la frase con la palabra que escuches:",
+          sentence: "Today's meeting has been moved to room 204 on the ________ floor.",
+          answer: "second"
+        },
+        {
+          type: "fillin",
+          transcript: "Welcome to the Lexi podcast. Today we're going to talk about the importance of vocabulary in language learning. Studies show that knowing the most common two thousand words in a language allows you to understand about eighty percent of everyday conversations.",
+          question: "Completa la frase con la palabra que escuches:",
+          sentence: "Knowing the most common two thousand words allows you to understand about ________ percent of everyday conversations.",
+          answer: "eighty"
+        },
+        {
+          type: "fillin",
+          transcript: "The flight to London has been delayed by approximately forty minutes due to heavy fog at the destination airport. Passengers are advised to remain in the departure lounge and listen for further announcements.",
+          question: "Completa la frase con la palabra que escuches:",
+          sentence: "The flight has been delayed due to heavy ________ at the destination airport.",
+          answer: "fog"
+        }
+      ]
+    },
+    speaking: {
+      title: "Speaking",
+      items: [
+        { type: "pronounce", word: "meet a deadline", hint: "cumplir un plazo de entrega" },
+        { type: "pronounce", word: "pull someone's leg", hint: "tomar el pelo a alguien" },
+        { type: "pronounce", word: "break the ice", hint: "romper el hielo" },
+        { type: "pronounce", word: "under the weather", hint: "encontrarse mal / pachuco" },
+        { type: "pronounce", word: "once in a blue moon", hint: "de vez en cuando / muy raramente" }
+      ]
+    },
+    writing: {
+      title: "Writing",
+      items: [
+        {
+          type: "translate",
+          prompt: "Traduce al ingles:",
+          sentence: "No pude cumplir el plazo de entrega.",
+          answer: "I couldn't meet the deadline."
+        },
+        {
+          type: "translate",
+          prompt: "Traduce al ingles:",
+          sentence: "Estamos bajo mucha presion ultimamente.",
+          answer: "We've been under a lot of pressure lately."
+        },
+        {
+          type: "translate",
+          prompt: "Traduce al ingles:",
+          sentence: "La reunion ha sido cancelada debido al mal tiempo.",
+          answer: "The meeting has been cancelled due to bad weather."
+        }
+      ]
+    },
+    mix: {
+      title: "Combinado",
+      items: [
+        {
+          type: "mcq",
+          passage: "Remote work has become increasingly common since 2020. Many employees report higher productivity when working from home, while others miss the social aspects of the office. Companies are now exploring hybrid models that combine both approaches.",
+          question: "What are companies exploring as a solution?",
+          options: ["Full remote work", "Full office work", "Hybrid models", "Four-day work weeks"],
+          correct: 2
+        },
+        {
+          type: "fillin",
+          transcript: "To apply for the position, please send your CV and a cover letter to the address shown on screen. The application deadline is the thirty-first of May. Late applications will not be considered.",
+          question: "Completa la frase:",
+          sentence: "Please send your CV and a ________ letter to the address shown.",
+          answer: "cover"
+        },
+        { type: "pronounce", word: "get the ball rolling", hint: "poner las cosas en marcha" },
+        {
+          type: "translate",
+          prompt: "Traduce al ingles:",
+          sentence: "Lleva dos horas esperando una respuesta.",
+          answer: "He has been waiting for an answer for two hours."
+        }
+      ]
+    }
+  };
+
+  let currentMode = null;
+  let currentIndex = 0;
+
+  // Card clicks
+  document.querySelectorAll('.exercise-card[data-mode]').forEach(card => {
+    card.addEventListener('click', () => openMode(card.dataset.mode));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMode(card.dataset.mode); }
+    });
+    card.style.cursor = 'pointer';
+  });
+
+  document.getElementById('btnBack').addEventListener('click', closePanel);
+  document.getElementById('btnNextEx').addEventListener('click', nextExercise);
+  document.getElementById('btnPrevEx').addEventListener('click', prevExercise);
+  document.getElementById('btnRepeat').addEventListener('click', () => {
+    document.getElementById('exCompleteModal').hidden = true;
+    currentIndex = 0;
+    document.getElementById('exercisePanel').hidden = false;
+    renderExercise();
+  });
+  document.getElementById('btnBackFromComplete').addEventListener('click', () => {
+    document.getElementById('exCompleteModal').hidden = true;
+    document.getElementById('exerciseMenu').hidden = false;
+  });
+
+  function openMode(mode) {
+    currentMode = mode;
+    currentIndex = 0;
+    document.getElementById('exerciseMenu').hidden = true;
+    document.getElementById('exercisePanel').hidden = false;
+    document.getElementById('exCompleteModal').hidden = true;
+    document.getElementById('exPanelTitle').textContent = EXERCISES[mode].title;
+    renderExercise();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function closePanel() {
+    document.getElementById('exercisePanel').hidden = true;
+    document.getElementById('exerciseMenu').hidden = false;
+  }
+
+  function renderExercise() {
+    const items = EXERCISES[currentMode].items;
+    const total = items.length;
+    const item = items[currentIndex];
+
+    document.getElementById('exProgress').textContent = currentIndex + 1 + ' / ' + total;
+    document.getElementById('exProgressBar').style.width = ((currentIndex + 1) / total * 100) + '%';
+    document.getElementById('btnPrevEx').disabled = currentIndex === 0;
+    document.getElementById('btnNextEx').innerHTML = currentIndex === total - 1
+      ? 'Finalizar <i class="bi bi-check-lg"></i>'
+      : 'Siguiente <i class="bi bi-arrow-right"></i>';
+
+    const content = document.getElementById('exerciseContent');
+    content.innerHTML = '';
+
+    if (item.type === 'mcq') renderMCQ(content, item);
+    else if (item.type === 'fillin') renderFillin(content, item);
+    else if (item.type === 'pronounce') renderPronounce(content, item);
+    else if (item.type === 'translate') renderTranslate(content, item);
+  }
+
+  function nextExercise() {
+    const items = EXERCISES[currentMode].items;
+    if (currentIndex < items.length - 1) {
+      currentIndex++;
+      renderExercise();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      showCompletion();
+    }
+  }
+
+  function prevExercise() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      renderExercise();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function renderMCQ(container, item) {
+    container.innerHTML =
+      '<p class="ex-type-label"><i class="bi bi-book"></i> Lectura &amp; comprension</p>' +
+      '<div class="ex-passage">' + item.passage + '</div>' +
+      '<p class="ex-question">' + item.question + '</p>' +
+      '<div class="ex-options">' +
+      item.options.map((opt, i) =>
+        '<button class="ex-option" data-idx="' + i + '">' +
+        '<span class="ex-option-letter">' + String.fromCharCode(65 + i) + '</span>' + opt +
+        '</button>'
+      ).join('') +
+      '</div>' +
+      '<div class="ex-feedback" hidden></div>';
+
+    container.querySelectorAll('.ex-option').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const idx = parseInt(this.dataset.idx);
+        const feedback = container.querySelector('.ex-feedback');
+        container.querySelectorAll('.ex-option').forEach(b => b.disabled = true);
+        if (idx === item.correct) {
+          this.classList.add('ex-option--correct');
+          feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Correcto!';
+          feedback.className = 'ex-feedback ex-feedback--ok';
+        } else {
+          this.classList.add('ex-option--wrong');
+          container.querySelectorAll('.ex-option')[item.correct].classList.add('ex-option--correct');
+          feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> Incorrecto. La respuesta es: <strong>' + item.options[item.correct] + '</strong>';
+          feedback.className = 'ex-feedback ex-feedback--err';
+        }
+        feedback.hidden = false;
+      });
+    });
+  }
+
+  function renderFillin(container, item) {
+    container.innerHTML =
+      '<p class="ex-type-label"><i class="bi bi-headphones"></i> Listening</p>' +
+      '<div class="ex-audio-mock">' +
+      '<div class="ex-audio-wave"><span></span><span></span><span></span><span></span><span></span></div>' +
+      '<span class="ex-audio-label">Audio simulado</span>' +
+      '</div>' +
+      '<button class="ex-transcript-toggle">Ver transcripcion <i class="bi bi-chevron-down"></i></button>' +
+      '<div class="ex-transcript" hidden>' + item.transcript + '</div>' +
+      '<p class="ex-question">' + item.question + '</p>' +
+      '<div class="ex-fillin-wrap">' + item.sentence.replace('________', '<input class="ex-input" type="text" autocomplete="off" spellcheck="false" placeholder="...">') + '</div>' +
+      '<button class="btn btn-primary ex-check-btn">Comprobar</button>' +
+      '<div class="ex-feedback" hidden></div>';
+
+    container.querySelector('.ex-transcript-toggle').addEventListener('click', function () {
+      const t = container.querySelector('.ex-transcript');
+      t.hidden = !t.hidden;
+      this.innerHTML = t.hidden
+        ? 'Ver transcripcion <i class="bi bi-chevron-down"></i>'
+        : 'Ocultar transcripcion <i class="bi bi-chevron-up"></i>';
+    });
+
+    container.querySelector('.ex-check-btn').addEventListener('click', () => {
+      const val = container.querySelector('.ex-input').value.trim().toLowerCase();
+      const feedback = container.querySelector('.ex-feedback');
+      if (val === item.answer.toLowerCase()) {
+        feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Correcto!';
+        feedback.className = 'ex-feedback ex-feedback--ok';
+      } else {
+        feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> La respuesta es: <strong>"' + item.answer + '"</strong>';
+        feedback.className = 'ex-feedback ex-feedback--err';
+      }
+      feedback.hidden = false;
+    });
+
+    container.querySelector('.ex-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') container.querySelector('.ex-check-btn').click();
+    });
+  }
+
+  function renderPronounce(container, item) {
+    container.innerHTML =
+      '<p class="ex-type-label"><i class="bi bi-mic"></i> Speaking</p>' +
+      '<p class="ex-speaking-prompt">Pronuncia en voz alta:</p>' +
+      '<div class="ex-word-big">' + item.word + '</div>' +
+      '<p class="ex-hint-text">' + item.hint + '</p>' +
+      '<div class="ex-mic-area">' +
+      '<button class="ex-mic-btn" id="micBtn"><i class="bi bi-mic"></i><span>Pulsa para hablar</span></button>' +
+      '</div>' +
+      '<div class="ex-self-check" hidden>' +
+      '<p>?Lo has pronunciado correctamente?</p>' +
+      '<div class="ex-self-check-btns">' +
+      '<button class="btn btn-success ex-self-yes"><i class="bi bi-check-lg"></i> Si</button>' +
+      '<button class="btn btn-outline-danger ex-self-no">Repetir</button>' +
+      '</div></div>';
+
+    const micBtn = container.querySelector('#micBtn');
+    const selfCheck = container.querySelector('.ex-self-check');
+
+    micBtn.addEventListener('click', function () {
+      this.classList.toggle('recording');
+      const icon = this.querySelector('i');
+      const label = this.querySelector('span');
+      if (this.classList.contains('recording')) {
+        icon.className = 'bi bi-stop-fill';
+        label.textContent = 'Grabando... pulsa para parar';
+      } else {
+        icon.className = 'bi bi-mic';
+        label.textContent = 'Pulsa para hablar';
+        selfCheck.hidden = false;
+      }
+    });
+
+    container.querySelector('.ex-self-yes').addEventListener('click', () => {
+      selfCheck.innerHTML = '<p class="ex-feedback ex-feedback--ok" style="display:block"><i class="bi bi-check-circle-fill"></i> Genial! Sigue practicando.</p>';
+    });
+    container.querySelector('.ex-self-no').addEventListener('click', () => {
+      selfCheck.hidden = true;
+      micBtn.classList.remove('recording');
+      micBtn.querySelector('i').className = 'bi bi-mic';
+      micBtn.querySelector('span').textContent = 'Pulsa para hablar';
+    });
+  }
+
+  function renderTranslate(container, item) {
+    container.innerHTML =
+      '<p class="ex-type-label"><i class="bi bi-pencil"></i> Writing</p>' +
+      '<p class="ex-prompt">' + item.prompt + '</p>' +
+      '<div class="ex-sentence-box">' + item.sentence + '</div>' +
+      '<textarea class="ex-textarea" placeholder="Escribe tu traduccion aqui..."></textarea>' +
+      '<button class="btn btn-primary ex-check-btn">Comprobar</button>' +
+      '<div class="ex-feedback" hidden></div>';
+
+    container.querySelector('.ex-check-btn').addEventListener('click', () => {
+      const val = container.querySelector('.ex-textarea').value.trim().toLowerCase();
+      const feedback = container.querySelector('.ex-feedback');
+      const keywords = item.answer.toLowerCase().split(' ').filter(w => w.length > 3);
+      const matches = keywords.filter(k => val.includes(k)).length;
+      if (val.length > 0 && matches >= Math.ceil(keywords.length * 0.65)) {
+        feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Muy bien! Respuesta de referencia: <em>"' + item.answer + '"</em>';
+        feedback.className = 'ex-feedback ex-feedback--ok';
+      } else if (val.length === 0) {
+        feedback.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Escribe tu respuesta primero.';
+        feedback.className = 'ex-feedback ex-feedback--warn';
+      } else {
+        feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> Respuesta de referencia: <em>"' + item.answer + '"</em>';
+        feedback.className = 'ex-feedback ex-feedback--err';
+      }
+      feedback.hidden = false;
+    });
+  }
+
+  function showCompletion() {
+    // Registrar sesi?n completada en estad?sticas
+    try {
+      const s = JSON.parse(localStorage.getItem('lexiStats') || '{}');
+      s[currentMode] = (s[currentMode] || 0) + 1;
+      const today = new Date().toISOString().slice(0, 10);
+      if (!s.lastVisit) { s.lastVisit = today; s.streak = 1; }
+      else {
+        const diff = Math.round((new Date(today) - new Date(s.lastVisit)) / 86400000);
+        if (diff === 1) { s.streak = (s.streak || 1) + 1; s.lastVisit = today; }
+        else if (diff > 1) { s.streak = 1; s.lastVisit = today; }
+      }
+      localStorage.setItem('lexiStats', JSON.stringify(s));
+      // Registrar idioma como estudiado
+      try {
+        const hKey = 'lexiLangHistory';
+        const studyLang = localStorage.getItem('lexiLang') || 'en';
+        const hist = JSON.parse(localStorage.getItem(hKey) || '[]');
+        if (!hist.find(h => h.lang === studyLang)) {
+          hist.push({ lang: studyLang, firstAt: Date.now() });
+          localStorage.setItem(hKey, JSON.stringify(hist));
+        }
+      } catch (e2) {}
+    } catch (e) {}
+
+    document.getElementById('exercisePanel').hidden = true;
+    const modal = document.getElementById('exCompleteModal');
+    document.getElementById('exCompleteMsg').textContent =
+      'Has completado todos los ejercicios de ' + EXERCISES[currentMode].title + '.';
+    modal.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+})();
+</script>
 </html>

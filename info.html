@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Informacion sobre Lexi, equipo y ubicacion.">
+  <meta name="description" content="Como funciona Lexi: metodologia, flujo de uso y modelo freemium.">
   <meta name="robots" content="index,follow">
   <title>Lexi | Informacion</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,50 +26,89 @@
     </button>
     <nav class="nav-left" id="mainNav">
       <a href="index.html">Inicio</a>
-      <a href="ejercicios.html">Ejercicios</a>
-      <a href="producto.html">Producto</a>
-      <a href="busqueda.html">Busqueda</a>
-      <a href="contacto.html">Contacto</a>
-      <a class="active" href="info.html">Info</a>
+      <a href="biblioteca.html">Biblioteca</a>
+      <a href="ejercicios.html">Práctica</a>
     </nav>
   </div>
 
   <div class="header-right">
-    <button class="icon-btn" type="button" aria-label="Progreso">
-      <img src="icons/progress.svg" alt="Progreso" class="icono-oscilante">
+    <button class="icon-btn" type="button" aria-label="Progreso" data-progress-trigger>
+      <i class="bi bi-rocket-takeoff" style="font-size:1.45rem;"></i>
     </button>
-    <button class="icon-btn" type="button" aria-label="Idioma ingles">
-      <img src="icons/united_kingdom_flag.svg" alt="Bandera de idioma" class="icono-parpadeante">
-    </button>
-    <button class="icon-btn" type="button" aria-label="Perfil">
+    <div class="lang-dropdown-wrap" data-lang-wrap>
+      <button class="icon-btn" type="button" aria-label="Seleccionar idioma" data-lang-trigger aria-haspopup="true" aria-expanded="false">
+        <img src="" alt="Idioma seleccionado" id="activeLangFlag">
+      </button>
+      <div class="lang-dropdown" id="langDropdown" hidden></div>
+    </div>
+    <script>(function(){var f={en:"icons/flags/united_kingdom_flag.svg",fr:"icons/flags/france_flag.svg",de:"icons/flags/germany_flag.svg",es:"icons/flags/spain_flag.svg",it:"icons/flags/italy_flag.svg",pt:"icons/flags/brazil_flag.svg",no:"icons/flags/norway_flag.svg",sv:"icons/flags/sweden_flag.svg",dk:"icons/flags/denmark_flag.svg",fi:"icons/flags/finland_flag.svg",ko:"icons/flags/south_korea_flag.svg",ja:"icons/flags/japan_flag.svg",zh:"icons/flags/china_flag.svg",ru:"icons/flags/russia_flag.svg",ua:"icons/flags/ukraine_flag.svg",bg:"icons/flags/bulgaria_flag.svg",ro:"icons/flags/romania_flag.svg",cs:"icons/flags/czech_republic_flag.svg",sk:"icons/flags/slovakia_flag.svg",hu:"icons/flags/hungary_flag.svg",gr:"icons/flags/greece_flag.svg",ar:"icons/flags/saudi_arabia_flag.svg",vi:"icons/flags/vietnam_flag.svg",pl:"icons/flags/poland_flag.svg",tr:"icons/flags/turkey_flag.svg",id:"icons/flags/indonesia_flag.svg",he:"icons/flags/israel_flag.svg",hi:"icons/flags/india_flag.svg",th:"icons/flags/thailand_flag.svg",nl:"icons/flags/netherlands_flag.svg"};var img=document.getElementById("activeLangFlag");if(img)img.src=f[localStorage.getItem("lexiLang")||"en"]||f.en;})();</script>
+    <a href="perfil.html" class="icon-btn" aria-label="Mi perfil">
       <img src="icons/profile.svg" alt="Perfil">
-    </button>
-    <button class="icon-btn cart-trigger" type="button" data-cart-trigger aria-label="Abrir carrito">
-      <i class="bi bi-cart3"></i>
-      <span class="cart-count-badge" data-cart-count>0</span>
+    </a>
+
+    <button class="icon-btn utility-trigger" type="button" data-utility-trigger aria-label="Abrir menu secundario" aria-expanded="false">
+      <img src="icons/menu.svg" alt="" aria-hidden="true">
     </button>
   </div>
 </header>
 
 <main id="mainContent" class="info page-main">
-  <h1>Sobre Lexi</h1>
-  <p>Lexi es una plataforma educativa para practicar vocabulario de forma personalizada. Puedes subir tus propios archivos, seleccionar palabras y realizar ejercicios segun tu nivel.</p>
+  <h1>Como funciona Lexi</h1>
+  <p>Lexi esta pensado para practicar vocabulario real sin rutas largas obligatorias. Tu decides que estudiar y a que ritmo.</p>
 
-  <div class="team-photo">
-    <img src="images/team.jpg" alt="Equipo de trabajo de Lexi">
-  </div>
+  <section class="info-grid">
+    <article class="info-card">
+      <h2 class="h5">1. Crea tu biblioteca</h2>
+      <p>Sube listas, copia y pega palabras o guardalas manualmente desde la app.</p>
+    </article>
+    <article class="info-card">
+      <h2 class="h5">2. Practica por habilidad</h2>
+      <p>Elige listening, reading, speaking, writing o ejercicios combinados.</p>
+    </article>
+    <article class="info-card">
+      <h2 class="h5">3. Sigue tu progreso</h2>
+      <p>Controla aciertos, repaso y avance para centrarte en lo que te cuesta.</p>
+    </article>
+  </section>
 
-  <div class="map">
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3192.6794372999316!2d-2.4676975240999193!3d36.85015266488202!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd7075f9253c8cfd%3A0x10423ef17d0655c!2sI.E.S.%20Al-%C3%81ndalus!5e0!3m2!1ses!2ses!4v1770580063904!5m2!1ses!2ses" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa de ubicacion"></iframe>
-  </div>
-
-  <div class="video">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/Y8KsRjl3RiY?cc_load_policy=1&cc_lang_pref=es" title="Video sobre idiomas" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-  </div>
+  <section class="container mt-4">
+    <h2 class="h4">Modelo de acceso</h2>
+    <p>Lexi usa un modelo freemium: la parte gratuita cubre el uso diario y premium amplía límites y funciones avanzadas sin anuncios intrusivos.</p>
+  </section>
 </main>
 
 <footer class="footer">
-  <p>Lexi &copy; 2026 &middot; <a href="info.html">Informacion</a></p>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="footer-logo" aria-label="Inicio">Lexi</a>
+      <p class="footer-tagline">Tu vocabulario, tu ritmo.<br>Aprende los idiomas que importan.</p>
+      <a href="biblioteca.html" class="footer-cta">Empezar gratis &rarr;</a>
+    </div>
+    <nav class="footer-nav" aria-label="Páginas">
+      <h3 class="footer-heading">Páginas</h3>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="biblioteca.html">Biblioteca</a></li>
+        <li><a href="ejercicios.html">Práctica</a></li>
+        <li><a href="carrito.html">Carrito</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-nav" aria-label="Info">
+      <h3 class="footer-heading">Info</h3>
+      <ul>
+        <li><a href="info.html">Sobre Lexi</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+        <li><a href="producto.html">Premium</a></li>
+      </ul>
+    </nav>
+    <div class="footer-stat">
+      <span class="footer-stat-num">13</span>
+      <span class="footer-stat-label">idiomas disponibles</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 Lexi &mdash; Proyecto DAW</p>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

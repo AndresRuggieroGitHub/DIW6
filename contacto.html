@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -26,37 +26,39 @@
     </button>
     <nav class="nav-left" id="mainNav">
       <a href="index.html">Inicio</a>
-      <a href="ejercicios.html">Ejercicios</a>
-      <a href="producto.html">Producto</a>
-      <a href="busqueda.html">Busqueda</a>
-      <a class="active" href="contacto.html">Contacto</a>
-      <a href="info.html">Info</a>
+      <a href="biblioteca.html">Biblioteca</a>
+      <a href="ejercicios.html">Práctica</a>
     </nav>
   </div>
 
   <div class="header-right">
-    <button class="icon-btn" type="button" aria-label="Progreso">
-      <img src="icons/progress.svg" alt="Progreso" class="icono-oscilante">
+    <button class="icon-btn" type="button" aria-label="Progreso" data-progress-trigger>
+      <i class="bi bi-rocket-takeoff" style="font-size:1.45rem;"></i>
     </button>
-    <button class="icon-btn" type="button" aria-label="Idioma ingles">
-      <img src="icons/united_kingdom_flag.svg" alt="Bandera de idioma" class="icono-parpadeante">
-    </button>
-    <button class="icon-btn" type="button" aria-label="Perfil">
+    <div class="lang-dropdown-wrap" data-lang-wrap>
+      <button class="icon-btn" type="button" aria-label="Seleccionar idioma" data-lang-trigger aria-haspopup="true" aria-expanded="false">
+        <img src="" alt="Idioma seleccionado" id="activeLangFlag">
+      </button>
+      <div class="lang-dropdown" id="langDropdown" hidden></div>
+    </div>
+    <script>(function(){var f={en:"icons/flags/united_kingdom_flag.svg",fr:"icons/flags/france_flag.svg",de:"icons/flags/germany_flag.svg",es:"icons/flags/spain_flag.svg",it:"icons/flags/italy_flag.svg",pt:"icons/flags/brazil_flag.svg",no:"icons/flags/norway_flag.svg",sv:"icons/flags/sweden_flag.svg",dk:"icons/flags/denmark_flag.svg",fi:"icons/flags/finland_flag.svg",ko:"icons/flags/south_korea_flag.svg",ja:"icons/flags/japan_flag.svg",zh:"icons/flags/china_flag.svg",ru:"icons/flags/russia_flag.svg",ua:"icons/flags/ukraine_flag.svg",bg:"icons/flags/bulgaria_flag.svg",ro:"icons/flags/romania_flag.svg",cs:"icons/flags/czech_republic_flag.svg",sk:"icons/flags/slovakia_flag.svg",hu:"icons/flags/hungary_flag.svg",gr:"icons/flags/greece_flag.svg",ar:"icons/flags/saudi_arabia_flag.svg",vi:"icons/flags/vietnam_flag.svg",pl:"icons/flags/poland_flag.svg",tr:"icons/flags/turkey_flag.svg",id:"icons/flags/indonesia_flag.svg",he:"icons/flags/israel_flag.svg",hi:"icons/flags/india_flag.svg",th:"icons/flags/thailand_flag.svg",nl:"icons/flags/netherlands_flag.svg"};var img=document.getElementById("activeLangFlag");if(img)img.src=f[localStorage.getItem("lexiLang")||"en"]||f.en;})();</script>
+    <a href="perfil.html" class="icon-btn" aria-label="Mi perfil">
       <img src="icons/profile.svg" alt="Perfil">
-    </button>
-    <button class="icon-btn cart-trigger" type="button" data-cart-trigger aria-label="Abrir carrito">
-      <i class="bi bi-cart3"></i>
-      <span class="cart-count-badge" data-cart-count>0</span>
+    </a>
+
+    <button class="icon-btn utility-trigger" type="button" data-utility-trigger aria-label="Abrir menu secundario" aria-expanded="false">
+      <img src="icons/menu.svg" alt="" aria-hidden="true">
     </button>
   </div>
 </header>
 
 <main id="mainContent" class="page-main container section-space">
-  <h1 class="mb-4">Contacto</h1>
+  <h1 class="mb-3">Centro de soporte</h1>
+  <p class="text-muted mb-4">Si tienes dudas de uso, facturacion o gestion academica, contacta con el equipo de Lexi.</p>
 
   <div class="contact-grid">
     <section>
-      <h2 class="h4">Escribenos</h2>
+      <h2 class="h4">Enviar consulta</h2>
       <form class="contact-form" action="#" method="post">
         <div class="mb-3">
           <label for="nombre" class="form-label">Nombre</label>
@@ -67,6 +69,15 @@
           <input id="email" name="email" class="form-control" type="email" required>
         </div>
         <div class="mb-3">
+          <label for="motivo" class="form-label">Motivo</label>
+          <select id="motivo" name="motivo" class="form-select" required>
+            <option value="">Selecciona una opcion</option>
+            <option value="tecnico">Soporte tecnico</option>
+            <option value="premium">Facturacion premium</option>
+            <option value="profesor">Cuenta de profesor</option>
+          </select>
+        </div>
+        <div class="mb-3">
           <label for="mensaje" class="form-label">Mensaje</label>
           <textarea id="mensaje" name="mensaje" class="form-control" rows="4" required></textarea>
         </div>
@@ -75,16 +86,60 @@
     </section>
 
     <section>
-      <h2 class="h4">Equipo Lexi</h2>
-      <p>Aplicacion web de aprendizaje de idiomas centrada en practica personalizada.</p>
-      <p>Email: contacto@lexi.app</p>
-      <p>Ubicacion: Almeria</p>
+      <h2 class="h4">Canales disponibles</h2>
+      <div class="support-list">
+        <article class="support-item">
+          <h3 class="h6 mb-1">Soporte tecnico</h3>
+          <p class="mb-1">Incidencias con cuenta, biblioteca y ejercicios.</p>
+          <p class="mb-0">soporte@lexi.app</p>
+        </article>
+        <article class="support-item">
+          <h3 class="h6 mb-1">Facturacion premium</h3>
+          <p class="mb-1">Pagos, renovaciones y cancelaciones.</p>
+          <p class="mb-0">billing@lexi.app</p>
+        </article>
+        <article class="support-item">
+          <h3 class="h6 mb-1">Docentes y centros</h3>
+          <p class="mb-1">Activacion de perfil profesor y grupos.</p>
+          <p class="mb-0">teachers@lexi.app</p>
+        </article>
+      </div>
     </section>
   </div>
 </main>
 
 <footer class="footer">
-  <p>Lexi &copy; 2026 &middot; <a href="info.html">Informacion</a></p>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="footer-logo" aria-label="Inicio">Lexi</a>
+      <p class="footer-tagline">Tu vocabulario, tu ritmo.<br>Aprende los idiomas que importan.</p>
+      <a href="biblioteca.html" class="footer-cta">Empezar gratis &rarr;</a>
+    </div>
+    <nav class="footer-nav" aria-label="Páginas">
+      <h3 class="footer-heading">Páginas</h3>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="biblioteca.html">Biblioteca</a></li>
+        <li><a href="ejercicios.html">Práctica</a></li>
+        <li><a href="carrito.html">Carrito</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-nav" aria-label="Info">
+      <h3 class="footer-heading">Info</h3>
+      <ul>
+        <li><a href="info.html">Sobre Lexi</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+        <li><a href="producto.html">Premium</a></li>
+      </ul>
+    </nav>
+    <div class="footer-stat">
+      <span class="footer-stat-num">13</span>
+      <span class="footer-stat-label">idiomas disponibles</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 Lexi &mdash; Proyecto DAW</p>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
