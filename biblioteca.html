@@ -109,10 +109,12 @@
           <h3 class="import-card-title"><span class="method-num">1</span> Subir archivo</h3>
           <p class="import-card-desc">Sube un .txt o .csv.</p>
           <input id="wordFileInput" type="file" accept=".txt,.csv" style="display:none">
-          <button id="chooseFileBtn" class="btn btn-outline-secondary btn-sm w-100 mb-1" type="button">
-            <i class="bi bi-folder2-open"></i> Elegir archivo
-          </button>
-          <span id="fileNameDisplay" class="d-block text-muted small mb-2" style="font-size:0.78rem">Ningún archivo seleccionado</span>
+          <div id="dropZone" class="file-drop-zone mb-2">
+            <i class="bi bi-cloud-arrow-up file-drop-icon"></i>
+            <span class="file-drop-text">Arrastra tu archivo aquí, o...</span>
+            <button id="chooseFileBtn" class="file-drop-btn" type="button">Buscar archivo</button>
+            <span id="fileNameDisplay" class="file-drop-name"></span>
+          </div>
           <button id="importFileBtn" class="btn btn-primary btn-sm w-100" type="button">Importar archivo</button>
         </div>
       </article>
@@ -122,8 +124,10 @@
         <div class="import-card-content">
           <h3 class="import-card-title"><span class="method-num">2</span> Pegar texto</h3>
           <p class="import-card-desc">Una palabra o varias.</p>
-          <textarea id="pasteWordsInput" class="form-control form-control-sm mb-2" rows="3" placeholder="heritage&#10;sustainable growth&#10;check in"></textarea>
-          <button id="importPasteBtn" class="btn btn-primary btn-sm w-100" type="button">Importar texto</button>
+          <div class="import-card-grow">
+            <textarea id="pasteWordsInput" class="form-control form-control-sm h-100" rows="3" placeholder="heritage&#10;sustainable growth,&#10;check in.&#10;breakthrough;"></textarea>
+          </div>
+          <button id="importPasteBtn" class="btn btn-primary btn-sm w-100 mt-2" type="button">Importar texto</button>
         </div>
       </article>
     </div>
@@ -133,42 +137,47 @@
 
     <!-- catálogo -->
     <article class="import-card import-card--catalog">
-      <div class="import-card-icon"><i class="bi bi-search"></i></div>
+      <div class="import-card-icon"><i class="bi bi-journals"></i></div>
       <div class="import-card-content catalog-content">
-        <h3 class="import-card-title"><span class="method-num">3</span> Buscar en el catálogo</h3>
+        <h3 class="import-card-title"><span class="method-num">3</span> Explorar en el catálogo</h3>
         <p class="import-card-desc">Explora palabras curadas por nivel y tema — guarda las que te interesen.</p>
         <div class="catalog-controls">
-          <input id="searchInput" class="form-control form-control-sm" type="search" placeholder="Ej: travel, health..." aria-label="Buscar por palabra, frase o tema">
-          <select id="cefrFilter" class="form-select form-select-sm">
-            <option value="all">Todos los niveles</option>
-            <option value="A1">A1</option>
-            <option value="A2">A2</option>
-            <option value="B1">B1</option>
-            <option value="B2">B2</option>
-            <option value="C1">C1</option>
-            <option value="C2">C2</option>
-          </select>
-          <select id="topicFilter" class="form-select form-select-sm">
-            <option value="all">Todas las temáticas</option>
-            <option value="travel">✈ Viajes</option>
-            <option value="food">🍽 Gastronomía</option>
-            <option value="work">💼 Trabajo</option>
-            <option value="business">📈 Negocios</option>
-            <option value="education">🎓 Educación</option>
-            <option value="health">🏥 Salud</option>
-            <option value="science">🔬 Ciencia</option>
-            <option value="technology">💻 Tecnología</option>
-            <option value="culture">🎭 Cultura</option>
-            <option value="social">🤝 Social</option>
-            <option value="home">🏠 Hogar</option>
-            <option value="nature">🌿 Naturaleza</option>
-            <option value="politics">🏛 Política</option>
-            <option value="sport">⚽ Deporte</option>
-            <option value="art">🎨 Arte</option>
-            <option value="media">📺 Medios</option>
-            <option value="law">⚖ Derecho</option>
-            <option value="finance">💰 Finanzas</option>
-          </select>
+          <div class="catalog-search-wrap">
+            <i class="bi bi-search catalog-search-icon"></i>
+            <input id="searchInput" class="form-control catalog-search" type="search" placeholder="Buscar palabras o frases..." aria-label="Buscar por palabra, frase o tema">
+          </div>
+          <div class="catalog-filters">
+            <select id="cefrFilter" class="form-select form-select-sm">
+              <option value="all">Todos los niveles</option>
+              <option value="A1">A1</option>
+              <option value="A2">A2</option>
+              <option value="B1">B1</option>
+              <option value="B2">B2</option>
+              <option value="C1">C1</option>
+              <option value="C2">C2</option>
+            </select>
+            <select id="topicFilter" class="form-select form-select-sm">
+              <option value="all">Todas las temáticas</option>
+              <option value="travel">✈ Viajes</option>
+              <option value="food">🍽 Gastronomía</option>
+              <option value="work">💼 Trabajo</option>
+              <option value="business">📈 Negocios</option>
+              <option value="education">🎓 Educación</option>
+              <option value="health">🏥 Salud</option>
+              <option value="science">🔬 Ciencia</option>
+              <option value="technology">💻 Tecnología</option>
+              <option value="culture">🎭 Cultura</option>
+              <option value="social">🤝 Social</option>
+              <option value="home">🏠 Hogar</option>
+              <option value="nature">🌿 Naturaleza</option>
+              <option value="politics">🏛 Política</option>
+              <option value="sport">⚽ Deporte</option>
+              <option value="art">🎨 Arte</option>
+              <option value="media">📺 Medios</option>
+              <option value="law">⚖ Derecho</option>
+              <option value="finance">💰 Finanzas</option>
+            </select>
+          </div>
         </div>
       </div>
     </article>

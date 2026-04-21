@@ -1094,6 +1094,7 @@
 
   const setupLibraryImport = () => {
     const fileInput = document.getElementById("wordFileInput");
+    const dropZone = document.getElementById("dropZone");
     const chooseFileBtn = document.getElementById("chooseFileBtn");
     const fileNameDisplay = document.getElementById("fileNameDisplay");
     const importFileBtn = document.getElementById("importFileBtn");
@@ -1139,11 +1140,26 @@
 
     if (importFileBtn && fileInput) {
       if (chooseFileBtn) {
-        chooseFileBtn.addEventListener("click", () => fileInput.click());
+        chooseFileBtn.addEventListener("click", (e) => { e.stopPropagation(); fileInput.click(); });
       }
       if (fileInput && fileNameDisplay) {
         fileInput.addEventListener("change", () => {
-          fileNameDisplay.textContent = fileInput.files[0]?.name ?? "Ningún archivo seleccionado";
+          fileNameDisplay.textContent = fileInput.files[0]?.name ?? "";
+        });
+      }
+      if (dropZone) {
+        dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("drag-over"); });
+        dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+        dropZone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          dropZone.classList.remove("drag-over");
+          const file = e.dataTransfer.files?.[0];
+          if (file) {
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            fileInput.files = dt.files;
+            fileNameDisplay.textContent = file.name;
+          }
         });
       }
       importFileBtn.addEventListener("click", () => {
@@ -1187,7 +1203,7 @@
 
     if (!searchInput || !cards.length) return;
 
-    const CARDS_PER_PAGE = 9;
+    const CARDS_PER_PAGE = 16;
     let currentPage = 1;
     let filteredCards = [];
 
