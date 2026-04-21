@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <a href="#mainContent" class="skip-link">Saltar al contenido</a>
@@ -68,7 +69,7 @@
   <!-- Racha prominente -->
   <div class="progress-streak-card">
     <div class="progress-streak-left">
-      <span class="progress-streak-fire" id="streakFire">??</span>
+      <span class="progress-streak-fire" id="streakFire">🔥🌱</span>
       <div>
         <div class="progress-streak-num" id="streakNum">0</div>
         <div class="progress-streak-label">días de racha</div>
@@ -114,11 +115,32 @@
     <p class="progress-cefr-note">El nivel se estima según las palabras guardadas en tu biblioteca.</p>
   </section>
 
+  <!-- Gráficas -->
+  <section class="profile-section">
+    <h2 class="profile-section-title">Vocabulario &amp; sesiones</h2>
+    <div class="progress-charts-grid">
+      <div class="progress-chart-card">
+        <p class="progress-chart-title"><i class="bi bi-pie-chart-fill"></i> Palabras por idioma</p>
+        <div class="progress-chart-wrap">
+          <canvas id="langDonutChart"></canvas>
+        </div>
+        <p class="progress-chart-empty" id="donutEmpty" hidden>Aún no hay palabras guardadas.</p>
+      </div>
+      <div class="progress-chart-card">
+        <p class="progress-chart-title"><i class="bi bi-bar-chart-fill"></i> Sesiones de práctica</p>
+        <div class="progress-chart-wrap">
+          <canvas id="modeBarChart"></canvas>
+        </div>
+        <p class="progress-chart-empty" id="barEmpty" hidden>Aún no hay sesiones registradas.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- Sesiones por modo -->
   <section class="profile-section">
     <div class="profile-section-header">
       <h2 class="profile-section-title">Sesiones de práctica</h2>
-      <a href="ejercicios.html" class="profile-section-link">Practicar ?</a>
+      <a href="ejercicios.html" class="profile-section-link">Practicar →</a>
     </div>
     <div class="profile-modes-grid">
       <div class="profile-mode-item">
@@ -153,7 +175,7 @@
   <section class="profile-section">
     <div class="profile-section-header">
       <h2 class="profile-section-title">Últimas palabras guardadas</h2>
-      <a href="biblioteca.html" class="profile-section-link">Ver todas ?</a>
+      <a href="biblioteca.html" class="profile-section-link">Ver todas →</a>
     </div>
     <ul class="profile-words-list" id="recentWordsList">
       <li class="profile-words-empty">Aún no has guardado ninguna palabra. <a href="biblioteca.html">Explorar biblioteca</a></li>
@@ -206,6 +228,11 @@
     ru:'Ruso', ua:'Ucraniano', gr:'Griego'
   };
 
+  const PALETTE = [
+    '#7c3aed','#a855f7','#4f8ef7','#2dc98b','#f9b233',
+    '#f76b4f','#06b6d4','#ec4899','#84cc16','#f59e0b'
+  ];
+
   const CEFR_LEVELS = [
     { label:'A1', min:0,  next:10,  nextLabel:'A2', desc:'Estás empezando. ¡Cada palabra cuenta!' },
     { label:'A2', min:10, next:25,  nextLabel:'B1', desc:'Buen comienzo. Sigue ampliando tu vocabulario.' },
@@ -218,6 +245,17 @@
   const getStats   = () => { try { return JSON.parse(localStorage.getItem('lexiStats'))   || {}; } catch { return {}; } };
   const getLibrary = () => { try { return JSON.parse(localStorage.getItem('lexiLibrary')) || []; } catch { return []; } };
   const getUser    = () => { try { return JSON.parse(localStorage.getItem('lexiUser'))    || {}; } catch { return {}; } };
+
+  // Agrupa palabras de la librería por idioma (buscando su card en el catálogo)
+  const getWordsByLang = (library) => {
+    const map = {};
+    library.forEach(item => {
+      const card = document.querySelector(`[data-word-id="${item.id}"]`);
+      const l = card ? (card.dataset.language || 'en') : 'en';
+      map[l] = (map[l] || 0) + 1;
+    });
+    return map;
+  };
 
   const s = getStats();
   const library = getLibrary();
@@ -232,7 +270,7 @@
   // Racha
   const streak = s.streak || 0;
   document.getElementById('streakNum').textContent = streak;
-  document.getElementById('streakFire').textContent = streak > 0 ? '??' : '??';
+  document.getElementById('streakFire').textContent = streak > 0 ? '🔥' : '🌱';
   document.getElementById('streakMsg').textContent = streak > 1
     ? '¡Llevas ' + streak + ' días seguidos! Sigue así.'
     : streak === 1 ? '¡Buen comienzo! Vuelve mañana para mantener la racha.'
@@ -258,7 +296,7 @@
       count + ' / ' + level.next + ' palabras para ' + level.nextLabel;
   } else {
     document.getElementById('levelBar').style.width = '100%';
-    document.getElementById('levelNext').textContent = '?Nivel m?ximo alcanzado! ??';
+    document.getElementById('levelNext').textContent = '¡Nivel máximo alcanzado! 🏆';
   }
 
   // Modos
@@ -268,7 +306,7 @@
   document.getElementById('modeWriting').textContent   = s.writing   || 0;
   document.getElementById('modeMix').textContent       = s.mix       || 0;
 
-  // ?ltimas palabras
+  // Últimas palabras
   const list = document.getElementById('recentWordsList');
   list.innerHTML = '';
   if (!library.length) {
@@ -280,6 +318,66 @@
       li.innerHTML = `<i class="bi bi-bookmark-fill" style="color:var(--brand)"></i> <span>${item.label}</span>`;
       list.appendChild(li);
     });
+  }
+
+  // Gráficas
+  if (typeof Chart !== 'undefined') {
+    const byLang = getWordsByLang(library);
+    const langs  = Object.keys(byLang);
+
+    // Donut: palabras por idioma
+    const donutCanvas = document.getElementById('langDonutChart');
+    const donutEmpty  = document.getElementById('donutEmpty');
+    if (!langs.length) {
+      donutCanvas.hidden = true; donutEmpty.hidden = false;
+    } else {
+      new Chart(donutCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: langs.map(l => LANG_LABELS[l] || l.toUpperCase()),
+          datasets: [{ data: langs.map(l => byLang[l]),
+            backgroundColor: langs.map((_,i) => PALETTE[i % PALETTE.length]),
+            borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { font:{family:'Inter',size:12}, padding:12, color:'#374151' } },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} ${ctx.parsed===1?'palabra':'palabras'}` } }
+          },
+          cutout: '62%'
+        }
+      });
+    }
+
+    // Barras: sesiones por modo
+    const barCanvas = document.getElementById('modeBarChart');
+    const barEmpty  = document.getElementById('barEmpty');
+    const modeData  = [s.reading||0, s.listening||0, s.speaking||0, s.writing||0, s.mix||0];
+    if (!modeData.reduce((a,b)=>a+b,0)) {
+      barCanvas.hidden = true; barEmpty.hidden = false;
+    } else {
+      new Chart(barCanvas, {
+        type: 'bar',
+        data: {
+          labels: ['Lectura','Escucha','Habla','Escritura','Combinado'],
+          datasets: [{ data: modeData,
+            backgroundColor: ['#4f8ef7','#f76b4f','#2dc98b','#a855f7','#f9b233'],
+            borderRadius: 8, borderSkipped: false }]
+        },
+        options: {
+          responsive: true, indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x} ${ctx.parsed.x===1?'sesión':'sesiones'}` } }
+          },
+          scales: {
+            x: { grid:{color:'#f3f4f6'}, ticks:{font:{family:'Inter',size:11},color:'#6b7280',stepSize:1} },
+            y: { grid:{display:false}, ticks:{font:{family:'Inter',size:12},color:'#374151'} }
+          }
+        }
+      });
+    }
   }
 })();
 </script>

@@ -605,7 +605,6 @@
     const listEl = document.getElementById("librarySavedList");
     const countEl = document.getElementById("libraryCount");
     const clearBtn = document.getElementById("clearLibrary");
-    const seeAllBtn = document.getElementById("librarySeeAll");
     const filterInput = document.getElementById("savedWordFilter");
     const listsGrid = document.getElementById("listsGrid");
     const listsIndex = document.getElementById("listsIndex");
@@ -657,6 +656,8 @@
             <button class="coll-kebab-btn" type="button" data-kebab-coll="${c.id}" aria-label="Opciones de ${c.name}"><i class="bi bi-three-dots-vertical"></i></button>
             <div class="coll-kebab-menu" data-kebab-menu="${c.id}" hidden>
               <button type="button" data-rename-coll="${c.id}"><i class="bi bi-pencil"></i> Renombrar</button>
+              <div class="coll-kebab-divider"></div>
+              <button type="button" data-clear-coll="${c.id}" class="coll-kebab-clear"><i class="bi bi-eraser"></i> Vaciar lista</button>
               <button type="button" data-delete-coll="${c.id}" class="coll-kebab-delete"><i class="bi bi-trash"></i> Eliminar</button>
             </div>
           </div>
@@ -697,15 +698,20 @@
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
           const id = btn.dataset.renameColl;
-          const colls = getCollections();
-          const coll = colls.find(c => c.id === id);
-          if (!coll) return;
-          const newName = prompt("Nuevo nombre:", coll.name);
-          if (!newName || !newName.trim()) return;
-          coll.name = newName.trim();
-          saveCollections(colls);
-          renderListsIndex();
-          showAlert("Colección renombrada");
+          const menu = listsGrid.querySelector(`[data-kebab-menu="${id}"]`);
+          if (menu) menu.hidden = true;
+          openRenameModal(id, renderListsIndex);
+        });
+      });
+
+      // Kebab: vaciar lista
+      listsGrid.querySelectorAll("[data-clear-coll]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const id = btn.dataset.clearColl;
+          const menu = listsGrid.querySelector(`[data-kebab-menu="${id}"]`);
+          if (menu) menu.hidden = true;
+          openClearModal(id, renderListsIndex);
         });
       });
 
@@ -714,10 +720,9 @@
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
           const id = btn.dataset.deleteColl;
-          if (!confirm("¿Eliminar esta colección?")) return;
-          saveCollections(getCollections().filter(c => c.id !== id));
-          renderListsIndex();
-          showAlert("Colección eliminada", "warning");
+          const menu = listsGrid.querySelector(`[data-kebab-menu="${id}"]`);
+          if (menu) menu.hidden = true;
+          openDeleteModal(id, renderListsIndex);
         });
       });
     };
@@ -779,8 +784,13 @@
 
     if (!cards.length || !listEl || !countEl) return;
 
-    const PAGE_SIZE = 8;
-    let visibleCount = PAGE_SIZE;
+    const PAGE_SIZE = 10;
+    let currentPage = 0;
+
+    const paginationEl = document.getElementById("listPagination");
+    const pagePrevBtn  = document.getElementById("listPagePrev");
+    const pageNextBtn  = document.getElementById("listPageNext");
+    const pageInfoEl   = document.getElementById("listPageInfo");
 
     const renderList = () => {
       const query = filterInput ? filterInput.value.trim().toLowerCase() : "";
@@ -800,7 +810,6 @@
       }
 
       let filtered = source;
-      // Filter by search query
       if (query) {
         filtered = filtered.filter((item) =>
           item.label.toLowerCase().includes(query)
@@ -814,34 +823,42 @@
           : hasAny
           ? `<li class="library-empty-state"><i class="bi bi-globe"></i><span>No hay palabras guardadas en este idioma.</span></li>`
           : `<li class="library-empty-state"><i class="bi bi-journal-plus"></i><span>Esta lista está vacía.<br><small>Guarda palabras desde el catálogo.</small></span></li>`;
-        if (seeAllBtn) seeAllBtn.hidden = true;
+        if (paginationEl) paginationEl.hidden = true;
       } else {
-        const toShow = filtered.slice(0, visibleCount);
+        const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+        if (currentPage >= totalPages) currentPage = totalPages - 1;
+        if (currentPage < 0) currentPage = 0;
+
+        const pageStart = currentPage * PAGE_SIZE;
+        const pageEnd   = pageStart + PAGE_SIZE;
+        const toShow    = filtered.slice(pageStart, pageEnd);
+
         listEl.innerHTML = toShow
           .map((item) => {
             const card = document.querySelector(`[data-word-id="${item.id}"]`);
-            const cefr = card?.dataset.cefr || "";
-            const topic = card?.dataset.topic || "";
-            const cefrClass = cefr ? `cefr-${cefr.toLowerCase()}` : "";
+            const cefr        = card?.dataset.cefr        || "";
+            const topic       = card?.dataset.topic       || "";
+            const translation = card?.dataset.translation || item.translation || "";
+            const cefrClass   = cefr ? `cefr-${cefr.toLowerCase()}` : "";
             return `<li class="saved-word-row">
               <div class="saved-word-info">
                 <span class="saved-word-label">${item.label}</span>
+                ${translation ? `<span class="saved-word-translation">${translation}</span>` : ""}
                 <div class="saved-word-tags">
-                  ${cefr ? `<span class="cefr-badge ${cefrClass}">${cefr}</span>` : ""}
+                  ${cefr  ? `<span class="cefr-badge ${cefrClass}">${cefr}</span>` : ""}
                   ${topic ? `<span class="topic-tag">${topic}</span>` : ""}
                 </div>
               </div>
-              <button class="remove-saved-btn" type="button" data-remove-saved="${item.id}" aria-label="Eliminar ${item.label}">×</button>
+              <button class="remove-saved-btn" type="button" data-remove-saved="${item.id}" aria-label="Eliminar ${item.label}"><i class="bi bi-x"></i></button>
             </li>`;
           })
           .join("");
 
-        if (seeAllBtn) {
-          const remaining = filtered.length - toShow.length;
-          seeAllBtn.hidden = remaining <= 0;
-          if (remaining > 0) {
-            seeAllBtn.textContent = `Mostrar ${Math.min(remaining, PAGE_SIZE)} más`;
-          }
+        if (paginationEl) {
+          paginationEl.hidden = totalPages <= 1;
+          if (pageInfoEl) pageInfoEl.textContent = `${currentPage + 1} / ${totalPages}`;
+          if (pagePrevBtn) pagePrevBtn.disabled = currentPage === 0;
+          if (pageNextBtn) pageNextBtn.disabled = currentPage >= totalPages - 1;
         }
       }
 
@@ -865,16 +882,20 @@
       renderList();
     });
 
-    if (seeAllBtn) {
-      seeAllBtn.addEventListener("click", () => {
-        visibleCount += PAGE_SIZE;
-        renderList();
+    if (pagePrevBtn) {
+      pagePrevBtn.addEventListener("click", () => {
+        if (currentPage > 0) { currentPage--; renderList(); listEl.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+      });
+    }
+    if (pageNextBtn) {
+      pageNextBtn.addEventListener("click", () => {
+        currentPage++; renderList(); listEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
       });
     }
 
     if (filterInput) {
       filterInput.addEventListener("input", () => {
-        visibleCount = PAGE_SIZE;
+        currentPage = 0;
         renderList();
       });
     }
@@ -929,7 +950,7 @@
         } else {
           saveLibrary([]);
         }
-        visibleCount = PAGE_SIZE;
+        currentPage = 0;
         if (filterInput) filterInput.value = "";
         renderList();
         renderListsIndex();
@@ -938,12 +959,12 @@
     }
 
     window.addEventListener("lexi-library-updated", () => {
-      visibleCount = PAGE_SIZE;
+      currentPage = 0;
       if (listDetail && !listDetail.hidden) renderList();
       else renderListsIndex();
     });
     window.addEventListener("lexi-lang-changed", () => {
-      visibleCount = PAGE_SIZE;
+      currentPage = 0;
       if (listDetail && !listDetail.hidden) renderList();
       else renderListsIndex();
     });
@@ -952,8 +973,129 @@
     renderListsIndex();
   };
 
+  // ---- Modal de renombrar colección ----
+  const openRenameModal = (collId, onSaved) => {
+    const modal = document.getElementById("renameCollModal");
+    const input = document.getElementById("renameCollInput");
+    const confirmBtn = document.getElementById("renameCollConfirm");
+    const cancelBtn = document.getElementById("renameCollCancel");
+    if (!modal || !input) return;
+
+    const colls = getCollections();
+    const coll = colls.find(c => c.id === collId);
+    if (!coll) return;
+
+    input.value = coll.name;
+    modal.hidden = false;
+    requestAnimationFrame(() => input.select());
+
+    const close = () => {
+      modal.hidden = true;
+      confirmBtn.removeEventListener("click", onConfirm);
+      cancelBtn.removeEventListener("click", close);
+      input.removeEventListener("keydown", onKey);
+      modal.removeEventListener("click", onBackdrop);
+    };
+    const onConfirm = () => {
+      const name = input.value.trim();
+      if (!name) return;
+      const updated = getCollections();
+      const idx = updated.findIndex(c => c.id === collId);
+      if (idx !== -1) { updated[idx].name = name; saveCollections(updated); }
+      close();
+      if (onSaved) onSaved();
+      showAlert("Lista renombrada");
+    };
+    const onKey = (e) => {
+      if (e.key === "Enter") onConfirm();
+      if (e.key === "Escape") close();
+    };
+    const onBackdrop = (e) => { if (e.target === modal) close(); };
+
+    confirmBtn.addEventListener("click", onConfirm);
+    cancelBtn.addEventListener("click", close);
+    input.addEventListener("keydown", onKey);
+    modal.addEventListener("click", onBackdrop);
+  };
+
+  const openDeleteModal = (collId, onConfirmed) => {
+    const modal      = document.getElementById("deleteCollModal");
+    const bodyEl     = document.getElementById("deleteModalBody");
+    const confirmBtn = document.getElementById("deleteCollConfirm");
+    const cancelBtn  = document.getElementById("deleteCollCancel");
+    if (!modal) return;
+
+    const coll = getCollections().find(c => c.id === collId);
+    if (bodyEl) bodyEl.textContent = coll
+      ? `¿Eliminar "${coll.name}"? Esta acción no se puede deshacer.`
+      : "Esta acción no se puede deshacer.";
+
+    modal.hidden = false;
+
+    const close = () => {
+      modal.hidden = true;
+      confirmBtn.removeEventListener("click", onConfirm);
+      cancelBtn.removeEventListener("click", close);
+      modal.removeEventListener("click", onBackdrop);
+      document.removeEventListener("keydown", onKey);
+    };
+    const onConfirm = () => {
+      saveCollections(getCollections().filter(c => c.id !== collId));
+      close();
+      if (onConfirmed) onConfirmed();
+      showAlert("Colección eliminada", "warning");
+    };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    const onBackdrop = (e) => { if (e.target === modal) close(); };
+
+    confirmBtn.addEventListener("click", onConfirm);
+    cancelBtn.addEventListener("click", close);
+    modal.addEventListener("click", onBackdrop);
+    document.addEventListener("keydown", onKey);
+  };
+
+  const openClearModal = (collId, onConfirmed) => {
+    const modal      = document.getElementById("clearCollModal");
+    const bodyEl     = document.getElementById("clearModalBody");
+    const confirmBtn = document.getElementById("clearCollConfirm");
+    const cancelBtn  = document.getElementById("clearCollCancel");
+    if (!modal) return;
+
+    const colls = getCollections();
+    const idx   = colls.findIndex(c => c.id === collId);
+    if (idx === -1) return;
+    if (bodyEl) bodyEl.textContent = `¿Vaciar "${colls[idx].name}"? Se eliminarán todas las palabras.`;
+
+    modal.hidden = false;
+
+    const close = () => {
+      modal.hidden = true;
+      confirmBtn.removeEventListener("click", onConfirm);
+      cancelBtn.removeEventListener("click", close);
+      modal.removeEventListener("click", onBackdrop);
+      document.removeEventListener("keydown", onKey);
+    };
+    const onConfirm = () => {
+      const updated = getCollections();
+      const i = updated.findIndex(c => c.id === collId);
+      if (i !== -1) { updated[i].items = []; saveCollections(updated); }
+      close();
+      if (onConfirmed) onConfirmed();
+      showAlert("Lista vaciada", "warning");
+    };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    const onBackdrop = (e) => { if (e.target === modal) close(); };
+
+    confirmBtn.addEventListener("click", onConfirm);
+    cancelBtn.addEventListener("click", close);
+    modal.addEventListener("click", onBackdrop);
+    document.addEventListener("keydown", onKey);
+  };
+
   const setupLibraryImport = () => {
     const fileInput = document.getElementById("wordFileInput");
+    const chooseFileBtn = document.getElementById("chooseFileBtn");
+    const fileNameDisplay = document.getElementById("fileNameDisplay");
     const importFileBtn = document.getElementById("importFileBtn");
     const pasteInput = document.getElementById("pasteWordsInput");
     const importPasteBtn = document.getElementById("importPasteBtn");
@@ -996,6 +1138,14 @@
     };
 
     if (importFileBtn && fileInput) {
+      if (chooseFileBtn) {
+        chooseFileBtn.addEventListener("click", () => fileInput.click());
+      }
+      if (fileInput && fileNameDisplay) {
+        fileInput.addEventListener("change", () => {
+          fileNameDisplay.textContent = fileInput.files[0]?.name ?? "Ningún archivo seleccionado";
+        });
+      }
       importFileBtn.addEventListener("click", () => {
         const file = fileInput.files?.[0];
         if (!file) {

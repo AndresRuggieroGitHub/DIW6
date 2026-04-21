@@ -27,7 +27,7 @@
     <nav class="nav-left" id="mainNav">
       <a href="index.html">Inicio</a>
       <a class="active" href="biblioteca.html">Biblioteca</a>
-      <a href="ejercicios.html">Pr�ctica</a>
+      <a href="ejercicios.html">Práctica</a>
     </nav>
   </div>
 
@@ -55,12 +55,12 @@
 <main id="mainContent" class="page-main container section-space">
   <h1 class="mb-4">Mi biblioteca de vocabulario</h1>
 
-  <!-- Vista: �ndice de listas -->
+  <!-- Vista: Índice de listas -->
   <div id="listsIndex" class="mb-4">
     <div class="lists-index-header mb-3">
       <span class="lists-index-label">Mis listas</span>
       <button class="btn btn-outline-secondary btn-sm" id="newCollectionTopBtn" type="button">
-        <i class="bi bi-plus"></i> Nueva colecci�n
+        <i class="bi bi-plus"></i> Nueva colección
       </button>
     </div>
     <div class="lists-grid" id="listsGrid">
@@ -86,15 +86,19 @@
     <ul class="library-saved-list" id="librarySavedList">
       <li class="text-muted">Aun no has guardado palabras.</li>
     </ul>
-    <div class="d-flex gap-2 mt-2">
-      <button class="btn btn-link btn-sm px-0" id="librarySeeAll" type="button" hidden>Mostrar m�s</button>
+    <div class="d-flex gap-2 mt-2 align-items-center flex-wrap">
+      <div id="listPagination" class="list-pagination" hidden>
+        <button class="list-page-btn" id="listPagePrev" type="button"><i class="bi bi-chevron-left"></i> Anterior</button>
+        <span id="listPageInfo" class="list-page-info">1 / 1</span>
+        <button class="list-page-btn" id="listPageNext" type="button">Siguiente <i class="bi bi-chevron-right"></i></button>
+      </div>
       <button class="btn btn-outline-danger btn-sm ms-auto" id="clearLibrary" type="button">Vaciar lista</button>
     </div>
   </div>
 
   <section class="library-add-panel mb-4">
-    <h2 class="h5 mb-0">A�adir vocabulario</h2>
-    <p class="text-muted small mt-1 mb-3">Importa tus propias palabras o explora el cat�logo y guarda con un clic.</p>
+    <h2 class="h5 mb-0">Añadir vocabulario</h2>
+    <p class="text-muted small mt-1 mb-3">Importa tus propias palabras separadas por líneas, puntos, comas o puntos y comas.</p>
 
     <!-- Importar -->
     <p class="add-panel-sublabel">Importar palabras</p>
@@ -103,8 +107,12 @@
         <div class="import-card-icon"><i class="bi bi-file-earmark-arrow-up"></i></div>
         <div class="import-card-content">
           <h3 class="import-card-title"><span class="method-num">1</span> Subir archivo</h3>
-          <p class="import-card-desc">Sube un .txt o .csv con una palabra por l�nea.</p>
-          <input id="wordFileInput" class="form-control form-control-sm mb-2" type="file" accept=".txt,.csv">
+          <p class="import-card-desc">Sube un .txt o .csv.</p>
+          <input id="wordFileInput" type="file" accept=".txt,.csv" style="display:none">
+          <button id="chooseFileBtn" class="btn btn-outline-secondary btn-sm w-100 mb-1" type="button">
+            <i class="bi bi-folder2-open"></i> Elegir archivo
+          </button>
+          <span id="fileNameDisplay" class="d-block text-muted small mb-2" style="font-size:0.78rem">Ningún archivo seleccionado</span>
           <button id="importFileBtn" class="btn btn-primary btn-sm w-100" type="button">Importar archivo</button>
         </div>
       </article>
@@ -113,7 +121,7 @@
         <div class="import-card-icon"><i class="bi bi-clipboard-plus"></i></div>
         <div class="import-card-content">
           <h3 class="import-card-title"><span class="method-num">2</span> Pegar texto</h3>
-          <p class="import-card-desc">Una palabra por l�nea � o escribe solo una.</p>
+          <p class="import-card-desc">Una palabra o varias.</p>
           <textarea id="pasteWordsInput" class="form-control form-control-sm mb-2" rows="3" placeholder="heritage&#10;sustainable growth&#10;check in"></textarea>
           <button id="importPasteBtn" class="btn btn-primary btn-sm w-100" type="button">Importar texto</button>
         </div>
@@ -121,14 +129,14 @@
     </div>
 
     <!-- Divisor -->
-    <div class="add-panel-divider mt-1"><span>o explora el cat�logo</span></div>
+    <div class="add-panel-divider mt-1"><span>o explora el catálogo</span></div>
 
-    <!-- Cat�logo -->
+    <!-- catálogo -->
     <article class="import-card import-card--catalog">
       <div class="import-card-icon"><i class="bi bi-search"></i></div>
       <div class="import-card-content catalog-content">
-        <h3 class="import-card-title"><span class="method-num">3</span> Buscar en el cat�logo</h3>
-        <p class="import-card-desc">Explora palabras curadas por nivel y tema � guarda las que te interesen.</p>
+        <h3 class="import-card-title"><span class="method-num">3</span> Buscar en el catálogo</h3>
+        <p class="import-card-desc">Explora palabras curadas por nivel y tema — guarda las que te interesen.</p>
         <div class="catalog-controls">
           <input id="searchInput" class="form-control form-control-sm" type="search" placeholder="Ej: travel, health..." aria-label="Buscar por palabra, frase o tema">
           <select id="cefrFilter" class="form-select form-select-sm">
@@ -491,7 +499,7 @@
     </article>
 
     <!-- Norsk -->
-    <article class="result-card" data-word-card data-language="no" data-cefr="A1" data-topic="nature" data-word-id="w-vaer" data-word-label="v�ret" data-translation="el tiempo meteorologico">
+    <article class="result-card" data-word-card data-language="no" data-cefr="A1" data-topic="nature" data-word-id="w-vaer" data-word-label="været" data-translation="el tiempo meteorologico">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -499,7 +507,7 @@
           <span class="cefr-badge cefr-a1">A1</span>
           <span class="topic-tag">nature</span>
         </div>
-        <h2 class="card-word">v�ret</h2>
+        <h2 class="card-word">været</h2>
         <p class="card-translation">el tiempo meteorologico</p>
       </div>
     </article>
@@ -617,7 +625,7 @@
         <p class="card-translation">hola</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="ru" data-cefr="A1" data-topic="education" data-word-id="w-kniga" data-word-label="안녕하세요" data-translation="libro">
+    <article class="result-card" data-word-card data-language="ru" data-cefr="A1" data-topic="education" data-word-id="w-kniga" data-word-label="книга" data-translation="libro">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -625,11 +633,11 @@
           <span class="cefr-badge cefr-a1">A1</span>
           <span class="topic-tag">education</span>
         </div>
-        <h2 class="card-word">안녕하세요</h2>
+        <h2 class="card-word">книга</h2>
         <p class="card-translation">libro</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="ru" data-cefr="A2" data-topic="work" data-word-id="w-rabota" data-word-label="привет" data-translation="trabajo">
+    <article class="result-card" data-word-card data-language="ru" data-cefr="A2" data-topic="work" data-word-id="w-rabota" data-word-label="работа" data-translation="trabajo">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -637,13 +645,13 @@
           <span class="cefr-badge cefr-a2">A2</span>
           <span class="topic-tag">work</span>
         </div>
-        <h2 class="card-word">привет</h2>
+        <h2 class="card-word">работа</h2>
         <p class="card-translation">trabajo</p>
       </div>
     </article>
 
     <!-- ?????????? -->
-    <article class="result-card" data-word-card data-language="ua" data-cefr="A1" data-topic="social" data-word-id="w-dobroho" data-word-label="??????? ?????" data-translation="buenos dias">
+    <article class="result-card" data-word-card data-language="ua" data-cefr="A1" data-topic="social" data-word-id="w-dobroho" data-word-label="Доброго ранку" data-translation="buenos dias">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -651,11 +659,11 @@
           <span class="cefr-badge cefr-a1">A1</span>
           <span class="topic-tag">social</span>
         </div>
-        <h2 class="card-word">??????? ?????</h2>
+        <h2 class="card-word">Доброго ранку</h2>
         <p class="card-translation">buenos dias</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="ua" data-cefr="A1" data-topic="home" data-word-id="w-dim" data-word-label="???" data-translation="casa">
+    <article class="result-card" data-word-card data-language="ua" data-cefr="A1" data-topic="home" data-word-id="w-dim" data-word-label="дім" data-translation="casa">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -663,11 +671,11 @@
           <span class="cefr-badge cefr-a1">A1</span>
           <span class="topic-tag">home</span>
         </div>
-        <h2 class="card-word">???</h2>
+        <h2 class="card-word">дім</h2>
         <p class="card-translation">casa</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="ua" data-cefr="B1" data-topic="social" data-word-id="w-liubyty" data-word-label="привет" data-translation="amar">
+    <article class="result-card" data-word-card data-language="ua" data-cefr="B1" data-topic="social" data-word-id="w-liubyty" data-word-label="любити" data-translation="amar">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -675,7 +683,7 @@
           <span class="cefr-badge cefr-b1">B1</span>
           <span class="topic-tag">social</span>
         </div>
-        <h2 class="card-word">привет</h2>
+        <h2 class="card-word">любити</h2>
         <p class="card-translation">amar</p>
       </div>
     </article>
@@ -757,7 +765,7 @@
     </article>
 
     <!-- ???????? -->
-    <article class="result-card" data-word-card data-language="gr" data-cefr="A1" data-topic="social" data-word-id="w-yeia" data-word-label="Ge?a s??" data-translation="hola">
+    <article class="result-card" data-word-card data-language="gr" data-cefr="A1" data-topic="social" data-word-id="w-yeia" data-word-label="Γεια σου" data-translation="hola">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -765,11 +773,11 @@
           <span class="cefr-badge cefr-a1">A1</span>
           <span class="topic-tag">social</span>
         </div>
-        <h2 class="card-word">Ge?a s??</h2>
+        <h2 class="card-word">Γεια σου</h2>
         <p class="card-translation">hola</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="gr" data-cefr="A1" data-topic="food" data-word-id="w-nero" data-word-label="?e??" data-translation="agua">
+    <article class="result-card" data-word-card data-language="gr" data-cefr="A1" data-topic="food" data-word-id="w-nero" data-word-label="νερό" data-translation="agua">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -777,11 +785,11 @@
           <span class="cefr-badge cefr-a1">A1</span>
           <span class="topic-tag">food</span>
         </div>
-        <h2 class="card-word">?e??</h2>
+        <h2 class="card-word">νερό</h2>
         <p class="card-translation">agua</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="gr" data-cefr="B1" data-topic="culture" data-word-id="w-thalassa" data-word-label="T??assa" data-translation="el mar">
+    <article class="result-card" data-word-card data-language="gr" data-cefr="B1" data-topic="culture" data-word-id="w-thalassa" data-word-label="Θάλασσα" data-translation="el mar">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -789,13 +797,13 @@
           <span class="cefr-badge cefr-b1">B1</span>
           <span class="topic-tag">culture</span>
         </div>
-        <h2 class="card-word">T??assa</h2>
+        <h2 class="card-word">Θάλασσα</h2>
         <p class="card-translation">el mar</p>
       </div>
     </article>
 
     <!-- ?? -->
-    <article class="result-card" data-word-card data-language="zh" data-cefr="A1" data-topic="social" data-word-id="w-nihao" data-word-label="행복" data-translation="hola">
+    <article class="result-card" data-word-card data-language="zh" data-cefr="A1" data-topic="social" data-word-id="w-nihao" data-word-label="你好" data-translation="hola">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -803,11 +811,11 @@
           <span class="cefr-badge cefr-a1">A1</span>
           <span class="topic-tag">social</span>
         </div>
-        <h2 class="card-word">행복</h2>
+        <h2 class="card-word">你好</h2>
         <p class="card-translation">hola</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="zh" data-cefr="A1" data-topic="food" data-word-id="w-chi" data-word-label="행복" data-translation="comer">
+    <article class="result-card" data-word-card data-language="zh" data-cefr="A1" data-topic="food" data-word-id="w-chi" data-word-label="吃" data-translation="comer">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -815,11 +823,11 @@
           <span class="cefr-badge cefr-a1">A1</span>
           <span class="topic-tag">food</span>
         </div>
-        <h2 class="card-word">행복</h2>
+        <h2 class="card-word">吃</h2>
         <p class="card-translation">comer</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="zh" data-cefr="A2" data-topic="work" data-word-id="w-gongzuo" data-word-label="행복" data-translation="trabajo">
+    <article class="result-card" data-word-card data-language="zh" data-cefr="A2" data-topic="work" data-word-id="w-gongzuo" data-word-label="工作" data-translation="trabajo">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
@@ -827,12 +835,12 @@
           <span class="cefr-badge cefr-a2">A2</span>
           <span class="topic-tag">work</span>
         </div>
-        <h2 class="card-word">행복</h2>
+        <h2 class="card-word">工作</h2>
         <p class="card-translation">trabajo</p>
       </div>
     </article>
 
-    <!-- Portugu�s -->
+    <!-- Português -->
     <article class="result-card" data-word-card data-language="pt" data-cefr="A1" data-topic="travel" data-word-id="w-praia" data-word-label="a praia" data-translation="la playa">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
@@ -851,12 +859,12 @@
         <p class="card-translation">nostalgia</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="pt" data-cefr="A2" data-topic="social" data-word-id="w-coracao" data-word-label="o cora��o" data-translation="el corazon">
+    <article class="result-card" data-word-card data-language="pt" data-cefr="A2" data-topic="social" data-word-id="w-coracao" data-word-label="o coração" data-translation="el corazon">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">social</span></div>
-        <h2 class="card-word">o cora��o</h2>
+        <h2 class="card-word">o coração</h2>
         <p class="card-translation">el corazon</p>
       </div>
     </article>
@@ -891,64 +899,64 @@
     </article>
 
     <!-- ??? -->
-    <article class="result-card" data-word-card data-language="ja" data-cefr="A1" data-topic="social" data-word-id="w-arigato" data-word-label="안녕하세요" data-translation="gracias">
+    <article class="result-card" data-word-card data-language="ja" data-cefr="A1" data-topic="social" data-word-id="w-arigato" data-word-label="ありがとう" data-translation="gracias">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">social</span></div>
-        <h2 class="card-word">안녕하세요</h2>
+        <h2 class="card-word">ありがとう</h2>
         <p class="card-translation">gracias</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="ja" data-cefr="A1" data-topic="food" data-word-id="w-taberu" data-word-label="???" data-translation="comer">
+    <article class="result-card" data-word-card data-language="ja" data-cefr="A1" data-topic="food" data-word-id="w-taberu" data-word-label="食べる" data-translation="comer">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">food</span></div>
-        <h2 class="card-word">???</h2>
+        <h2 class="card-word">食べる</h2>
         <p class="card-translation">comer</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="ja" data-cefr="A2" data-topic="nature" data-word-id="w-sakura" data-word-label="밥" data-translation="flor de cerezo">
+    <article class="result-card" data-word-card data-language="ja" data-cefr="A2" data-topic="nature" data-word-id="w-sakura" data-word-label="桜" data-translation="flor de cerezo">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">nature</span></div>
-        <h2 class="card-word">밥</h2>
+        <h2 class="card-word">桜</h2>
         <p class="card-translation">flor de cerezo</p>
       </div>
     </article>
 
     <!-- ????????? -->
-    <article class="result-card" data-word-card data-language="bg" data-cefr="A1" data-topic="social" data-word-id="w-zdravey" data-word-label="???????" data-translation="hola">
+    <article class="result-card" data-word-card data-language="bg" data-cefr="A1" data-topic="social" data-word-id="w-zdravey" data-word-label="Здравей" data-translation="hola">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">social</span></div>
-        <h2 class="card-word">???????</h2>
+        <h2 class="card-word">Здравей</h2>
         <p class="card-translation">hola</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="bg" data-cefr="A1" data-topic="food" data-word-id="w-voda-bg" data-word-label="????" data-translation="agua">
+    <article class="result-card" data-word-card data-language="bg" data-cefr="A1" data-topic="food" data-word-id="w-voda-bg" data-word-label="вода" data-translation="agua">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">food</span></div>
-        <h2 class="card-word">????</h2>
+        <h2 class="card-word">вода</h2>
         <p class="card-translation">agua</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="bg" data-cefr="B1" data-topic="culture" data-word-id="w-krasota" data-word-label="???????" data-translation="belleza">
+    <article class="result-card" data-word-card data-language="bg" data-cefr="B1" data-topic="culture" data-word-id="w-krasota" data-word-label="красота" data-translation="belleza">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">culture</span></div>
-        <h2 class="card-word">???????</h2>
+        <h2 class="card-word">красота</h2>
         <p class="card-translation">belleza</p>
       </div>
     </article>
 
-    <!-- Rom�na -->
+    <!-- Română -->
     <article class="result-card" data-word-card data-language="ro" data-cefr="A1" data-topic="social" data-word-id="w-buna-ro" data-word-label="buna ziua" data-translation="buenos dias">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
@@ -977,13 +985,13 @@
       </div>
     </article>
 
-    <!-- Ce�tina -->
-    <article class="result-card" data-word-card data-language="cs" data-cefr="A1" data-topic="social" data-word-id="w-dobry-cs" data-word-label="dobr� den" data-translation="buenos dias">
+    <!-- Čeština -->
+    <article class="result-card" data-word-card data-language="cs" data-cefr="A1" data-topic="social" data-word-id="w-dobry-cs" data-word-label="dobrý den" data-translation="buenos dias">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">social</span></div>
-        <h2 class="card-word">dobr� den</h2>
+        <h2 class="card-word">dobrý den</h2>
         <p class="card-translation">buenos dias</p>
       </div>
     </article>
@@ -1007,12 +1015,12 @@
     </article>
 
     <!-- Slovencina -->
-    <article class="result-card" data-word-card data-language="sk" data-cefr="A1" data-topic="social" data-word-id="w-dobry-sk" data-word-label="dobr� den" data-translation="buenos dias">
+    <article class="result-card" data-word-card data-language="sk" data-cefr="A1" data-topic="social" data-word-id="w-dobry-sk" data-word-label="dobrý den" data-translation="buenos dias">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">social</span></div>
-        <h2 class="card-word">dobr� den</h2>
+        <h2 class="card-word">dobrý den</h2>
         <p class="card-translation">buenos dias</p>
       </div>
     </article>
@@ -1036,21 +1044,21 @@
     </article>
 
     <!-- Magyar -->
-    <article class="result-card" data-word-card data-language="hu" data-cefr="A1" data-topic="social" data-word-id="w-jonapot" data-word-label="j� napot" data-translation="buenos dias">
+    <article class="result-card" data-word-card data-language="hu" data-cefr="A1" data-topic="social" data-word-id="w-jonapot" data-word-label="jó napot" data-translation="buenos dias">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">social</span></div>
-        <h2 class="card-word">j� napot</h2>
+        <h2 class="card-word">jó napot</h2>
         <p class="card-translation">buenos dias</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="hu" data-cefr="A1" data-topic="food" data-word-id="w-viz" data-word-label="v�z" data-translation="agua">
+    <article class="result-card" data-word-card data-language="hu" data-cefr="A1" data-topic="food" data-word-id="w-viz" data-word-label="víz" data-translation="agua">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">food</span></div>
-        <h2 class="card-word">v�z</h2>
+        <h2 class="card-word">víz</h2>
         <p class="card-translation">agua</p>
       </div>
     </article>
@@ -1065,59 +1073,59 @@
     </article>
 
     <!-- ??????? -->
-    <article class="result-card" data-word-card data-language="ar" data-cefr="A1" data-topic="social" data-word-id="w-marhaba" data-word-label="안녕하세요" data-translation="hola">
+    <article class="result-card" data-word-card data-language="ar" data-cefr="A1" data-topic="social" data-word-id="w-marhaba" data-word-label="مرحبا" data-translation="hola">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">social</span></div>
-        <h2 class="card-word">안녕하세요</h2>
+        <h2 class="card-word">مرحبا</h2>
         <p class="card-translation">hola</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="ar" data-cefr="A1" data-topic="social" data-word-id="w-shukran" data-word-label="????" data-translation="gracias">
+    <article class="result-card" data-word-card data-language="ar" data-cefr="A1" data-topic="social" data-word-id="w-shukran" data-word-label="شكراً" data-translation="gracias">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">social</span></div>
-        <h2 class="card-word">????</h2>
+        <h2 class="card-word">شكراً</h2>
         <p class="card-translation">gracias</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="ar" data-cefr="A1" data-topic="food" data-word-id="w-maa" data-word-label="???" data-translation="agua">
+    <article class="result-card" data-word-card data-language="ar" data-cefr="A1" data-topic="food" data-word-id="w-maa" data-word-label="ماء" data-translation="agua">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">food</span></div>
-        <h2 class="card-word">???</h2>
+        <h2 class="card-word">ماء</h2>
         <p class="card-translation">agua</p>
       </div>
     </article>
 
     <!-- Ti?ng Vi?t -->
-    <article class="result-card" data-word-card data-language="vi" data-cefr="A1" data-topic="social" data-word-id="w-xinchao" data-word-label="xin ch�o" data-translation="hola">
+    <article class="result-card" data-word-card data-language="vi" data-cefr="A1" data-topic="social" data-word-id="w-xinchao" data-word-label="xin chào" data-translation="hola">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">social</span></div>
-        <h2 class="card-word">xin ch�o</h2>
+        <h2 class="card-word">xin chào</h2>
         <p class="card-translation">hola</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="vi" data-cefr="A1" data-topic="social" data-word-id="w-camon" data-word-label="c?m on" data-translation="gracias">
+    <article class="result-card" data-word-card data-language="vi" data-cefr="A1" data-topic="social" data-word-id="w-camon" data-word-label="cảm ơn" data-translation="gracias">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">social</span></div>
-        <h2 class="card-word">c?m on</h2>
+        <h2 class="card-word">cảm ơn</h2>
         <p class="card-translation">gracias</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="vi" data-cefr="A1" data-topic="food" data-word-id="w-nuoc" data-word-label="nu?c" data-translation="agua">
+    <article class="result-card" data-word-card data-language="vi" data-cefr="A1" data-topic="food" data-word-id="w-nuoc" data-word-label="nước" data-translation="agua">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">food</span></div>
-        <h2 class="card-word">nu?c</h2>
+        <h2 class="card-word">nước</h2>
         <p class="card-translation">agua</p>
       </div>
     </article>
@@ -1141,13 +1149,13 @@
         <p class="card-translation">aeropuerto</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="tr" data-cefr="B1" data-topic="work" data-word-id="w-tr-toplanti" data-word-label="toplanti" data-translation="reuni�n">
+    <article class="result-card" data-word-card data-language="tr" data-cefr="B1" data-topic="work" data-word-id="w-tr-toplanti" data-word-label="toplanti" data-translation="reunión">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">work</span></div>
         <h2 class="card-word">toplanti</h2>
-        <p class="card-translation">reuni�n</p>
+        <p class="card-translation">reunión</p>
       </div>
     </article>
     <article class="result-card" data-word-card data-language="tr" data-cefr="B2" data-topic="culture" data-word-id="w-tr-tarih" data-word-label="tarih" data-translation="historia / fecha">
@@ -1199,115 +1207,115 @@
     </article>
 
     <!-- Hebreo -->
-    <article class="result-card" data-word-card data-language="he" data-cefr="A1" data-topic="home" data-word-id="w-he-bayit" data-word-label="привет" data-translation="casa">
+    <article class="result-card" data-word-card data-language="he" data-cefr="A1" data-topic="home" data-word-id="w-he-bayit" data-word-label="בַּיִת" data-translation="casa">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">home</span></div>
-        <h2 class="card-word">привет</h2>
+        <h2 class="card-word">בַּיִת</h2>
         <p class="card-translation">casa</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="he" data-cefr="A2" data-topic="food" data-word-id="w-he-lechem" data-word-label="안녕하세요" data-translation="pan">
+    <article class="result-card" data-word-card data-language="he" data-cefr="A2" data-topic="food" data-word-id="w-he-lechem" data-word-label="לֶחֶם" data-translation="pan">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">food</span></div>
-        <h2 class="card-word">안녕하세요</h2>
+        <h2 class="card-word">לֶחֶם</h2>
         <p class="card-translation">pan</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="he" data-cefr="B1" data-topic="work" data-word-id="w-he-avoda" data-word-label="????????" data-translation="trabajo">
+    <article class="result-card" data-word-card data-language="he" data-cefr="B1" data-topic="work" data-word-id="w-he-avoda" data-word-label="עֲבוֹדָה" data-translation="trabajo">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">work</span></div>
-        <h2 class="card-word">????????</h2>
+        <h2 class="card-word">עֲבוֹדָה</h2>
         <p class="card-translation">trabajo</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="he" data-cefr="B2" data-topic="culture" data-word-id="w-he-tarbut" data-word-label="??????????" data-translation="cultura">
+    <article class="result-card" data-word-card data-language="he" data-cefr="B2" data-topic="culture" data-word-id="w-he-tarbut" data-word-label="תַּרְבּוּת" data-translation="cultura">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">culture</span></div>
-        <h2 class="card-word">??????????</h2>
+        <h2 class="card-word">תַּרְבּוּת</h2>
         <p class="card-translation">cultura</p>
       </div>
     </article>
 
     <!-- Hindi -->
-    <article class="result-card" data-word-card data-language="hi" data-cefr="A1" data-topic="home" data-word-id="w-hi-ghar" data-word-label="행복" data-translation="casa">
+    <article class="result-card" data-word-card data-language="hi" data-cefr="A1" data-topic="home" data-word-id="w-hi-ghar" data-word-label="घर" data-translation="casa">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">home</span></div>
-        <h2 class="card-word">행복</h2>
+        <h2 class="card-word">घर</h2>
         <p class="card-translation">casa</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="hi" data-cefr="A2" data-topic="food" data-word-id="w-hi-khana" data-word-label="????" data-translation="comida">
+    <article class="result-card" data-word-card data-language="hi" data-cefr="A2" data-topic="food" data-word-id="w-hi-khana" data-word-label="खाना" data-translation="comida">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">food</span></div>
-        <h2 class="card-word">????</h2>
+        <h2 class="card-word">खाना</h2>
         <p class="card-translation">comida</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="hi" data-cefr="B1" data-topic="education" data-word-id="w-hi-vidyalaya" data-word-label="????????" data-translation="escuela">
+    <article class="result-card" data-word-card data-language="hi" data-cefr="B1" data-topic="education" data-word-id="w-hi-vidyalaya" data-word-label="विद्यालय" data-translation="escuela">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">education</span></div>
-        <h2 class="card-word">????????</h2>
+        <h2 class="card-word">विद्यालय</h2>
         <p class="card-translation">escuela</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="hi" data-cefr="B2" data-topic="work" data-word-id="w-hi-vyapar" data-word-label="???????" data-translation="negocio / comercio">
+    <article class="result-card" data-word-card data-language="hi" data-cefr="B2" data-topic="work" data-word-id="w-hi-vyapar" data-word-label="व्यापार" data-translation="negocio / comercio">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">work</span></div>
-        <h2 class="card-word">???????</h2>
+        <h2 class="card-word">व्यापार</h2>
         <p class="card-translation">negocio / comercio</p>
       </div>
     </article>
 
     <!-- Tailandes -->
-    <article class="result-card" data-word-card data-language="th" data-cefr="A1" data-topic="food" data-word-id="w-th-aharn" data-word-label="안녕하세요" data-translation="comida">
+    <article class="result-card" data-word-card data-language="th" data-cefr="A1" data-topic="food" data-word-id="w-th-aharn" data-word-label="อาหาร" data-translation="comida">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">food</span></div>
-        <h2 class="card-word">안녕하세요</h2>
+        <h2 class="card-word">อาหาร</h2>
         <p class="card-translation">comida</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="th" data-cefr="A2" data-topic="home" data-word-id="w-th-ban" data-word-label="????" data-translation="casa">
+    <article class="result-card" data-word-card data-language="th" data-cefr="A2" data-topic="home" data-word-id="w-th-ban" data-word-label="บ้าน" data-translation="casa">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">home</span></div>
-        <h2 class="card-word">????</h2>
+        <h2 class="card-word">บ้าน</h2>
         <p class="card-translation">casa</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="th" data-cefr="B1" data-topic="travel" data-word-id="w-th-thongthiao" data-word-label="??????????" data-translation="viajar / turismo">
+    <article class="result-card" data-word-card data-language="th" data-cefr="B1" data-topic="travel" data-word-id="w-th-thongthiao" data-word-label="ท่องเที่ยว" data-translation="viajar / turismo">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">travel</span></div>
-        <h2 class="card-word">??????????</h2>
+        <h2 class="card-word">ท่องเที่ยว</h2>
         <p class="card-translation">viajar / turismo</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="th" data-cefr="B2" data-topic="culture" data-word-id="w-th-watthanatham" data-word-label="????????" data-translation="cultura">
+    <article class="result-card" data-word-card data-language="th" data-cefr="B2" data-topic="culture" data-word-id="w-th-watthanatham" data-word-label="วัฒนธรรม" data-translation="cultura">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">culture</span></div>
-        <h2 class="card-word">????????</h2>
+        <h2 class="card-word">วัฒนธรรม</h2>
         <p class="card-translation">cultura</p>
       </div>
     </article>
@@ -1331,13 +1339,13 @@
         <p class="card-translation">el pan</p>
       </div>
     </article>
-    <article class="result-card" data-word-card data-language="nl" data-cefr="B1" data-topic="work" data-word-id="w-nl-vergadering" data-word-label="de vergadering" data-translation="la reuni�n">
+    <article class="result-card" data-word-card data-language="nl" data-cefr="B1" data-topic="work" data-word-id="w-nl-vergadering" data-word-label="de vergadering" data-translation="la reunión">
       <div class="card-accent"></div>
       <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Mi lista"><i class="bi bi-bookmark"></i></button><button class="word-save-split__arrow" type="button" data-save-pick aria-label="Elegir coleccion"><i class="bi bi-chevron-down"></i></button></div>
       <div class="card-body-inner">
         <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">work</span></div>
         <h2 class="card-word">de vergadering</h2>
-        <p class="card-translation">la reuni�n</p>
+        <p class="card-translation">la reunión</p>
       </div>
     </article>
     <article class="result-card" data-word-card data-language="nl" data-cefr="B2" data-topic="culture" data-word-id="w-nl-schilderij" data-word-label="het schilderij" data-translation="el cuadro / la pintura">
@@ -1360,17 +1368,17 @@
   </section>
 </main>
 
-<!-- Dropdown global para guardar en colecci�n -->
-<div id="saveDropdown" class="save-dropdown" hidden role="dialog" aria-label="Guardar en colecci�n">
+<!-- Dropdown global para Guardar en colección -->
+<div id="saveDropdown" class="save-dropdown" hidden role="dialog" aria-label="Guardar en colección">
   <p class="save-dropdown-title"><i class="bi bi-bookmark-fill"></i> Guardar en</p>
   <ul class="save-dropdown-lists" id="saveDropdownLists"></ul>
   <div class="save-dropdown-divider"></div>
   <div class="save-dropdown-new-wrap" id="saveDropdownNewWrap">
     <button class="save-dropdown-new-btn" id="saveDropdownNewBtn" type="button">
-      <i class="bi bi-plus-circle"></i> Nueva colecci�n
+      <i class="bi bi-plus-circle"></i> Nueva colección
     </button>
     <div class="save-dropdown-new-input" id="saveDropdownNewInput" hidden>
-      <input type="text" class="form-control form-control-sm" id="newCollectionName" placeholder="Nombre de la colecci�n" maxlength="40">
+      <input type="text" class="form-control form-control-sm" id="newCollectionName" placeholder="Nombre de la colección" maxlength="40">
       <div class="d-flex gap-1 mt-1">
         <button class="btn btn-primary btn-sm flex-fill" id="newCollectionConfirm" type="button">Crear</button>
         <button class="btn btn-outline-secondary btn-sm" id="newCollectionCancel" type="button">Cancelar</button>
@@ -1381,5 +1389,51 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/script.js"></script>
+
+<!-- Modal renombrar colección -->
+<div id="renameCollModal" class="lexi-modal-backdrop" hidden>
+  <div class="lexi-modal" role="dialog" aria-modal="true" aria-labelledby="renameModalTitle">
+    <div class="lexi-modal-header">
+      <div class="lexi-modal-icon lexi-modal-icon--brand"><i class="bi bi-pencil-fill"></i></div>
+      <p class="lexi-modal-title" id="renameModalTitle">Renombrar lista</p>
+    </div>
+    <input type="text" id="renameCollInput" class="lexi-modal-input" placeholder="Nombre de la lista" maxlength="40">
+    <div class="lexi-modal-actions">
+      <button type="button" class="lexi-modal-btn lexi-modal-btn--ghost" id="renameCollCancel">Cancelar</button>
+      <button type="button" class="lexi-modal-btn lexi-modal-btn--primary" id="renameCollConfirm"><i class="bi bi-check2"></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal eliminar colección -->
+<div id="deleteCollModal" class="lexi-modal-backdrop" hidden>
+  <div class="lexi-modal lexi-modal--confirm" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    <div class="lexi-modal-header">
+      <div class="lexi-modal-icon lexi-modal-icon--danger"><i class="bi bi-trash-fill"></i></div>
+      <p class="lexi-modal-title" id="deleteModalTitle">Eliminar colección</p>
+      <p class="lexi-modal-body" id="deleteModalBody">Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="lexi-modal-actions">
+      <button type="button" class="lexi-modal-btn lexi-modal-btn--ghost" id="deleteCollCancel">Cancelar</button>
+      <button type="button" class="lexi-modal-btn lexi-modal-btn--danger" id="deleteCollConfirm"><i class="bi bi-trash"></i> Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal vaciar colección -->
+<div id="clearCollModal" class="lexi-modal-backdrop" hidden>
+  <div class="lexi-modal lexi-modal--confirm" role="dialog" aria-modal="true" aria-labelledby="clearModalTitle">
+    <div class="lexi-modal-header">
+      <div class="lexi-modal-icon lexi-modal-icon--warning"><i class="bi bi-eraser-fill"></i></div>
+      <p class="lexi-modal-title" id="clearModalTitle">Vaciar lista</p>
+      <p class="lexi-modal-body" id="clearModalBody">Se eliminarán todas las palabras de esta colección.</p>
+    </div>
+    <div class="lexi-modal-actions">
+      <button type="button" class="lexi-modal-btn lexi-modal-btn--ghost" id="clearCollCancel">Cancelar</button>
+      <button type="button" class="lexi-modal-btn lexi-modal-btn--warning" id="clearCollConfirm"><i class="bi bi-eraser"></i> Vaciar</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
