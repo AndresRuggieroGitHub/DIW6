@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Página de contacto de Lexi.">
-  <meta name="robots" content="index,follow">
-  <title>Lexi | Contacto</title>
+  <meta name="description" content="Lexi, prototipo de aprendizaje de idiomas centrado en vocabulario, ejercicios y progreso, con MVP priorizado para español e inglés.">
+  <meta name="robots" content="noindex,follow">
+  <title>Lexi | Inicio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
       <i class="bi bi-list"></i>
     </button>
     <nav class="nav-left" id="mainNav">
-      <a href="app.html">Inicio</a>
+      <a class="active" href="app.html">Inicio</a>
       <a href="biblioteca.html">Biblioteca</a>
       <a href="ejercicios.html">Ejercicios</a>
     </nav>
@@ -33,7 +33,7 @@
 
   <div class="header-right">
     <button class="icon-btn" type="button" aria-label="Progreso" data-progress-trigger>
-      <i class="bi bi-rocket-takeoff" style="font-size:1.45rem;"></i>
+      <i class="bi bi-rocket-takeoff"></i>
     </button>
     <div class="lang-dropdown-wrap" data-lang-wrap>
       <button class="icon-btn" type="button" aria-label="Seleccionar idioma" data-lang-trigger aria-haspopup="true" aria-expanded="false">
@@ -45,74 +45,90 @@
     <a href="perfil.html" class="icon-btn" aria-label="Mi perfil">
       <img src="icons/profile.svg" alt="Perfil">
     </a>
-
     <button class="icon-btn utility-trigger" type="button" data-utility-trigger aria-label="Abrir menu secundario" aria-expanded="false">
       <img src="icons/menu.svg" alt="" aria-hidden="true">
     </button>
   </div>
 </header>
 
-<main id="mainContent" class="page-main container section-space">
-  <h1 class="mb-3">Centro de soporte</h1>
-  <p class="text-muted mb-4">Si tienes dudas de uso, facturación o gestión académica, contacta con el equipo de Lexi.</p>
-
-  <div class="contact-grid">
-    <section>
-      <h2 class="h4">Enviar consulta</h2>
-      <form class="contact-form" action="#" method="post">
-        <div class="mb-3">
-          <label for="nombre" class="form-label">Nombre</label>
-          <input id="nombre" name="nombre" class="form-control" type="text" required>
-        </div>
-        <div class="mb-3">
-          <label for="email" class="form-label">Email</label>
-          <input id="email" name="email" class="form-control" type="email" required>
-        </div>
-        <div class="mb-3">
-          <label for="motivo" class="form-label">Motivo</label>
-          <select id="motivo" name="motivo" class="form-select" required>
-            <option value="">Selecciona una opción</option>
-            <option value="tecnico">Soporte técnico</option>
-            <option value="premium">Facturación premium</option>
-            <option value="profesor">Cuenta de profesor</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="mensaje" class="form-label">Mensaje</label>
-          <textarea id="mensaje" name="mensaje" class="form-control" rows="4" required></textarea>
-        </div>
-        <button class="btn btn-primary" type="submit">Enviar</button>
-      </form>
-    </section>
-
-    <section>
-      <h2 class="h4">Canales disponibles</h2>
-      <div class="support-list">
-        <article class="support-item">
-          <h3 class="h6 mb-1">Soporte técnico</h3>
-          <p class="mb-1">Incidencias con cuenta, biblioteca y ejercicios.</p>
-          <p class="mb-0">soporte@lexi.app</p>
-        </article>
-        <article class="support-item">
-          <h3 class="h6 mb-1">Facturación premium</h3>
-          <p class="mb-1">Pagos, renovaciones y cancelaciones.</p>
-          <p class="mb-0">billing@lexi.app</p>
-        </article>
-        <article class="support-item">
-          <h3 class="h6 mb-1">Docentes y centros</h3>
-          <p class="mb-1">Activacion de perfil profesor y grupos.</p>
-          <p class="mb-0">teachers@lexi.app</p>
-        </article>
-      </div>
-    </section>
+<main id="mainContent" class="hero">
+  <div class="hero-text scroll-animado">
+    <h1>Aprende idiomas a tu ritmo</h1>
+    <p class="hero-sub">Tu vocabulario, tus ejercicios, tu progreso.</p>
   </div>
 </main>
+
+<div class="hero-divider" aria-hidden="true"></div>
+
+<section class="container section-space home-cards">
+  <h2>¿Qué puedes hacer con Lexi?</h2>
+  <div class="home-card-grid">
+    <article class="home-card">
+      <div class="home-card-icon"><i class="bi bi-journals"></i></div>
+      <h3 class="h5">Tu propio vocabulario</h3>
+      <p>Sube tus palabras, organízalas por colecciones y repásalas cuando quieras.</p>
+      <a class="btn btn-primary" href="biblioteca.html">Ir a mi biblioteca</a>
+    </article>
+    <article class="home-card">
+      <div class="home-card-icon"><i class="bi bi-lightning-charge"></i></div>
+      <h3 class="h5">Ejercicios personalizados</h3>
+      <p>Ejercicios de vocabulario adaptados a lo que has guardado.</p>
+      <a class="btn btn-primary" href="ejercicios.html">Elegir ejercicio</a>
+    </article>
+    <article class="home-card">
+      <div class="home-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+      <h3 class="h5">Análisis de progreso</h3>
+      <p>Sigue tu evolución mediante gráficas y estadísticas claras.</p>
+      <a class="btn btn-primary" href="progreso.html">Ver mi progreso</a>
+    </article>
+  </div>
+</section>
+
+<section class="container section-space how-it-works">
+  <h2>¿Cómo funciona?</h2>
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="how-step-num">1</div>
+      <h3>Busca palabras</h3>
+      <p>Explora el catálogo y encuentra las palabras que necesitas o sube tu propio vocabulario.</p>
+    </div>
+    <div class="how-step-divider" aria-hidden="true"></div>
+    <div class="how-step">
+      <div class="how-step-num">2</div>
+      <h3>Guárdalas</h3>
+      <p>Organízalas en colecciones personalizadas según tus temas o niveles.</p>
+    </div>
+    <div class="how-step-divider" aria-hidden="true"></div>
+    <div class="how-step">
+      <div class="how-step-num">3</div>
+      <h3>Ejercicios</h3>
+      <p>Repasa con ejercicios adaptados justo a lo que has guardado.</p>
+    </div>
+  </div>
+</section>
+
+<section class="container home-premium-section">
+  <article class="home-card home-premium-card">
+    <div class="home-card-icon"><i class="bi bi-gem"></i></div>
+    <h3 class="h5">Desbloquear premium</h3>
+    <p>Accede a más ejercicios personalizados y ejercicios guiados por profesores nativos.</p>
+    <a class="btn btn-success" href="producto.html">Ver planes premium</a>
+  </article>
+  <div class="home-premium-image">
+    <img src="images/premium_illustration.png" alt="Ilustración aprendizaje premium">
+  </div>
+</section>
+
+<div class="home-cta-banner">
+  <p>¡Listo para empezar!</p>
+  <a class="btn btn-warning" href="biblioteca.html">Explorar catálogo</a>
+</div>
 
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
       <a href="app.html" class="footer-logo" aria-label="Inicio">Lexi</a>
-      <p class="footer-tagline">Tu vocabulario, tu ritmo.<br>Aprende los idiomas que importan.</p>
+      <p class="footer-tagline">Plataforma de aprendizaje de idiomas.<br>Ejercita el vocabulario que realmente necesitas.</p>
       <a href="biblioteca.html" class="footer-cta">Empezar gratis &rarr;</a>
     </div>
     <nav class="footer-nav" aria-label="Páginas">
@@ -121,7 +137,7 @@
         <li><a href="app.html">Inicio</a></li>
         <li><a href="biblioteca.html">Biblioteca</a></li>
         <li><a href="ejercicios.html">Ejercicios</a></li>
-        <li><a href="carrito.html">Carrito</a></li>
+        <li><a href="progreso.html">Progreso</a></li>
       </ul>
     </nav>
     <nav class="footer-nav" aria-label="Info">
@@ -141,6 +157,8 @@
     <p>&copy; 2026 Lexi &mdash; Proyecto DAW</p>
   </div>
 </footer>
+
+<button id="btnSubir" type="button" aria-label="Subir arriba">&uarr;</button>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/script.js"></script>

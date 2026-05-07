@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Crea tu cuenta en Lexi.">
+  <meta name="robots" content="noindex">
+  <title>Lexi | Crear cuenta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand: #f59e0b;
+      --violet: #7c3aed;
+      --violet-mid: #9d4edd;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --surface: #f9fafb;
+    }
+    html, body {
+      min-height: 100%;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(180deg, #faf5ff 0%, #ffffff 55%, #fff7ed 100%);
+      color: var(--text);
+    }
+    .auth-shell {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+    .auth-card {
+      width: min(100%, 980px);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      background: #fff;
+      border: 1px solid rgba(124, 58, 237, 0.1);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 28px 70px rgba(76, 29, 149, 0.12);
+    }
+    .auth-aside {
+      padding: 3rem;
+      background: radial-gradient(circle at top left, rgba(216, 180, 254, 0.8), transparent 38%), linear-gradient(145deg, #581c87 0%, #7c3aed 55%, #c084fc 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .auth-logo {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+    .auth-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .auth-title {
+      margin-top: 1rem;
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      line-height: 1.08;
+      letter-spacing: -0.05em;
+    }
+    .auth-desc {
+      margin-top: 1rem;
+      max-width: 32rem;
+      color: rgba(255, 255, 255, 0.82);
+      line-height: 1.6;
+    }
+    .auth-points {
+      display: grid;
+      gap: 0.8rem;
+      list-style: none;
+    }
+    .auth-points li {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      color: rgba(255, 255, 255, 0.92);
+    }
+    .auth-points i { color: #fde68a; margin-top: 0.15rem; }
+    .auth-form {
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .auth-form h1 {
+      font-size: 1.8rem;
+      letter-spacing: -0.04em;
+      margin-bottom: 0.45rem;
+    }
+    .auth-sub {
+      color: var(--muted);
+      margin-bottom: 1.75rem;
+      line-height: 1.6;
+    }
+    .auth-sub a { color: var(--violet); font-weight: 600; text-decoration: none; }
+    .auth-grid { display: grid; gap: 1rem; }
+    .auth-field label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-bottom: 0.45rem;
+    }
+    .auth-input-wrap { position: relative; }
+    .auth-input-wrap i {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+    }
+    .auth-input {
+      width: 100%;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      padding: 0.85rem 1rem 0.85rem 2.6rem;
+      font: inherit;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .auth-input:focus {
+      border-color: var(--violet);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+      background: #fff;
+    }
+    .auth-choices {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+    .auth-choice {
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      padding: 0.9rem;
+      background: #fff;
+    }
+    .auth-choice strong { display: block; margin-bottom: 0.15rem; }
+    .auth-choice span { color: var(--muted); font-size: 0.88rem; }
+    .auth-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .auth-check input { margin-top: 0.15rem; }
+    .auth-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 0.95rem 1.2rem;
+      font: inherit;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, var(--violet) 0%, var(--violet-mid) 100%);
+      cursor: pointer;
+    }
+    .auth-note {
+      margin-top: 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .auth-alert {
+      display: none;
+      margin-bottom: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .auth-alert.show { display: block; }
+    .auth-alert--ok { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    @media (max-width: 860px) {
+      .auth-card { grid-template-columns: 1fr; }
+      .auth-aside { padding: 2rem; }
+      .auth-form { padding: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="auth-shell">
+    <section class="auth-card" aria-label="Registro en Lexi">
+      <aside class="auth-aside">
+        <div>
+          <a href="index.html" class="auth-logo">Lexi</a>
+          <span class="auth-kicker"><i class="bi bi-stars"></i> Bienvenida</span>
+          <h2 class="auth-title">Empieza con una cuenta simple y deja el backend para el siguiente paso.</h2>
+          <p class="auth-desc">Para el prototipo, esta pantalla ya deja claro el flujo de onboarding sin obligarte todavía a tener autenticación real.</p>
+        </div>
+        <ul class="auth-points">
+          <li><i class="bi bi-check2-circle"></i><span>Registro visual coherente con el login.</span></li>
+          <li><i class="bi bi-check2-circle"></i><span>Elección del perfil inicial de uso.</span></li>
+          <li><i class="bi bi-check2-circle"></i><span>Preparado para conectar con Laravel después.</span></li>
+        </ul>
+      </aside>
+      <div class="auth-form">
+        <h1>Crea tu cuenta</h1>
+        <p class="auth-sub">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+        <div class="auth-alert auth-alert--ok" id="registerAlert" role="alert"></div>
+        <form id="registerForm" class="auth-grid" novalidate>
+          <div class="auth-field">
+            <label for="registerName">Nombre</label>
+            <div class="auth-input-wrap">
+              <i class="bi bi-person"></i>
+              <input class="auth-input" id="registerName" type="text" placeholder="Tu nombre" maxlength="30" required>
+            </div>
+          </div>
+          <div class="auth-field">
+            <label for="registerEmail">Correo electrónico</label>
+            <div class="auth-input-wrap">
+              <i class="bi bi-envelope"></i>
+              <input class="auth-input" id="registerEmail" type="email" placeholder="tu@ejemplo.com" required>
+            </div>
+          </div>
+          <div class="auth-field">
+            <label for="registerPassword">Contraseña</label>
+            <div class="auth-input-wrap">
+              <i class="bi bi-lock"></i>
+              <input class="auth-input" id="registerPassword" type="password" placeholder="Mínimo 6 caracteres" required>
+            </div>
+          </div>
+          <div class="auth-field">
+            <label>Perfil inicial</label>
+            <div class="auth-choices">
+              <label class="auth-choice"><input type="radio" name="profileRole" value="student" checked> <strong>Estudiante</strong><span>Aprender y practicar vocabulario.</span></label>
+              <label class="auth-choice"><input type="radio" name="profileRole" value="teacher"> <strong>Profesor</strong><span>Preparar listas y seguimiento.</span></label>
+            </div>
+          </div>
+          <label class="auth-check"><input type="checkbox" id="registerTerms" required><span>Acepto el flujo demo y entiendo que esta cuenta aún no se sincroniza con servidor.</span></label>
+          <button class="auth-btn" type="submit">Crear cuenta demo</button>
+        </form>
+        <p class="auth-note">Después podrás conectar este flujo con tablas reales y validación del backend.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    const form = document.getElementById('registerForm');
+    const alertBox = document.getElementById('registerAlert');
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const name = document.getElementById('registerName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const accepted = document.getElementById('registerTerms').checked;
+      const role = form.querySelector('input[name="profileRole"]:checked')?.value || 'student';
+      if (!name || !email.includes('@') || password.length < 6 || !accepted) {
+        alertBox.textContent = 'Completa los campos y acepta la condición demo para continuar.';
+        alertBox.className = 'auth-alert auth-alert--ok show';
+        return;
+      }
+      localStorage.setItem('lexiUser', JSON.stringify({ name, email, role }));
+      localStorage.setItem('lexiPrefs', JSON.stringify({ onboardingComplete: true }));
+      alertBox.textContent = 'Cuenta demo creada. Redirigiendo al inicio de sesión…';
+      alertBox.className = 'auth-alert auth-alert--ok show';
+      setTimeout(() => { window.location.href = 'login.html'; }, 900);
+    });
+  })();
+  </script>
+</body>
+</html>

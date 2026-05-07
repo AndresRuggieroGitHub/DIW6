@@ -3,164 +3,240 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Lexi, plataforma de aprendizaje de idiomas. Practica el vocabulario que necesitas con ejercicios personalizados en más de 30 idiomas.">
+  <meta name="description" content="Bienvenida a Lexi. Accede o crea tu cuenta para entrar en la aplicación.">
   <meta name="robots" content="index,follow">
-  <title>Lexi | Aprende idiomas</title>
+  <title>Lexi | Bienvenida</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      color: #111827;
+      background:
+        radial-gradient(circle at top left, rgba(245, 158, 11, 0.22), transparent 28%),
+        radial-gradient(circle at 85% 18%, rgba(216, 180, 254, 0.55), transparent 24%),
+        linear-gradient(160deg, #faf5ff 0%, #ffffff 54%, #eef2ff 100%);
+    }
+    .welcome-shell {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+    .welcome-card {
+      width: min(100%, 1120px);
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 0;
+      border: 1px solid rgba(124, 58, 237, 0.12);
+      border-radius: 32px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 30px 80px rgba(76, 29, 149, 0.14);
+    }
+    .welcome-hero {
+      padding: 3rem;
+      background:
+        radial-gradient(circle at 22% 20%, rgba(255,255,255,0.2), transparent 26%),
+        linear-gradient(145deg, #4c1d95 0%, #7c3aed 46%, #c084fc 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 2rem;
+      position: relative;
+    }
+    .welcome-logo {
+      font-size: 1.95rem;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+    }
+    .welcome-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      width: fit-content;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .welcome-title {
+      margin: 1rem 0 0;
+      font-size: clamp(2.2rem, 4vw, 3.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.07em;
+      max-width: 10ch;
+    }
+    .welcome-copy {
+      margin: 1rem 0 0;
+      max-width: 34rem;
+      color: rgba(255,255,255,0.84);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+    .welcome-metrics {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .welcome-metric {
+      min-width: 140px;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.1);
+    }
+    .welcome-metric strong {
+      display: block;
+      font-size: 1.5rem;
+      letter-spacing: -0.05em;
+      margin-bottom: 0.2rem;
+    }
+    .welcome-metric span {
+      color: rgba(255,255,255,0.76);
+      font-size: 0.86rem;
+    }
+    .welcome-panel {
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.25rem;
+    }
+    .welcome-panel h1 {
+      margin: 0;
+      font-size: 2rem;
+      letter-spacing: -0.05em;
+    }
+    .welcome-panel p {
+      margin: 0;
+      color: #6b7280;
+      line-height: 1.7;
+    }
+    .welcome-actions {
+      display: grid;
+      gap: 0.9rem;
+      margin-top: 0.4rem;
+    }
+    .welcome-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.1rem;
+      border-radius: 18px;
+      text-decoration: none;
+      border: 1px solid #e5e7eb;
+      color: #111827;
+      background: #fff;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+    .welcome-action:hover {
+      transform: translateY(-1px);
+      border-color: rgba(124, 58, 237, 0.3);
+      box-shadow: 0 16px 32px rgba(76, 29, 149, 0.08);
+    }
+    .welcome-action--primary {
+      background: linear-gradient(135deg, #7c3aed 0%, #9d4edd 100%);
+      color: #fff;
+      border-color: transparent;
+    }
+    .welcome-action__meta strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      font-size: 1rem;
+    }
+    .welcome-action__meta span {
+      display: block;
+      color: inherit;
+      opacity: 0.8;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .welcome-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-top: 0.35rem;
+      padding: 1rem 1.05rem;
+      border-radius: 18px;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .welcome-note i { color: #7c3aed; margin-top: 0.1rem; }
+    .welcome-admin {
+      margin-top: 0.2rem;
+      font-size: 0.9rem;
+    }
+    .welcome-admin a {
+      color: #7c3aed;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    @media (max-width: 900px) {
+      .welcome-card { grid-template-columns: 1fr; }
+      .welcome-hero, .welcome-panel { padding: 2rem; }
+      .welcome-title { max-width: none; }
+    }
+  </style>
 </head>
 <body>
-<a href="#mainContent" class="skip-link">Saltar al contenido</a>
+  <main class="welcome-shell">
+    <section class="welcome-card" aria-label="Bienvenida a Lexi">
+      <div class="welcome-hero">
+        <div>
+          <div class="welcome-logo">Lexi</div>
+          <span class="welcome-kicker"><i class="bi bi-stars"></i> Bienvenida</span>
+          <h2 class="welcome-title">Tu espacio para aprender vocabulario con foco.</h2>
+          <p class="welcome-copy">Entra a tu cuenta o crea una nueva para acceder a tu biblioteca, tus ejercicios y tu progreso sin mezclar esta pantalla pública con la app interna.</p>
+        </div>
+        <div class="welcome-metrics">
+          <div class="welcome-metric"><strong>2</strong><span>idiomas prioritarios del MVP</span></div>
+          <div class="welcome-metric"><strong>5</strong><span>modos de ejercicio activos</span></div>
+          <div class="welcome-metric"><strong>1</strong><span>flujo claro de acceso</span></div>
+        </div>
+      </div>
+      <div class="welcome-panel">
+        <h1>Accede a Lexi</h1>
+        <p>Si es tu primera vez, crea tu cuenta demo. Si ya has entrado antes, pasa directamente al acceso.</p>
 
-<header class="header">
-  <div class="header-left">
-    <a class="logo" href="index.html" aria-label="Ir a inicio Lexi">
-      <img src="icons/logo.svg" alt="Logo Lexi">
-    </a>
-    <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
-      <i class="bi bi-list"></i>
-    </button>
-    <nav class="nav-left" id="mainNav">
-      <a class="active" href="index.html">Inicio</a>
-      <a href="biblioteca.html">Biblioteca</a>
-      <a href="ejercicios.html">Práctica</a>
-    </nav>
-  </div>
+        <div class="welcome-actions">
+          <a class="welcome-action welcome-action--primary" href="login.html">
+            <div class="welcome-action__meta">
+              <strong>Iniciar sesión</strong>
+              <span>Entrar a tu zona interna y continuar donde lo dejaste.</span>
+            </div>
+            <i class="bi bi-arrow-right-circle-fill"></i>
+          </a>
+          <a class="welcome-action" href="registro.html">
+            <div class="welcome-action__meta">
+              <strong>Crear cuenta</strong>
+              <span>Abrir el flujo visual de alta y elegir perfil inicial.</span>
+            </div>
+            <i class="bi bi-person-plus"></i>
+          </a>
+        </div>
 
-  <div class="header-right">
-    <button class="icon-btn" type="button" aria-label="Progreso" data-progress-trigger>
-      <i class="bi bi-rocket-takeoff"></i>
-    </button>
-    <div class="lang-dropdown-wrap" data-lang-wrap>
-      <button class="icon-btn" type="button" aria-label="Seleccionar idioma" data-lang-trigger aria-haspopup="true" aria-expanded="false">
-        <img src="" alt="Idioma seleccionado" id="activeLangFlag">
-      </button>
-      <div class="lang-dropdown" id="langDropdown" hidden></div>
-    </div>
-    <script>(function(){var f={en:"icons/flags/united_kingdom_flag.svg",fr:"icons/flags/france_flag.svg",de:"icons/flags/germany_flag.svg",es:"icons/flags/spain_flag.svg",it:"icons/flags/italy_flag.svg",pt:"icons/flags/brazil_flag.svg",no:"icons/flags/norway_flag.svg",sv:"icons/flags/sweden_flag.svg",dk:"icons/flags/denmark_flag.svg",fi:"icons/flags/finland_flag.svg",ko:"icons/flags/south_korea_flag.svg",ja:"icons/flags/japan_flag.svg",zh:"icons/flags/china_flag.svg",ru:"icons/flags/russia_flag.svg",ua:"icons/flags/ukraine_flag.svg",bg:"icons/flags/bulgaria_flag.svg",ro:"icons/flags/romania_flag.svg",cs:"icons/flags/czech_republic_flag.svg",sk:"icons/flags/slovakia_flag.svg",hu:"icons/flags/hungary_flag.svg",gr:"icons/flags/greece_flag.svg",ar:"icons/flags/saudi_arabia_flag.svg",vi:"icons/flags/vietnam_flag.svg",pl:"icons/flags/poland_flag.svg",tr:"icons/flags/turkey_flag.svg",id:"icons/flags/indonesia_flag.svg",he:"icons/flags/israel_flag.svg",hi:"icons/flags/india_flag.svg",th:"icons/flags/thailand_flag.svg",nl:"icons/flags/netherlands_flag.svg"};var img=document.getElementById("activeLangFlag");if(img)img.src=f[localStorage.getItem("lexiLang")||"en"]||f.en;})();</script>
-    <a href="perfil.html" class="icon-btn" aria-label="Mi perfil">
-      <img src="icons/profile.svg" alt="Perfil">
-    </a>
-    <button class="icon-btn utility-trigger" type="button" data-utility-trigger aria-label="Abrir menu secundario" aria-expanded="false">
-      <img src="icons/menu.svg" alt="" aria-hidden="true">
-    </button>
-  </div>
-</header>
+        <div class="welcome-note">
+          <i class="bi bi-info-circle-fill"></i>
+          <div>La app interna queda separada de esta bienvenida. Después del login entrarás en el inicio autenticado.</div>
+        </div>
 
-<main id="mainContent" class="hero">
-  <div class="hero-text scroll-animado">
-    <h1>Aprende idiomas a tu ritmo</h1>
-    <p class="hero-sub">Tu vocabulario, tus ejercicios, tu progreso.</p>
-  </div>
-</main>
-
-<div class="hero-divider" aria-hidden="true"></div>
-
-<section class="container section-space home-cards">
-  <h2>¿Qué puedes hacer con Lexi?</h2>
-  <div class="home-card-grid">
-    <article class="home-card">
-      <div class="home-card-icon"><i class="bi bi-journals"></i></div>
-      <h3 class="h5">Tu propio vocabulario</h3>
-      <p>Sube tus palabras, organízalas por colecciones y repásalas cuando quieras.</p>
-      <a class="btn btn-primary" href="biblioteca.html">Ir a mi biblioteca</a>
-    </article>
-    <article class="home-card">
-      <div class="home-card-icon"><i class="bi bi-lightning-charge"></i></div>
-      <h3 class="h5">Práctica personalizada</h3>
-      <p>Ejercicios de vocabulario adaptados a lo que has guardado.</p>
-      <a class="btn btn-primary" href="ejercicios.html">Elegir ejercicio</a>
-    </article>
-    <article class="home-card">
-      <div class="home-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
-      <h3 class="h5">Análisis de progreso</h3>
-      <p>Sigue tu evolución mediante gráficas y estadísticas claras.</p>
-      <a class="btn btn-primary" href="progreso.html">Ver mi progreso</a>
-    </article>
-  </div>
-</section>
-
-<section class="container section-space how-it-works">
-  <h2>¿Cómo funciona?</h2>
-  <div class="how-steps">
-    <div class="how-step">
-      <div class="how-step-num">1</div>
-      <h3>Busca palabras</h3>
-      <p>Explora el catálogo y encuentra las palabras que necesitas o sube tu propio vocabulario.</p>
-    </div>
-    <div class="how-step-divider" aria-hidden="true"></div>
-    <div class="how-step">
-      <div class="how-step-num">2</div>
-      <h3>Guárdalas</h3>
-      <p>Organízalas en colecciones personalizadas según tus temas o niveles.</p>
-    </div>
-    <div class="how-step-divider" aria-hidden="true"></div>
-    <div class="how-step">
-      <div class="how-step-num">3</div>
-      <h3>Practica</h3>
-      <p>Repasa con ejercicios adaptados justo a lo que has guardado.</p>
-    </div>
-  </div>
-</section>
-
-<section class="container home-premium-section">
-  <article class="home-card home-premium-card">
-    <div class="home-card-icon"><i class="bi bi-gem"></i></div>
-    <h3 class="h5">Desbloquear premium</h3>
-    <p>Accede a más ejercicios personalizados y prácticas guiadas por profesores nativos.</p>
-    <a class="btn btn-success" href="producto.html">Ver planes premium</a>
-  </article>
-  <div class="home-premium-image">
-    <img src="images/premium_illustration.png" alt="Ilustración aprendizaje premium">
-  </div>
-</section>
-
-<div class="home-cta-banner">
-  <p>¡Listo para empezar!</p>
-  <a class="btn btn-warning" href="biblioteca.html">Explorar catálogo</a>
-</div>
-
-<footer class="footer">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <a href="index.html" class="footer-logo" aria-label="Inicio">Lexi</a>
-      <p class="footer-tagline">Plataforma de aprendizaje de idiomas.<br>Practica el vocabulario que realmente necesitas.</p>
-      <a href="biblioteca.html" class="footer-cta">Empezar gratis &rarr;</a>
-    </div>
-    <nav class="footer-nav" aria-label="Páginas">
-      <h3 class="footer-heading">Páginas</h3>
-      <ul>
-        <li><a href="index.html">Inicio</a></li>
-        <li><a href="biblioteca.html">Biblioteca</a></li>
-        <li><a href="ejercicios.html">Práctica</a></li>
-        <li><a href="progreso.html">Progreso</a></li>
-      </ul>
-    </nav>
-    <nav class="footer-nav" aria-label="Info">
-      <h3 class="footer-heading">Info</h3>
-      <ul>
-        <li><a href="info.html">Sobre Lexi</a></li>
-        <li><a href="contacto.html">Contacto</a></li>
-        <li><a href="producto.html">Premium</a></li>
-      </ul>
-    </nav>
-    <div class="footer-stat">
-      <span class="footer-stat-num">30</span>
-      <span class="footer-stat-label">idiomas disponibles</span>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; 2026 Lexi &mdash; Proyecto DAW</p>
-  </div>
-</footer>
-
-<button id="btnSubir" type="button" aria-label="Subir arriba">&uarr;</button>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js"></script>
+        <div class="welcome-admin">Acceso interno de demo: <a href="admin.html">entrar como admin</a></div>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

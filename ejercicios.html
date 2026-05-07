@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Ejercicios de ingles en Lexi para reading, listening, speaking y writing.">
+  <meta name="description" content="Ejercicios de inglés en Lexi para reading, listening, speaking y writing.">
   <meta name="robots" content="index,follow">
   <title>Lexi | Ejercicios</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,16 +18,16 @@
 
 <header class="header">
   <div class="header-left">
-    <a class="logo" href="index.html" aria-label="Ir a inicio Lexi">
+    <a class="logo" href="app.html" aria-label="Ir a inicio Lexi">
       <img src="icons/logo.svg" alt="Logo Lexi">
     </a>
     <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
       <i class="bi bi-list"></i>
     </button>
     <nav class="nav-left" id="mainNav">
-      <a href="index.html">Inicio</a>
+      <a href="app.html">Inicio</a>
       <a href="biblioteca.html">Biblioteca</a>
-      <a class="active" href="ejercicios.html">Práctica</a>
+      <a class="active" href="ejercicios.html">Ejercicios</a>
     </nav>
   </div>
 
@@ -58,7 +58,7 @@
   <div id="exerciseMenu">
     <div class="exercises-hero">
       <p class="exercises-eyebrow">Sesión de hoy</p>
-      <h1 class="exercises-title">¿Qué quieres practicar?</h1>
+      <h1 class="exercises-title">¿Cómo quieres practicar?</h1>
       <p class="exercises-subtitle">Elige un modo y empieza — cada ejercicio dura menos de 5 minutos.</p>
     </div>
     <section class="exercise-grid">
@@ -237,20 +237,20 @@
       items: [
         {
           type: "translate",
-          prompt: "Traduce al ingles:",
+          prompt: "Traduce al inglés:",
           sentence: "No pude cumplir el plazo de entrega.",
           answer: "I couldn't meet the deadline."
         },
         {
           type: "translate",
-          prompt: "Traduce al ingles:",
-          sentence: "Estamos bajo mucha presion ultimamente.",
+          prompt: "Traduce al inglés:",
+          sentence: "Estamos bajo mucha presión últimamente.",
           answer: "We've been under a lot of pressure lately."
         },
         {
           type: "translate",
-          prompt: "Traduce al ingles:",
-          sentence: "La reunion ha sido cancelada debido al mal tiempo.",
+          prompt: "Traduce al inglés:",
+          sentence: "La reunión ha sido cancelada debido al mal tiempo.",
           answer: "The meeting has been cancelled due to bad weather."
         }
       ]
@@ -275,7 +275,7 @@
         { type: "pronounce", word: "get the ball rolling", hint: "poner las cosas en marcha" },
         {
           type: "translate",
-          prompt: "Traduce al ingles:",
+          prompt: "Traduce al inglés:",
           sentence: "Lleva dos horas esperando una respuesta.",
           answer: "He has been waiting for an answer for two hours."
         }
@@ -367,7 +367,7 @@
 
   function renderMCQ(container, item) {
     container.innerHTML =
-      '<p class="ex-type-label"><i class="bi bi-book"></i> Lectura &amp; comprension</p>' +
+      '<p class="ex-type-label"><i class="bi bi-book"></i> Lectura &amp; comprensión</p>' +
       '<div class="ex-passage">' + item.passage + '</div>' +
       '<p class="ex-question">' + item.question + '</p>' +
       '<div class="ex-options">' +
@@ -406,7 +406,7 @@
       '<div class="ex-audio-wave"><span></span><span></span><span></span><span></span><span></span></div>' +
       '<span class="ex-audio-label">Audio simulado</span>' +
       '</div>' +
-      '<button class="ex-transcript-toggle">Ver transcripcion <i class="bi bi-chevron-down"></i></button>' +
+      '<button class="ex-transcript-toggle">Ver transcripción <i class="bi bi-chevron-down"></i></button>' +
       '<div class="ex-transcript" hidden>' + item.transcript + '</div>' +
       '<p class="ex-question">' + item.question + '</p>' +
       '<div class="ex-fillin-wrap">' + item.sentence.replace('________', '<input class="ex-input" type="text" autocomplete="off" spellcheck="false" placeholder="...">') + '</div>' +
@@ -417,8 +417,8 @@
       const t = container.querySelector('.ex-transcript');
       t.hidden = !t.hidden;
       this.innerHTML = t.hidden
-        ? 'Ver transcripcion <i class="bi bi-chevron-down"></i>'
-        : 'Ocultar transcripcion <i class="bi bi-chevron-up"></i>';
+        ? 'Ver transcripción <i class="bi bi-chevron-down"></i>'
+        : 'Ocultar transcripción <i class="bi bi-chevron-up"></i>';
     });
 
     container.querySelector('.ex-check-btn').addEventListener('click', () => {
@@ -449,9 +449,9 @@
       '<button class="ex-mic-btn" id="micBtn"><i class="bi bi-mic"></i><span>Pulsa para hablar</span></button>' +
       '</div>' +
       '<div class="ex-self-check" hidden>' +
-      '<p>?Lo has pronunciado correctamente?</p>' +
+      '<p>¿Lo has pronunciado correctamente?</p>' +
       '<div class="ex-self-check-btns">' +
-      '<button class="btn btn-success ex-self-yes"><i class="bi bi-check-lg"></i> Si</button>' +
+      '<button class="btn btn-success ex-self-yes"><i class="bi bi-check-lg"></i> Sí</button>' +
       '<button class="btn btn-outline-danger ex-self-no">Repetir</button>' +
       '</div></div>';
 
@@ -488,7 +488,7 @@
       '<p class="ex-type-label"><i class="bi bi-pencil"></i> Writing</p>' +
       '<p class="ex-prompt">' + item.prompt + '</p>' +
       '<div class="ex-sentence-box">' + item.sentence + '</div>' +
-      '<textarea class="ex-textarea" placeholder="Escribe tu traduccion aqui..."></textarea>' +
+      '<textarea class="ex-textarea" placeholder="Escribe tu traducción aquí..."></textarea>' +
       '<button class="btn btn-primary ex-check-btn">Comprobar</button>' +
       '<div class="ex-feedback" hidden></div>';
 
@@ -512,7 +512,7 @@
   }
 
   function showCompletion() {
-    // Registrar sesi?n completada en estad?sticas
+    // Registrar sesión completada en estadísticas
     try {
       const s = JSON.parse(localStorage.getItem('lexiStats') || '{}');
       s[currentMode] = (s[currentMode] || 0) + 1;

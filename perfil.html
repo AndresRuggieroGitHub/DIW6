@@ -18,16 +18,16 @@
 
 <header class="header">
   <div class="header-left">
-    <a class="logo" href="index.html" aria-label="Ir a inicio Lexi">
+    <a class="logo" href="app.html" aria-label="Ir a inicio Lexi">
       <img src="icons/logo.svg" alt="Logo Lexi">
     </a>
     <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
       <i class="bi bi-list"></i>
     </button>
     <nav class="nav-left" id="mainNav">
-      <a href="index.html">Inicio</a>
+      <a href="app.html">Inicio</a>
       <a href="biblioteca.html">Biblioteca</a>
-      <a href="ejercicios.html">Práctica</a>
+      <a href="ejercicios.html">Ejercicios</a>
     </nav>
   </div>
 
@@ -152,7 +152,7 @@
     </div>
   </section>
 
-  <!-- Sesi?n -->
+  <!-- Sesión -->
   <section class="profile-section">
     <h2 class="profile-section-title">Sesión</h2>
     <div class="profile-settings-card">
@@ -170,7 +170,7 @@
       <div class="profile-setting-row profile-setting-danger">
         <div>
           <span class="profile-setting-label">Reiniciar estadísticas</span>
-          <p class="profile-setting-hint">Borra todos los datos de práctica. No se puede deshacer.</p>
+          <p class="profile-setting-hint">Borra todos los datos de ejercicios. No se puede deshacer.</p>
         </div>
         <button class="btn btn-outline-danger btn-sm" id="btnClearStats">Reiniciar</button>
       </div>
@@ -196,16 +196,16 @@
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="index.html" class="footer-logo" aria-label="Inicio">Lexi</a>
+      <a href="app.html" class="footer-logo" aria-label="Inicio">Lexi</a>
       <p class="footer-tagline">Tu vocabulario, tu ritmo.<br>Aprende los idiomas que importan.</p>
       <a href="biblioteca.html" class="footer-cta">Empezar gratis &rarr;</a>
     </div>
     <nav class="footer-nav" aria-label="Páginas">
       <h3 class="footer-heading">Páginas</h3>
       <ul>
-        <li><a href="index.html">Inicio</a></li>
+        <li><a href="app.html">Inicio</a></li>
         <li><a href="biblioteca.html">Biblioteca</a></li>
-        <li><a href="ejercicios.html">Práctica</a></li>
+        <li><a href="ejercicios.html">Ejercicios</a></li>
         <li><a href="carrito.html">Carrito</a></li>
       </ul>
     </nav>
@@ -219,7 +219,7 @@
     </nav>
     <div class="footer-stat">
       <span class="footer-stat-num">13</span>
-      <span class="footer-stat-label">idiomas disponibles</span>
+      <span class="footer-stat-label">idiomas en prototipo</span>
     </div>
   </div>
   <div class="footer-bottom">
@@ -374,28 +374,28 @@
 
   // Cerrar sesión (demo)
   document.getElementById('btnLogout').addEventListener('click', () => {
-    alert('Sesi?n cerrada (demo ? en producci?n redirigir?as al login).');
+    alert('Sesión cerrada (demo: en producción redirigirías al login).');
   });
 
   // Reiniciar estadísticas
   document.getElementById('btnClearStats').addEventListener('click', () => {
-    if (!confirm('?Borrar todas las estad?sticas de pr?ctica? Esto no se puede deshacer.')) return;
+    if (!confirm('¿Borrar todas las estadísticas de práctica? Esto no se puede deshacer.')) return;
     const s = getStats();
     s.reading = 0; s.listening = 0; s.speaking = 0; s.writing = 0; s.mix = 0;
     localStorage.setItem('lexiStats', JSON.stringify(s));
-    alert('Estad?sticas reiniciadas.');
+    alert('Estadísticas reiniciadas.');
   });
 
   // Borrar biblioteca
   document.getElementById('btnClearLibrary').addEventListener('click', () => {
-    if (!confirm('?Vaciar toda tu biblioteca? Perder?s todas las palabras guardadas.')) return;
+    if (!confirm('¿Vaciar toda tu biblioteca? Perderás todas las palabras guardadas.')) return;
     localStorage.setItem('lexiLibrary', JSON.stringify([]));
     alert('Biblioteca vaciada.');
   });
 
   // Eliminar cuenta (demo)
   document.getElementById('btnDeleteAccount').addEventListener('click', () => {
-    if (!confirm('?Eliminar tu cuenta? Se borrar?n todos tus datos. Esta acci?n es irreversible.')) return;
+    if (!confirm('¿Eliminar tu cuenta? Se borrarán todos tus datos. Esta acción es irreversible.')) return;
     ['lexiUser','lexiStats','lexiLibrary','lexiPrefs','lexiLang','lexiCart'].forEach(k => localStorage.removeItem(k));
     alert('Cuenta eliminada (demo). Redirigiendo...');
     window.location.href = 'index.html';

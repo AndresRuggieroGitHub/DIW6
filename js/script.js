@@ -5,19 +5,19 @@
 
   const LANG_CONFIG = {
     // Europa Occidental (lenguas más estudiadas)
-    en: { flag: "icons/flags/united_kingdom_flag.svg", label: "Ingles" },
-    es: { flag: "icons/flags/spain_flag.svg", label: "Espanol" },
-    fr: { flag: "icons/flags/france_flag.svg", label: "Frances" },
-    de: { flag: "icons/flags/germany_flag.svg", label: "Aleman" },
+    en: { flag: "icons/flags/united_kingdom_flag.svg", label: "Inglés" },
+    es: { flag: "icons/flags/spain_flag.svg", label: "Español" },
+    fr: { flag: "icons/flags/france_flag.svg", label: "Francés" },
+    de: { flag: "icons/flags/germany_flag.svg", label: "Alemán" },
     it: { flag: "icons/flags/italy_flag.svg", label: "Italiano" },
-    pt: { flag: "icons/flags/brazil_flag.svg", label: "Portugues" },
+    pt: { flag: "icons/flags/brazil_flag.svg", label: "Portugués" },
     // Germánico continental
-    nl: { flag: "icons/flags/netherlands_flag.svg", label: "Neerlandes" },
+    nl: { flag: "icons/flags/netherlands_flag.svg", label: "Neerlandés" },
     // Países Nórdicos
     no: { flag: "icons/flags/norway_flag.svg", label: "Noruego" },
     sv: { flag: "icons/flags/sweden_flag.svg", label: "Sueco" },
-    dk: { flag: "icons/flags/denmark_flag.svg", label: "Danes" },
-    fi: { flag: "icons/flags/finland_flag.svg", label: "Fines" },
+    dk: { flag: "icons/flags/denmark_flag.svg", label: "Danés" },
+    fi: { flag: "icons/flags/finland_flag.svg", label: "Finés" },
     // Europa del Este (eslavos)
     ru: { flag: "icons/flags/russia_flag.svg", label: "Ruso" },
     ua: { flag: "icons/flags/ukraine_flag.svg", label: "Ucraniano" },
@@ -25,21 +25,21 @@
     cs: { flag: "icons/flags/czech_republic_flag.svg", label: "Checo" },
     sk: { flag: "icons/flags/slovakia_flag.svg", label: "Eslovaco" },
     // Europa Central y Balcánica
-    hu: { flag: "icons/flags/hungary_flag.svg", label: "Hungaro" },
+    hu: { flag: "icons/flags/hungary_flag.svg", label: "Húngaro" },
     ro: { flag: "icons/flags/romania_flag.svg", label: "Rumano" },
-    bg: { flag: "icons/flags/bulgaria_flag.svg", label: "Bulgaro" },
+    bg: { flag: "icons/flags/bulgaria_flag.svg", label: "Búlgaro" },
     gr: { flag: "icons/flags/greece_flag.svg", label: "Griego" },
     // Oriente Medio
     tr: { flag: "icons/flags/turkey_flag.svg", label: "Turco" },
-    ar: { flag: "icons/flags/saudi_arabia_flag.svg", label: "Arabe" },
+    ar: { flag: "icons/flags/saudi_arabia_flag.svg", label: "Árabe" },
     he: { flag: "icons/flags/israel_flag.svg", label: "Hebreo" },
     // Asia Oriental
     zh: { flag: "icons/flags/china_flag.svg", label: "Chino" },
-    ja: { flag: "icons/flags/japan_flag.svg", label: "Japones" },
+    ja: { flag: "icons/flags/japan_flag.svg", label: "Japonés" },
     ko: { flag: "icons/flags/south_korea_flag.svg", label: "Coreano" },
     // Asia del Sur y Sudeste
     hi: { flag: "icons/flags/india_flag.svg", label: "Hindi" },
-    th: { flag: "icons/flags/thailand_flag.svg", label: "Tailandes" },
+    th: { flag: "icons/flags/thailand_flag.svg", label: "Tailandés" },
     vi: { flag: "icons/flags/vietnam_flag.svg", label: "Vietnamita" },
     id: { flag: "icons/flags/indonesia_flag.svg", label: "Indonesio" },
   };
@@ -401,8 +401,8 @@
         <a class="utility-link utility-link--premium" href="producto.html"><i class="bi bi-gem"></i><span>Premium</span></a>
         <a class="utility-link utility-link--cart" href="carrito.html"><i class="bi bi-bag"></i><span>Carrito</span><span class="cart-count-badge cart-count-badge--drawer" data-cart-count="0">0</span></a>
         <a class="utility-link" href="contacto.html"><i class="bi bi-envelope"></i><span>Contacto</span></a>
-        <a class="utility-link" href="info.html"><i class="bi bi-info-circle"></i><span>Informacion</span></a>
-        <button class="btn btn-outline-danger utility-logout-btn" type="button" id="logoutAction"><i class="bi bi-box-arrow-right"></i><span>Cerrar sesion</span></button>
+        <a class="utility-link" href="info.html"><i class="bi bi-info-circle"></i><span>Información</span></a>
+        <button class="btn btn-outline-danger utility-logout-btn" type="button" id="logoutAction"><i class="bi bi-box-arrow-right"></i><span>Cerrar sesión</span></button>
       </div>
     `;
 
@@ -413,7 +413,7 @@
     drawer.querySelector("#closeUtilityDrawer").addEventListener("click", () => toggleUtilityDrawer(false));
     drawer.querySelector("#logoutAction").addEventListener("click", () => {
       toggleUtilityDrawer(false);
-      showAlert("Sesion cerrada (demo)", "warning");
+      showAlert("Sesión cerrada (demo)", "warning");
     });
   };
 
@@ -595,7 +595,7 @@
   const setupActionButtons = () => {
     document.querySelectorAll(".accion").forEach((btn) => {
       btn.addEventListener("click", () => {
-        showAlert("Practica iniciada");
+        showAlert("Ejercicio iniciado");
       });
     });
   };

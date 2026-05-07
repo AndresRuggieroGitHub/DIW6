@@ -329,21 +329,21 @@
         El vocabulario<br>que necesitas,<br><span>a tu ritmo.</span>
       </h1>
       <p class="login-brand-desc">
-        Más de 30 idiomas, ejercicios adaptativos y tu biblioteca personal de palabras. Todo en un solo lugar.
+        Tu biblioteca personal, ejercicios y una base clara para seguir creciendo el proyecto sin depender todavía del backend.
       </p>
     </div>
     <div class="login-brand-stats">
       <div class="login-brand-stat">
-        <span class="login-brand-stat-num">30+</span>
-        <span class="login-brand-stat-label">idiomas</span>
+        <span class="login-brand-stat-num">2</span>
+        <span class="login-brand-stat-label">idiomas prioritarios</span>
       </div>
       <div class="login-brand-stat">
         <span class="login-brand-stat-num">5</span>
-        <span class="login-brand-stat-label">modos de práctica</span>
+        <span class="login-brand-stat-label">modos de ejercicios</span>
       </div>
       <div class="login-brand-stat">
-        <span class="login-brand-stat-num">∞</span>
-        <span class="login-brand-stat-label">palabras a aprender</span>
+        <span class="login-brand-stat-num">MVP</span>
+        <span class="login-brand-stat-label">catálogo en crecimiento</span>
       </div>
     </div>
   </div>
@@ -356,7 +356,8 @@
 
       <h2 class="login-form-title">Bienvenido de nuevo</h2>
       <p class="login-form-sub">
-        ¿Primera vez? <a href="registro.html">Crea tu cuenta gratis</a>
+        ¿Primera vez? <a href="registro.html">Crea tu cuenta gratis</a><br>
+        ¿Acceso interno? <a href="admin.html">Entrar como admin</a>
       </p>
 
       <!-- Alert feedback -->
@@ -471,12 +472,12 @@
     } catch { /* noop */ }
 
     showAlert('¡Bienvenido a Lexi! Redirigiendo…', 'success');
-    setTimeout(() => { window.location.href = 'index.html'; }, 900);
+    setTimeout(() => { window.location.href = 'app.html'; }, 900);
   });
 
   // Invitado
   document.getElementById('guestBtn').addEventListener('click', () => {
-    window.location.href = 'index.html';
+    window.location.href = 'app.html';
   });
 })();
 </script>

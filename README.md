@@ -1,4 +1,4 @@
-﻿# Lexi - Plataforma de aprendizaje de ingles
+﻿# Lexi - Plataforma de aprendizaje de inglés
 
 ![HTML](https://img.shields.io/badge/HTML-5-orange)
 ![CSS](https://img.shields.io/badge/CSS-3-blue)
@@ -6,29 +6,31 @@
 ![Bootstrap](https://img.shields.io/badge/UI-Bootstrap%205-purple)
 ![Status](https://img.shields.io/badge/Project-DIW%20Final-green)
 
-Aplicacion web desarrollada para la asignatura DIW (Diseno de Interfaces Web), orientada a la practica de ingles mediante ejercicios e interacciones simples y usables.
+Aplicación web desarrollada para la asignatura DIW (Diseño de Interfaces Web), orientada al aprendizaje de idiomas mediante vocabulario, ejercicios e interacciones simples.
 
-## Descripcion
+## Descripción
 
-Lexi es una web educativa centrada en la experiencia de usuario, con navegacion clara, diseno responsive e interacciones para reforzar la practica de idiomas.
+Lexi es un prototipo front-end centrado en la experiencia de usuario, con navegación clara, diseño responsive y persistencia local mediante `localStorage`.
 
 Incluye:
-- Landing page con hero y secciones destacadas
-- Pagina de producto
-- Pagina de busqueda
-- Pagina de contacto
-- Pagina de carrito funcional
+- Página principal
+- Biblioteca de vocabulario
+- Ejercicios interactivos
+- Página de progreso
+- Perfil de usuario
+- Carrito y página de producto premium
+- Páginas de información, contacto e inicio de sesión
 
 ## Funcionalidades principales
 
-- Menu responsive para movil y escritorio
-- Carrusel de contenidos destacados
-- Acordeon de preguntas frecuentes
-- Pestanas por tipo de practica
-- Boton de subir con desplazamiento suave
+- Menú responsive para móvil y escritorio
+- Biblioteca con guardado en "Mi lista" y colecciones
+- Ejercicios por modo y registro de sesiones
+- Seguimiento visual del progreso
+- Botón de subir con desplazamiento suave
 - Notificaciones visuales en acciones clave
 - Carrito dinamico con persistencia en localStorage
-- Modal de confirmacion para eliminar productos
+- Modales y confirmaciones para acciones relevantes
 - Atajo de teclado: tecla T para volver al inicio
 
 ## Accesibilidad y usabilidad
@@ -36,9 +38,9 @@ Incluye:
 - Enlace Saltar al contenido para navegacion por teclado
 - Focus visible en elementos interactivos
 - Estructura semantica en las paginas principales
-- Revision con Lighthouse (capturas incluidas en la memoria)
+- Revision con Lighthouse como parte del prototipo
 
-## Tecnologias utilizadas
+## Tecnologías utilizadas
 
 - HTML5
 - CSS3
@@ -48,29 +50,36 @@ Incluye:
 
 ## Estructura del proyecto
 
-- sources/Lexi/index.html - Pagina principal
-- sources/Lexi/ejercicios.html - Ejercicios
-- sources/Lexi/producto.html - Ficha de producto
-- sources/Lexi/busqueda.html - Resultados de busqueda
-- sources/Lexi/contacto.html - Pagina de contacto
-- sources/Lexi/carrito.html - Carrito
-- sources/Lexi/info.html - Pagina de informacion
-- sources/Lexi/style.css - Estilos
-- sources/Lexi/js/script.js - Logica e interacciones
+- index.html - Página principal
+- biblioteca.html - Biblioteca de vocabulario
+- ejercicios.html - Ejercicios
+- progreso.html - Panel de progreso
+- perfil.html - Perfil de usuario
+- producto.html - Planes premium
+- carrito.html - Carrito
+- contacto.html - Página de contacto
+- info.html - Página informativa
+- login.html - Inicio de sesión
+- style.css - Estilos principales
+- js/script.js - Lógica e interacciones compartidas
 
-## Como ejecutar
+## Cómo ejecutar
 
 1. Descargar o clonar el repositorio.
 2. Abrir index.html en el navegador.
 
-## Publicacion
+## Estado actual
+
+El proyecto está preparado como prototipo visual y funcional en cliente. Antes de migrarlo a Laravel conviene centralizar layouts, mover el estado fuera de `localStorage` y consolidar la lógica compartida.
+
+## Publicación
 
 - Repositorio: https://github.com/AndresRuggieroGitHub/DIW6
 - GitHub Pages: https://andresruggierogithub.github.io/DIW6/
 
 ## Demo
 
-Video de validacion en dos navegadores: AQUI_TU_ENLACE_DE_VIDEO
+Video de validación en dos navegadores: AQUI_TU_ENLACE_DE_VIDEO
 
 ## Autor
 
