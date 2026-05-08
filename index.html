@@ -190,6 +190,42 @@
       .welcome-hero, .welcome-panel { padding: 2rem; }
       .welcome-title { max-width: none; }
     }
+    @media (max-width: 640px) {
+      .welcome-shell {
+        padding: 1rem;
+        place-items: stretch;
+      }
+      .welcome-card {
+        width: 100%;
+        border-radius: 24px;
+      }
+      .welcome-hero, .welcome-panel {
+        padding: 1.4rem;
+      }
+      .welcome-title {
+        font-size: 2rem;
+        line-height: 1.04;
+      }
+      .welcome-copy,
+      .welcome-panel p,
+      .welcome-action__meta span,
+      .welcome-note {
+        line-height: 1.55;
+      }
+      .welcome-metrics {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      .welcome-metric {
+        min-width: 0;
+      }
+      .welcome-action {
+        align-items: flex-start;
+      }
+      .welcome-action i {
+        margin-top: 0.15rem;
+      }
+    }
   </style>
 </head>
 <body>

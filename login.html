@@ -40,7 +40,6 @@
     }
     @media (max-width: 768px) {
       .login-page { grid-template-columns: 1fr; }
-      .login-brand-panel { display: none; }
     }
 
     /* ---- Panel izquierdo (marca) ---- */
@@ -48,8 +47,9 @@
       background: linear-gradient(145deg, #5b21b6 0%, #7c3aed 40%, #a855f7 75%, #d8b4fe 100%);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 3rem 3rem 2.5rem;
+      justify-content: flex-start;
+      gap: 2.2rem;
+      padding: 4rem 3rem 2.5rem;
       position: relative;
       overflow: hidden;
     }
@@ -62,15 +62,28 @@
       pointer-events: none;
     }
     .login-brand-logo {
-      font-size: 2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 1.1rem;
+      font-size: 3.1rem;
       font-weight: 800;
       color: #fff;
       letter-spacing: -0.04em;
-      text-decoration: none;
+      margin-bottom: 0.9rem;
       z-index: 1;
+    }
+    .login-brand-logo img {
+      width: 2.25rem;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 6px 14px rgba(36, 8, 87, 0.28));
+      flex-shrink: 0;
     }
     .login-brand-content {
       z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
     }
     .login-brand-headline {
       font-size: clamp(1.9rem, 3vw, 2.7rem);
@@ -78,7 +91,7 @@
       color: #fff;
       line-height: 1.2;
       letter-spacing: -0.03em;
-      margin-bottom: 1.2rem;
+      margin: 0;
     }
     .login-brand-headline span {
       color: var(--brand);
@@ -87,12 +100,14 @@
       font-size: 1rem;
       color: rgba(255,255,255,0.82);
       line-height: 1.6;
-      max-width: 360px;
+      max-width: 470px;
+      margin: 0;
     }
     .login-brand-stats {
       display: flex;
       gap: 2rem;
       z-index: 1;
+      margin-top: 4.6rem;
     }
     .login-brand-stat {
       display: flex;
@@ -124,27 +139,21 @@
       max-width: 400px;
     }
 
-    /* Logo móvil */
-    .login-mobile-logo {
-      display: none;
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--violet);
-      letter-spacing: -0.04em;
-      text-decoration: none;
-      margin-bottom: 2rem;
-    }
-    @media (max-width: 768px) {
-      .login-mobile-logo { display: block; }
-    }
-
     /* Cabecera formulario */
     .login-form-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
       font-size: 1.65rem;
       font-weight: 800;
       color: var(--text);
       letter-spacing: -0.03em;
       margin-bottom: 0.4rem;
+    }
+    .login-form-title i {
+      font-size: 1.35rem;
+      color: var(--brand);
+      line-height: 1;
     }
     .login-form-sub {
       font-size: 0.9rem;
@@ -247,46 +256,19 @@
     .login-btn-primary:hover { opacity: 0.92; }
     .login-btn-primary:active { transform: scale(0.98); }
 
-    /* Divisor */
-    .login-divider {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin: 1.35rem 0;
-      color: #d1d5db;
-      font-size: 0.8rem;
+    .login-register-note {
+      margin-top: 1.1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.55;
     }
-    .login-divider::before,
-    .login-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--line);
-    }
-
-    /* Botón invitado */
-    .login-btn-guest {
-      width: 100%;
-      padding: 0.75rem 1.5rem;
-      border: 1.5px solid var(--line);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.93rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      transition: border-color 0.15s, background 0.15s, color 0.15s;
-    }
-    .login-btn-guest:hover {
-      border-color: #a78bfa;
+    .login-register-note a {
       color: var(--violet);
-      background: #faf5ff;
+      font-weight: 600;
+      text-decoration: none;
     }
+    .login-register-note a:hover { text-decoration: underline; }
 
     /* Pie de formulario */
     .login-footer-note {
@@ -315,6 +297,69 @@
     .login-alert.show { display: block; }
     .login-alert--error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
     .login-alert--success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+
+    @media (max-width: 768px) {
+      .login-brand-panel {
+        min-height: auto;
+        padding: 2.35rem 1.5rem 1.75rem;
+        gap: 1.6rem;
+      }
+      .login-brand-headline {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+      }
+      .login-brand-desc {
+        max-width: none;
+        font-size: 0.95rem;
+      }
+      .login-brand-stats {
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .login-brand-stat {
+        min-width: 110px;
+      }
+      .login-form-panel {
+        padding: 1.5rem 1.25rem 2rem;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .login-brand-panel {
+        padding: 1.85rem 1.1rem 1.35rem;
+      }
+      .login-brand-logo {
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+      }
+      .login-brand-headline {
+        font-size: 1.7rem;
+        line-height: 1.08;
+      }
+      .login-brand-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+      .login-brand-stat-num {
+        font-size: 1.15rem;
+      }
+      .login-brand-stat-label {
+        font-size: 0.72rem;
+      }
+      .login-form-panel {
+        padding: 1.25rem 1rem 1.8rem;
+      }
+      .login-form-title {
+        font-size: 1.45rem;
+      }
+      .login-form-sub {
+        line-height: 1.55;
+      }
+      .login-btn-primary {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -323,27 +368,30 @@
 
   <!-- Panel izquierdo: marca -->
   <div class="login-brand-panel">
-    <a href="index.html" class="login-brand-logo">Lexi</a>
+    <div class="login-brand-logo">
+      <span>Lexi</span>
+      <img src="icons/logo_book.svg" alt="">
+    </div>
     <div class="login-brand-content">
       <h1 class="login-brand-headline">
-        El vocabulario<br>que necesitas,<br><span>a tu ritmo.</span>
+        Aprende idiomas<br><span>a tu ritmo.</span>
       </h1>
       <p class="login-brand-desc">
-        Tu biblioteca personal, ejercicios y una base clara para seguir creciendo el proyecto sin depender todavía del backend.
+        Guarda tu propio vocabulario, elige cómo practicar y sigue tu progreso. Un espacio donde el aprendizaje se encuentra en tus manos.
       </p>
-    </div>
-    <div class="login-brand-stats">
-      <div class="login-brand-stat">
-        <span class="login-brand-stat-num">2</span>
-        <span class="login-brand-stat-label">idiomas prioritarios</span>
-      </div>
-      <div class="login-brand-stat">
-        <span class="login-brand-stat-num">5</span>
-        <span class="login-brand-stat-label">modos de ejercicios</span>
-      </div>
-      <div class="login-brand-stat">
-        <span class="login-brand-stat-num">MVP</span>
-        <span class="login-brand-stat-label">catálogo en crecimiento</span>
+      <div class="login-brand-stats">
+        <div class="login-brand-stat">
+          <span class="login-brand-stat-num">30</span>
+          <span class="login-brand-stat-label">Idiomas</span>
+        </div>
+        <div class="login-brand-stat">
+          <span class="login-brand-stat-num">2</span>
+          <span class="login-brand-stat-label">idiomas funcionales</span>
+        </div>
+        <div class="login-brand-stat">
+          <span class="login-brand-stat-num">5</span>
+          <span class="login-brand-stat-label">modos de ejercicio</span>
+        </div>
       </div>
     </div>
   </div>
@@ -352,12 +400,9 @@
   <div class="login-form-panel">
     <div class="login-form-wrap">
 
-      <a href="index.html" class="login-mobile-logo">Lexi</a>
-
-      <h2 class="login-form-title">Bienvenido de nuevo</h2>
+      <h2 class="login-form-title">¡Bienvenido! <i class="bi bi-stars" aria-hidden="true"></i></h2>
       <p class="login-form-sub">
-        ¿Primera vez? <a href="registro.html">Crea tu cuenta gratis</a><br>
-        ¿Acceso interno? <a href="admin.html">Entrar como admin</a>
+        Accede a tu cuenta para continuar.
       </p>
 
       <!-- Alert feedback -->
@@ -407,12 +452,9 @@
         </button>
       </form>
 
-      <div class="login-divider">o continúa como</div>
-
-      <button type="button" class="login-btn-guest" id="guestBtn">
-        <i class="bi bi-person-dash"></i>
-        Invitado (sin cuenta)
-      </button>
+      <p class="login-register-note">
+        ¿No tienes cuenta? <a href="registro.html">Crear cuenta</a>
+      </p>
 
       <p class="login-footer-note">
         Al acceder aceptas los <a href="#">Términos de uso</a> y la <a href="#">Política de privacidad</a>.
@@ -473,11 +515,6 @@
 
     showAlert('¡Bienvenido a Lexi! Redirigiendo…', 'success');
     setTimeout(() => { window.location.href = 'app.html'; }, 900);
-  });
-
-  // Invitado
-  document.getElementById('guestBtn').addEventListener('click', () => {
-    window.location.href = 'app.html';
   });
 })();
 </script>

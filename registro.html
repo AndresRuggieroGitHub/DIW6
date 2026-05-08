@@ -24,7 +24,7 @@
     html, body {
       min-height: 100%;
       font-family: 'Inter', system-ui, sans-serif;
-      background: linear-gradient(180deg, #faf5ff 0%, #ffffff 55%, #fff7ed 100%);
+      background: #b0a0ca;
       color: var(--text);
     }
     .auth-shell {
@@ -32,16 +32,17 @@
       display: grid;
       place-items: center;
       padding: 2rem;
+      background: linear-gradient(180deg, #e1d7ee 0%, #c2b1d7 52%, #9986b6 100%);
     }
     .auth-card {
       width: min(100%, 980px);
       display: grid;
       grid-template-columns: 1.05fr 0.95fr;
       background: #fff;
-      border: 1px solid rgba(124, 58, 237, 0.1);
+      border: none;
       border-radius: 28px;
       overflow: hidden;
-      box-shadow: 0 28px 70px rgba(76, 29, 149, 0.12);
+      box-shadow: 0 28px 70px rgba(51, 24, 96, 0.22);
     }
     .auth-aside {
       padding: 3rem;
@@ -128,6 +129,7 @@
       color: #9ca3af;
     }
     .auth-input {
+      appearance: none;
       width: 100%;
       border: 1.5px solid var(--line);
       border-radius: 12px;
@@ -141,6 +143,9 @@
       border-color: var(--violet);
       box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
       background: #fff;
+    }
+    .auth-input[type="date"] {
+      padding-right: 0.85rem;
     }
     .auth-choices {
       display: grid;
@@ -195,6 +200,59 @@
       .auth-aside { padding: 2rem; }
       .auth-form { padding: 2rem; }
     }
+    @media (max-width: 640px) {
+      .auth-shell {
+        padding: 0.8rem;
+        place-items: stretch;
+      }
+      .auth-card {
+        width: 100%;
+        min-height: calc(100vh - 1.6rem);
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 18px 40px rgba(76, 29, 149, 0.12);
+      }
+      .auth-form {
+        order: 1;
+        padding: 1.35rem 1.1rem 2rem;
+      }
+      .auth-aside {
+        order: 2;
+        padding: 1.1rem 1.1rem 1.35rem;
+        gap: 1rem;
+      }
+      .auth-kicker {
+        display: none;
+      }
+      .auth-title {
+        font-size: 1.45rem;
+        line-height: 1.15;
+        margin-top: 0;
+      }
+      .auth-desc {
+        max-width: none;
+        font-size: 0.95rem;
+        line-height: 1.55;
+      }
+      .auth-points {
+        gap: 0.55rem;
+      }
+      .auth-points li {
+        gap: 0.55rem;
+        font-size: 0.92rem;
+      }
+      .auth-choices {
+        grid-template-columns: 1fr;
+      }
+      .auth-note,
+      .auth-sub,
+      .auth-check {
+        line-height: 1.55;
+      }
+      .auth-btn {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -203,14 +261,14 @@
       <aside class="auth-aside">
         <div>
           <a href="index.html" class="auth-logo">Lexi</a>
-          <span class="auth-kicker"><i class="bi bi-stars"></i> Bienvenida</span>
-          <h2 class="auth-title">Empieza con una cuenta simple y deja el backend para el siguiente paso.</h2>
-          <p class="auth-desc">Para el prototipo, esta pantalla ya deja claro el flujo de onboarding sin obligarte todavía a tener autenticación real.</p>
+          <span class="auth-kicker"><i class="bi bi-stars"></i> Tu cuenta</span>
+          <h2 class="auth-title">Empieza a guardar vocabulario y organiza tu aprendizaje desde el primer día.</h2>
+          <p class="auth-desc">Crea tu cuenta para personalizar los idiomas que hablas y el que quieres aprender, acceder a tus ejercicios y seguir tu progreso.</p>
         </div>
         <ul class="auth-points">
-          <li><i class="bi bi-check2-circle"></i><span>Registro visual coherente con el login.</span></li>
-          <li><i class="bi bi-check2-circle"></i><span>Elección del perfil inicial de uso.</span></li>
-          <li><i class="bi bi-check2-circle"></i><span>Preparado para conectar con Laravel después.</span></li>
+          <li><i class="bi bi-check2-circle"></i><span>Configura tus idiomas desde el inicio.</span></li>
+          <li><i class="bi bi-check2-circle"></i><span>Guarda vocabulario y practica a tu ritmo.</span></li>
+          <li><i class="bi bi-check2-circle"></i><span>Sigue tu progreso desde un solo lugar.</span></li>
         </ul>
       </aside>
       <div class="auth-form">
@@ -240,16 +298,53 @@
             </div>
           </div>
           <div class="auth-field">
-            <label>Perfil inicial</label>
-            <div class="auth-choices">
-              <label class="auth-choice"><input type="radio" name="profileRole" value="student" checked> <strong>Estudiante</strong><span>Aprender y practicar vocabulario.</span></label>
-              <label class="auth-choice"><input type="radio" name="profileRole" value="teacher"> <strong>Profesor</strong><span>Preparar listas y seguimiento.</span></label>
+            <label for="registerPasswordConfirm">Repetir contraseña</label>
+            <div class="auth-input-wrap">
+              <i class="bi bi-shield-lock"></i>
+              <input class="auth-input" id="registerPasswordConfirm" type="password" placeholder="Repite tu contraseña" required>
             </div>
           </div>
-          <label class="auth-check"><input type="checkbox" id="registerTerms" required><span>Acepto el flujo demo y entiendo que esta cuenta aún no se sincroniza con servidor.</span></label>
-          <button class="auth-btn" type="submit">Crear cuenta demo</button>
+          <div class="auth-field">
+            <label for="registerBirthDate">Fecha de nacimiento</label>
+            <div class="auth-input-wrap">
+              <i class="bi bi-calendar-event"></i>
+              <input class="auth-input" id="registerBirthDate" type="date" required>
+            </div>
+          </div>
+          <div class="auth-field">
+            <label for="registerNativeLanguage">Idioma materno</label>
+            <div class="auth-input-wrap">
+              <i class="bi bi-translate"></i>
+              <select class="auth-input" id="registerNativeLanguage" required>
+                <option value="">Selecciona tu idioma</option>
+                <option value="es">Español</option>
+                <option value="en">Inglés</option>
+                <option value="fr">Francés</option>
+                <option value="de">Alemán</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Portugués</option>
+              </select>
+            </div>
+          </div>
+          <div class="auth-field">
+            <label for="registerTargetLanguage">Idioma que deseas aprender</label>
+            <div class="auth-input-wrap">
+              <i class="bi bi-globe-europe-africa"></i>
+              <select class="auth-input" id="registerTargetLanguage" required>
+                <option value="">Selecciona el idioma</option>
+                <option value="en">Inglés</option>
+                <option value="es">Español</option>
+                <option value="fr">Francés</option>
+                <option value="de">Alemán</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Portugués</option>
+                <option value="ja">Japonés</option>
+              </select>
+            </div>
+          </div>
+          <label class="auth-check"><input type="checkbox" id="registerTerms" required><span>Acepto los términos y condiciones y la política de privacidad.</span></label>
+          <button class="auth-btn" type="submit">Crear cuenta</button>
         </form>
-        <p class="auth-note">Después podrás conectar este flujo con tablas reales y validación del backend.</p>
       </div>
     </section>
   </main>
@@ -263,16 +358,29 @@
       const name = document.getElementById('registerName').value.trim();
       const email = document.getElementById('registerEmail').value.trim();
       const password = document.getElementById('registerPassword').value;
+      const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+      const birthDate = document.getElementById('registerBirthDate').value;
+      const nativeLanguage = document.getElementById('registerNativeLanguage').value;
+      const targetLanguage = document.getElementById('registerTargetLanguage').value;
       const accepted = document.getElementById('registerTerms').checked;
-      const role = form.querySelector('input[name="profileRole"]:checked')?.value || 'student';
-      if (!name || !email.includes('@') || password.length < 6 || !accepted) {
-        alertBox.textContent = 'Completa los campos y acepta la condición demo para continuar.';
+      if (!name || !email.includes('@') || password.length < 6 || password !== passwordConfirm || !birthDate || !nativeLanguage || !targetLanguage || !accepted) {
+        alertBox.textContent = 'Completa todos los campos, revisa las contraseñas y acepta la condición demo para continuar.';
         alertBox.className = 'auth-alert auth-alert--ok show';
         return;
       }
-      localStorage.setItem('lexiUser', JSON.stringify({ name, email, role }));
-      localStorage.setItem('lexiPrefs', JSON.stringify({ onboardingComplete: true }));
-      alertBox.textContent = 'Cuenta demo creada. Redirigiendo al inicio de sesión…';
+      localStorage.setItem('lexiUser', JSON.stringify({
+        name,
+        email,
+        birthDate,
+        nativeLanguage,
+        targetLanguage
+      }));
+      localStorage.setItem('lexiPrefs', JSON.stringify({
+        onboardingComplete: true,
+        nativeLanguage,
+        targetLanguage
+      }));
+      alertBox.textContent = 'Cuenta creada. Redirigiendo al inicio de sesión…';
       alertBox.className = 'auth-alert auth-alert--ok show';
       setTimeout(() => { window.location.href = 'login.html'; }, 900);
     });
