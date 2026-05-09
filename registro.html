@@ -53,52 +53,40 @@
       color: #fff;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 2rem;
+      justify-content: center;
+      gap: 1rem;
+      position: relative;
+      overflow: hidden;
     }
-    .auth-logo {
-      color: #fff;
-      text-decoration: none;
-      font-size: 1.9rem;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-    }
-    .auth-kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      padding: 0.45rem 0.8rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.12);
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+    .auth-aside-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      z-index: 1;
     }
     .auth-title {
-      margin-top: 1rem;
-      font-size: clamp(2rem, 3vw, 2.8rem);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.58rem;
+      margin-top: 0;
+      font-size: clamp(1.95rem, 2.8vw, 2.55rem);
+      font-weight: 800;
+      color: #fff;
       line-height: 1.08;
       letter-spacing: -0.05em;
+      margin-bottom: 0;
+    }
+    .auth-title i {
+      font-size: 0.94em;
+      color: #fff;
+      line-height: 1;
     }
     .auth-desc {
-      margin-top: 1rem;
-      max-width: 32rem;
+      margin-top: 0;
+      max-width: 20rem;
       color: rgba(255, 255, 255, 0.82);
       line-height: 1.6;
     }
-    .auth-points {
-      display: grid;
-      gap: 0.8rem;
-      list-style: none;
-    }
-    .auth-points li {
-      display: flex;
-      gap: 0.75rem;
-      align-items: flex-start;
-      color: rgba(255, 255, 255, 0.92);
-    }
-    .auth-points i { color: #fde68a; margin-top: 0.15rem; }
     .auth-form {
       padding: 3rem;
       display: flex;
@@ -131,6 +119,29 @@
       transform: translateY(-50%);
       color: #9ca3af;
     }
+    .auth-input-wrap--select .auth-flag-icon {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      width: 1.15rem;
+      height: 1.15rem;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      object-fit: cover;
+      box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.18);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+    }
+    .auth-input-wrap--select > i {
+      transition: opacity 0.15s ease;
+    }
+    .auth-input-wrap--select.has-flag .auth-flag-icon {
+      opacity: 1;
+    }
+    .auth-input-wrap--select.has-flag > i {
+      opacity: 0;
+    }
     .auth-input {
       appearance: none;
       width: 100%;
@@ -141,6 +152,9 @@
       font: inherit;
       outline: none;
       transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .auth-input-wrap--select .auth-input {
+      padding-left: 2.95rem;
     }
     .auth-input:focus {
       border-color: var(--violet);
@@ -200,12 +214,23 @@
     .auth-alert--ok { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
     @media (max-width: 860px) {
       .auth-card { grid-template-columns: 1fr; }
-      .auth-aside { padding: 2rem; }
+      .auth-aside {
+        padding: 2rem;
+        min-height: 132px;
+      }
       .auth-form { padding: 2rem; }
+      .auth-aside-content {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+      }
     }
     @media (max-width: 640px) {
       .auth-shell {
-        padding: 0.8rem;
+      .recovery-brand-panel {
+        padding: 1.8rem 2rem;
+        min-height: 132px;
+      }
         place-items: stretch;
       }
       .auth-card {
@@ -216,16 +241,12 @@
         box-shadow: 0 18px 40px rgba(76, 29, 149, 0.12);
       }
       .auth-form {
-        order: 1;
         padding: 1.35rem 1.1rem 2rem;
       }
       .auth-aside {
-        order: 2;
         padding: 1.1rem 1.1rem 1.35rem;
         gap: 1rem;
-      }
-      .auth-kicker {
-        display: none;
+        min-height: 132px;
       }
       .auth-title {
         font-size: 1.45rem;
@@ -236,13 +257,6 @@
         max-width: none;
         font-size: 0.95rem;
         line-height: 1.55;
-      }
-      .auth-points {
-        gap: 0.55rem;
-      }
-      .auth-points li {
-        gap: 0.55rem;
-        font-size: 0.92rem;
       }
       .auth-choices {
         grid-template-columns: 1fr;
@@ -262,20 +276,13 @@
   <main class="auth-shell">
     <section class="auth-card" aria-label="Registro en Lexi">
       <aside class="auth-aside">
-        <div>
-          <a href="index.html" class="auth-logo">Lexi</a>
-          <span class="auth-kicker"><i class="bi bi-stars"></i> Tu cuenta</span>
-          <h2 class="auth-title">Empieza a guardar vocabulario y organiza tu aprendizaje desde el primer día.</h2>
-          <p class="auth-desc">Crea tu cuenta para personalizar los idiomas que hablas y el que quieres aprender, acceder a tus ejercicios y seguir tu progreso.</p>
+        <div class="auth-aside-content">
+          <h2 class="auth-title">Crea tu cuenta <i class="bi bi-person-plus" aria-hidden="true"></i></h2>
+          <p class="auth-desc">Empieza desde cero y disfruta de Lexi.</p>
         </div>
-        <ul class="auth-points">
-          <li><i class="bi bi-check2-circle"></i><span>Configura tus idiomas desde el inicio.</span></li>
-          <li><i class="bi bi-check2-circle"></i><span>Guarda vocabulario y practica a tu ritmo.</span></li>
-          <li><i class="bi bi-check2-circle"></i><span>Sigue tu progreso desde un solo lugar.</span></li>
-        </ul>
       </aside>
       <div class="auth-form">
-        <h1>Crea tu cuenta</h1>
+        <h1>Regístrate</h1>
         <p class="auth-sub">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
         <div class="auth-alert auth-alert--ok" id="registerAlert" role="alert"></div>
         <form id="registerForm" class="auth-grid" novalidate>
@@ -316,36 +323,85 @@
           </div>
           <div class="auth-field">
             <label for="registerNativeLanguage">Idioma materno</label>
-            <div class="auth-input-wrap">
+            <div class="auth-input-wrap auth-input-wrap--select" data-flag-select-wrap>
               <i class="bi bi-translate"></i>
+              <img class="auth-flag-icon" data-flag-icon alt="" aria-hidden="true">
               <select class="auth-input" id="registerNativeLanguage" required>
                 <option value="">Selecciona tu idioma</option>
-                <option value="es">Español</option>
                 <option value="en">Inglés</option>
                 <option value="fr">Francés</option>
                 <option value="de">Alemán</option>
+                <option value="es">Español</option>
                 <option value="it">Italiano</option>
                 <option value="pt">Portugués</option>
+                <option value="no">Noruego</option>
+                <option value="sv">Sueco</option>
+                <option value="dk">Danés</option>
+                <option value="fi">Finés</option>
+                <option value="ko">Coreano</option>
+                <option value="ja">Japonés</option>
+                <option value="zh">Chino</option>
+                <option value="ru">Ruso</option>
+                <option value="ua">Ucraniano</option>
+                <option value="bg">Búlgaro</option>
+                <option value="ro">Rumano</option>
+                <option value="cs">Checo</option>
+                <option value="sk">Eslovaco</option>
+                <option value="hu">Húngaro</option>
+                <option value="gr">Griego</option>
+                <option value="ar">Árabe</option>
+                <option value="vi">Vietnamita</option>
+                <option value="pl">Polaco</option>
+                <option value="tr">Turco</option>
+                <option value="id">Indonesio</option>
+                <option value="he">Hebreo</option>
+                <option value="hi">Hindi</option>
+                <option value="th">Tailandés</option>
+                <option value="nl">Neerlandés</option>
               </select>
             </div>
           </div>
           <div class="auth-field">
             <label for="registerTargetLanguage">Idioma que deseas aprender</label>
-            <div class="auth-input-wrap">
+            <div class="auth-input-wrap auth-input-wrap--select" data-flag-select-wrap>
               <i class="bi bi-globe-europe-africa"></i>
+              <img class="auth-flag-icon" data-flag-icon alt="" aria-hidden="true">
               <select class="auth-input" id="registerTargetLanguage" required>
                 <option value="">Selecciona el idioma</option>
                 <option value="en">Inglés</option>
-                <option value="es">Español</option>
                 <option value="fr">Francés</option>
                 <option value="de">Alemán</option>
+                <option value="es">Español</option>
                 <option value="it">Italiano</option>
                 <option value="pt">Portugués</option>
+                <option value="no">Noruego</option>
+                <option value="sv">Sueco</option>
+                <option value="dk">Danés</option>
+                <option value="fi">Finés</option>
+                <option value="ko">Coreano</option>
                 <option value="ja">Japonés</option>
+                <option value="zh">Chino</option>
+                <option value="ru">Ruso</option>
+                <option value="ua">Ucraniano</option>
+                <option value="bg">Búlgaro</option>
+                <option value="ro">Rumano</option>
+                <option value="cs">Checo</option>
+                <option value="sk">Eslovaco</option>
+                <option value="hu">Húngaro</option>
+                <option value="gr">Griego</option>
+                <option value="ar">Árabe</option>
+                <option value="vi">Vietnamita</option>
+                <option value="pl">Polaco</option>
+                <option value="tr">Turco</option>
+                <option value="id">Indonesio</option>
+                <option value="he">Hebreo</option>
+                <option value="hi">Hindi</option>
+                <option value="th">Tailandés</option>
+                <option value="nl">Neerlandés</option>
               </select>
             </div>
           </div>
-          <label class="auth-check"><input type="checkbox" id="registerTerms" required><span>Acepto los términos y condiciones y la política de privacidad.</span></label>
+          <label class="auth-check"><input type="checkbox" id="registerTerms" required><span>Acepto los <a href="terminos.html">términos y condiciones</a> y la <a href="privacidad.html">política de privacidad</a>.</span></label>
           <button class="auth-btn" type="submit">Crear cuenta</button>
         </form>
       </div>
@@ -354,8 +410,62 @@
 
   <script>
   (function () {
+    const flagByLanguage = {
+      es: 'icons/flags/spain_flag.svg',
+      en: 'icons/flags/united_kingdom_flag.svg',
+      fr: 'icons/flags/france_flag.svg',
+      de: 'icons/flags/germany_flag.svg',
+      it: 'icons/flags/italy_flag.svg',
+      pt: 'icons/flags/brazil_flag.svg',
+      no: 'icons/flags/norway_flag.svg',
+      sv: 'icons/flags/sweden_flag.svg',
+      dk: 'icons/flags/denmark_flag.svg',
+      fi: 'icons/flags/finland_flag.svg',
+      ko: 'icons/flags/south_korea_flag.svg',
+      ja: 'icons/flags/japan_flag.svg',
+      zh: 'icons/flags/china_flag.svg',
+      ru: 'icons/flags/russia_flag.svg',
+      ua: 'icons/flags/ukraine_flag.svg',
+      bg: 'icons/flags/bulgaria_flag.svg',
+      ro: 'icons/flags/romania_flag.svg',
+      cs: 'icons/flags/czech_republic_flag.svg',
+      sk: 'icons/flags/slovakia_flag.svg',
+      hu: 'icons/flags/hungary_flag.svg',
+      gr: 'icons/flags/greece_flag.svg',
+      ar: 'icons/flags/saudi_arabia_flag.svg',
+      vi: 'icons/flags/vietnam_flag.svg',
+      pl: 'icons/flags/poland_flag.svg',
+      tr: 'icons/flags/turkey_flag.svg',
+      id: 'icons/flags/indonesia_flag.svg',
+      he: 'icons/flags/israel_flag.svg',
+      hi: 'icons/flags/india_flag.svg',
+      th: 'icons/flags/thailand_flag.svg',
+      nl: 'icons/flags/netherlands_flag.svg'
+    };
     const form = document.getElementById('registerForm');
     const alertBox = document.getElementById('registerAlert');
+    const languageSelects = document.querySelectorAll('[data-flag-select-wrap] select');
+
+    function syncFlag(select) {
+      const wrap = select.closest('[data-flag-select-wrap]');
+      const flagIcon = wrap.querySelector('[data-flag-icon]');
+      const flagSrc = flagByLanguage[select.value];
+
+      if (!flagSrc) {
+        wrap.classList.remove('has-flag');
+        flagIcon.removeAttribute('src');
+        return;
+      }
+
+      flagIcon.src = flagSrc;
+      wrap.classList.add('has-flag');
+    }
+
+    languageSelects.forEach((select) => {
+      syncFlag(select);
+      select.addEventListener('change', () => syncFlag(select));
+    });
+
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const name = document.getElementById('registerName').value.trim();
