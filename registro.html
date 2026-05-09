@@ -24,7 +24,10 @@
     html, body {
       min-height: 100%;
       font-family: 'Inter', system-ui, sans-serif;
-      background: #b0a0ca;
+      background:
+        radial-gradient(circle at top left, rgba(245, 158, 11, 0.16), transparent 24%),
+        radial-gradient(circle at 85% 16%, rgba(216, 180, 254, 0.62), transparent 23%),
+        linear-gradient(160deg, #dccdea 0%, #f8f3fe 54%, #e2e5f4 100%);
       color: var(--text);
     }
     .auth-shell {
@@ -32,7 +35,7 @@
       display: grid;
       place-items: center;
       padding: 2rem;
-      background: linear-gradient(180deg, #e1d7ee 0%, #c2b1d7 52%, #9986b6 100%);
+      background: linear-gradient(180deg, rgba(210, 196, 229, 0.95) 0%, rgba(190, 172, 216, 0.72) 52%, rgba(156, 140, 186, 0.42) 100%);
     }
     .auth-card {
       width: min(100%, 980px);
