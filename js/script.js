@@ -383,6 +383,9 @@
   const createUtilityDrawer = () => {
     if (document.getElementById("utilityDrawer")) return;
 
+    const currentPage = window.location.pathname.split("/").pop() || "app.html";
+    const activeClass = (href) => currentPage === href ? " utility-link--active" : "";
+
     const backdrop = document.createElement("div");
     backdrop.className = "utility-drawer-backdrop";
     backdrop.id = "utilityDrawerBackdrop";
@@ -398,11 +401,20 @@
         <button class="btn btn-sm btn-outline-secondary" type="button" id="closeUtilityDrawer">Cerrar</button>
       </div>
       <div class="utility-drawer-body">
-        <a class="utility-link utility-link--premium" href="producto.html"><i class="bi bi-gem"></i><span>Premium</span></a>
-        <a class="utility-link utility-link--cart" href="carrito.html"><i class="bi bi-bag"></i><span>Carrito</span><span class="cart-count-badge cart-count-badge--drawer" data-cart-count="0">0</span></a>
-        <a class="utility-link" href="contacto.html"><i class="bi bi-envelope"></i><span>Contacto</span></a>
-        <a class="utility-link" href="info.html"><i class="bi bi-info-circle"></i><span>Información</span></a>
-        <button class="btn btn-outline-danger utility-logout-btn" type="button" id="logoutAction"><i class="bi bi-box-arrow-right"></i><span>Cerrar sesión</span></button>
+        <div class="utility-drawer-section utility-drawer-section--mobile-nav">
+          <p class="utility-drawer-label">Navegación</p>
+          <a class="utility-link${activeClass("app.html")}" href="app.html"><i class="bi bi-house"></i><span>Inicio</span></a>
+          <a class="utility-link${activeClass("biblioteca.html")}" href="biblioteca.html"><i class="bi bi-journals"></i><span>Biblioteca</span></a>
+          <a class="utility-link${activeClass("ejercicios.html")}" href="ejercicios.html"><i class="bi bi-lightning-charge"></i><span>Ejercicios</span></a>
+        </div>
+        <div class="utility-drawer-section">
+          <p class="utility-drawer-label">Más opciones</p>
+          <a class="utility-link utility-link--premium${activeClass("producto.html")}" href="producto.html"><i class="bi bi-gem"></i><span>Premium</span></a>
+          <a class="utility-link utility-link--cart${activeClass("carrito.html")}" href="carrito.html"><i class="bi bi-bag"></i><span>Carrito</span><span class="cart-count-badge cart-count-badge--drawer" data-cart-count="0">0</span></a>
+          <a class="utility-link${activeClass("contacto.html")}" href="contacto.html"><i class="bi bi-envelope"></i><span>Contacto</span></a>
+          <a class="utility-link${activeClass("info.html")}" href="info.html"><i class="bi bi-info-circle"></i><span>Información</span></a>
+          <button class="btn btn-outline-danger utility-logout-btn" type="button" id="logoutAction"><i class="bi bi-box-arrow-right"></i><span>Cerrar sesión</span></button>
+        </div>
       </div>
     `;
 
@@ -415,6 +427,13 @@
       toggleUtilityDrawer(false);
       showAlert("Sesión cerrada (demo)", "warning");
     });
+  };
+
+  const syncUtilityDrawerForViewport = () => {
+    const mobileNavSection = document.querySelector(".utility-drawer-section--mobile-nav");
+    if (!mobileNavSection) return;
+
+    mobileNavSection.hidden = window.innerWidth > 600;
   };
 
   const toggleUtilityDrawer = (open) => {
@@ -432,6 +451,9 @@
 
   const setupUtilityMenu = () => {
     createUtilityDrawer();
+    syncUtilityDrawerForViewport();
+
+    window.addEventListener("resize", syncUtilityDrawerForViewport);
 
     document.querySelectorAll("[data-utility-trigger]").forEach((btn) => {
       btn.addEventListener("click", () => {
