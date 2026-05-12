@@ -115,10 +115,6 @@
     const dropdown = document.getElementById("saveDropdown");
     const ddList = document.getElementById("saveDropdownLists");
     const newBtn = document.getElementById("saveDropdownNewBtn");
-    const newInput = document.getElementById("saveDropdownNewInput");
-    const newName = document.getElementById("newCollectionName");
-    const newConfirm = document.getElementById("newCollectionConfirm");
-    const newCancel = document.getElementById("newCollectionCancel");
     if (!dropdown) return;
 
     let activeCard = null;
@@ -172,9 +168,6 @@
     window._openSaveDropdown = (card, btn) => {
       activeCard = card;
       window._activeDropdownCard = card;
-      newInput.hidden = true;
-      newName.value = "";
-      newBtn.hidden = false;
       renderDropdown();
       dropdown.hidden = false;
       // Position
@@ -194,22 +187,12 @@
       });
     };
 
-    newBtn.addEventListener("click", () => { newBtn.hidden = true; newInput.hidden = false; newName.focus(); });
-    newCancel.addEventListener("click", () => { newBtn.hidden = false; newInput.hidden = true; newName.value = ""; });
-    newConfirm.addEventListener("click", () => {
-      const name = newName.value.trim();
-      if (!name) return;
-      saveCollections([...getCollections(), { id: "coll-" + Date.now(), name, lang: getActiveLang(), items: [] }]);
-      newName.value = "";
-      newBtn.hidden = false;
-      newInput.hidden = true;
-      updateAllBookmarkStates();
-      renderDropdown();
-      window.dispatchEvent(new Event("lexi-library-updated"));
-    });
-    newName.addEventListener("keydown", e => {
-      if (e.key === "Enter") newConfirm.click();
-      if (e.key === "Escape") newCancel.click();
+    newBtn.addEventListener("click", () => {
+      openCreateCollectionModal(() => {
+        updateAllBookmarkStates();
+        renderDropdown();
+        window.dispatchEvent(new Event("lexi-library-updated"));
+      });
     });
     document.addEventListener("click", e => {
       if (dropdown.hidden) return;
@@ -760,10 +743,7 @@
     const newCollTopBtn = document.getElementById("newCollectionTopBtn");
     if (newCollTopBtn) {
       newCollTopBtn.addEventListener("click", () => {
-        const name = prompt("Nombre de la nueva colección:");
-        if (!name || !name.trim()) return;
-        saveCollections([...getCollections(), { id: "coll-" + Date.now(), name: name.trim(), lang: getActiveLang(), items: [] }]);
-        renderListsIndex();
+        openCreateCollectionModal(renderListsIndex);
       });
     }
 
@@ -966,17 +946,24 @@
     if (clearBtn) {
       clearBtn.addEventListener("click", () => {
         if (activeCollId) {
-          const colls = getCollections();
-          const idx = colls.findIndex(c => c.id === activeCollId);
-          if (idx !== -1) { colls[idx].items = []; saveCollections(colls); }
+          openClearModal(activeCollId, () => {
+            currentPage = 0;
+            if (filterInput) filterInput.value = "";
+            renderList();
+            renderListsIndex();
+          });
+          return;
         } else {
-          saveLibrary([]);
+          openClearMainListModal(() => {
+            saveLibrary([]);
+            currentPage = 0;
+            if (filterInput) filterInput.value = "";
+            renderList();
+            renderListsIndex();
+            showAlert("Lista vaciada", "warning");
+          });
+          return;
         }
-        currentPage = 0;
-        if (filterInput) filterInput.value = "";
-        renderList();
-        renderListsIndex();
-        showAlert("Lista vaciada", "warning");
       });
     }
 
@@ -996,6 +983,50 @@
   };
 
   // ---- Modal de renombrar colección ----
+  const createCollection = (name) => {
+    const trimmedName = String(name || "").trim();
+    if (!trimmedName) return false;
+    saveCollections([...getCollections(), { id: "coll-" + Date.now(), name: trimmedName, lang: getActiveLang(), items: [] }]);
+    return true;
+  };
+
+  const openCreateCollectionModal = (onCreated) => {
+    const modal = document.getElementById("createCollModal");
+    const input = document.getElementById("createCollInput");
+    const confirmBtn = document.getElementById("createCollConfirm");
+    const cancelBtn = document.getElementById("createCollCancel");
+    if (!modal || !input || !confirmBtn || !cancelBtn) return;
+
+    input.value = "";
+    modal.hidden = false;
+    requestAnimationFrame(() => input.focus());
+
+    const close = () => {
+      modal.hidden = true;
+      confirmBtn.removeEventListener("click", onConfirm);
+      cancelBtn.removeEventListener("click", close);
+      input.removeEventListener("keydown", onKey);
+      modal.removeEventListener("click", onBackdrop);
+    };
+    const onConfirm = () => {
+      const name = input.value.trim();
+      if (!createCollection(name)) return;
+      close();
+      if (onCreated) onCreated();
+      showAlert("Colección creada");
+    };
+    const onKey = (e) => {
+      if (e.key === "Enter") onConfirm();
+      if (e.key === "Escape") close();
+    };
+    const onBackdrop = (e) => { if (e.target === modal) close(); };
+
+    confirmBtn.addEventListener("click", onConfirm);
+    cancelBtn.addEventListener("click", close);
+    input.addEventListener("keydown", onKey);
+    modal.addEventListener("click", onBackdrop);
+  };
+
   const openRenameModal = (collId, onSaved) => {
     const modal = document.getElementById("renameCollModal");
     const input = document.getElementById("renameCollInput");
@@ -1047,10 +1078,7 @@
     const cancelBtn  = document.getElementById("deleteCollCancel");
     if (!modal) return;
 
-    const coll = getCollections().find(c => c.id === collId);
-    if (bodyEl) bodyEl.textContent = coll
-      ? `¿Eliminar "${coll.name}"? Esta acción no se puede deshacer.`
-      : "Esta acción no se puede deshacer.";
+    if (bodyEl) bodyEl.textContent = "Esta acción no se puede deshacer.";
 
     modal.hidden = false;
 
@@ -1076,6 +1104,40 @@
     document.addEventListener("keydown", onKey);
   };
 
+  const openClearMainListModal = (onConfirmed) => {
+    const modal      = document.getElementById("clearCollModal");
+    const titleEl    = document.getElementById("clearModalTitle");
+    const bodyEl     = document.getElementById("clearModalBody");
+    const confirmBtn = document.getElementById("clearCollConfirm");
+    const cancelBtn  = document.getElementById("clearCollCancel");
+    if (!modal || !confirmBtn || !cancelBtn) return;
+
+    if (titleEl) titleEl.textContent = "Vaciar Mi lista";
+    if (bodyEl) bodyEl.textContent = "¿Vaciar tu lista principal? Se eliminarán todas las palabras guardadas en este idioma.";
+
+    modal.hidden = false;
+
+    const close = () => {
+      modal.hidden = true;
+      if (titleEl) titleEl.textContent = "Vaciar lista";
+      confirmBtn.removeEventListener("click", onConfirm);
+      cancelBtn.removeEventListener("click", close);
+      modal.removeEventListener("click", onBackdrop);
+      document.removeEventListener("keydown", onKey);
+    };
+    const onConfirm = () => {
+      close();
+      if (onConfirmed) onConfirmed();
+    };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    const onBackdrop = (e) => { if (e.target === modal) close(); };
+
+    confirmBtn.addEventListener("click", onConfirm);
+    cancelBtn.addEventListener("click", close);
+    modal.addEventListener("click", onBackdrop);
+    document.addEventListener("keydown", onKey);
+  };
+
   const openClearModal = (collId, onConfirmed) => {
     const modal      = document.getElementById("clearCollModal");
     const bodyEl     = document.getElementById("clearModalBody");
@@ -1086,7 +1148,7 @@
     const colls = getCollections();
     const idx   = colls.findIndex(c => c.id === collId);
     if (idx === -1) return;
-    if (bodyEl) bodyEl.textContent = `¿Vaciar "${colls[idx].name}"? Se eliminarán todas las palabras.`;
+    if (bodyEl) bodyEl.textContent = "Se eliminarán todas las palabras de esta colección.";
 
     modal.hidden = false;
 

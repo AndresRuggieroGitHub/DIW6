@@ -348,7 +348,12 @@
     document.querySelectorAll('[data-source-tab]').forEach(button => {
       button.addEventListener('click', () => {
         localStorage.setItem(EXERCISE_SOURCE_KEY, button.dataset.sourceTab);
+        localStorage.setItem(EXERCISE_CATALOG_LEVEL_KEY, '');
+        localStorage.setItem(EXERCISE_CATALOG_TOPIC_KEY, '');
+        localStorage.setItem(EXERCISE_COLLECTION_KEY, '');
         syncSourcePanels();
+        setupExerciseCatalogSelects();
+        setupExerciseCollectionSelect();
       });
     });
 

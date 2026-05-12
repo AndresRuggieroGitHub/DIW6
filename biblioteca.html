@@ -1386,13 +1386,6 @@
     <button class="save-dropdown-new-btn" id="saveDropdownNewBtn" type="button">
       <i class="bi bi-plus-circle"></i> Nueva colección
     </button>
-    <div class="save-dropdown-new-input" id="saveDropdownNewInput" hidden>
-      <input type="text" class="form-control form-control-sm" id="newCollectionName" placeholder="Nombre de la colección" maxlength="40">
-      <div class="d-flex gap-1 mt-1">
-        <button class="btn btn-primary btn-sm flex-fill" id="newCollectionConfirm" type="button">Crear</button>
-        <button class="btn btn-outline-secondary btn-sm" id="newCollectionCancel" type="button">Cancelar</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -1410,6 +1403,22 @@
     <div class="lexi-modal-actions">
       <button type="button" class="lexi-modal-btn lexi-modal-btn--ghost" id="renameCollCancel">Cancelar</button>
       <button type="button" class="lexi-modal-btn lexi-modal-btn--primary" id="renameCollConfirm"><i class="bi bi-check2"></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal nueva colección -->
+<div id="createCollModal" class="lexi-modal-backdrop" hidden>
+  <div class="lexi-modal" role="dialog" aria-modal="true" aria-labelledby="createModalTitle">
+    <div class="lexi-modal-header">
+      <div class="lexi-modal-icon lexi-modal-icon--brand"><i class="bi bi-folder-plus"></i></div>
+      <p class="lexi-modal-title" id="createModalTitle">Nueva colección</p>
+      <p class="lexi-modal-body">Crea una lista personalizada para guardar vocabulario relacionado.</p>
+    </div>
+    <input type="text" id="createCollInput" class="lexi-modal-input" placeholder="Nombre de la colección" maxlength="40">
+    <div class="lexi-modal-actions">
+      <button type="button" class="lexi-modal-btn lexi-modal-btn--ghost" id="createCollCancel">Cancelar</button>
+      <button type="button" class="lexi-modal-btn lexi-modal-btn--primary" id="createCollConfirm"><i class="bi bi-plus-lg"></i> Crear</button>
     </div>
   </div>
 </div>
