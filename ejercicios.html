@@ -32,7 +32,7 @@
   </div>
 
   <div class="header-right">
-    <button class="icon-btn" type="button" aria-label="Progreso" data-progress-trigger>
+    <button class="icon-btn" type="button" aria-label="Tu progreso" data-progress-trigger>
       <i class="bi bi-rocket-takeoff" style="font-size:1.45rem;"></i>
     </button>
     <div class="lang-dropdown-wrap" data-lang-wrap>
@@ -42,7 +42,7 @@
       <div class="lang-dropdown" id="langDropdown" hidden></div>
     </div>
     <script>(function(){var f={en:"icons/flags/united_kingdom_flag.svg",fr:"icons/flags/france_flag.svg",de:"icons/flags/germany_flag.svg",es:"icons/flags/spain_flag.svg",it:"icons/flags/italy_flag.svg",pt:"icons/flags/brazil_flag.svg",no:"icons/flags/norway_flag.svg",sv:"icons/flags/sweden_flag.svg",dk:"icons/flags/denmark_flag.svg",fi:"icons/flags/finland_flag.svg",ko:"icons/flags/south_korea_flag.svg",ja:"icons/flags/japan_flag.svg",zh:"icons/flags/china_flag.svg",ru:"icons/flags/russia_flag.svg",ua:"icons/flags/ukraine_flag.svg",bg:"icons/flags/bulgaria_flag.svg",ro:"icons/flags/romania_flag.svg",cs:"icons/flags/czech_republic_flag.svg",sk:"icons/flags/slovakia_flag.svg",hu:"icons/flags/hungary_flag.svg",gr:"icons/flags/greece_flag.svg",ar:"icons/flags/saudi_arabia_flag.svg",vi:"icons/flags/vietnam_flag.svg",pl:"icons/flags/poland_flag.svg",tr:"icons/flags/turkey_flag.svg",id:"icons/flags/indonesia_flag.svg",he:"icons/flags/israel_flag.svg",hi:"icons/flags/india_flag.svg",th:"icons/flags/thailand_flag.svg",nl:"icons/flags/netherlands_flag.svg"};var img=document.getElementById("activeLangFlag");if(img)img.src=f[localStorage.getItem("lexiLang")||"en"]||f.en;})();</script>
-    <a href="perfil.html" class="icon-btn" aria-label="Mi perfil">
+    <a href="perfil.html" class="icon-btn" aria-label="Perfil">
       <img src="icons/profile.svg" alt="Perfil">
     </a>
 
@@ -57,12 +57,23 @@
   <!-- Vista de seleccion de modo -->
   <div id="exerciseMenu">
     <div class="exercises-hero">
-      <p class="exercises-eyebrow">Sesión de hoy</p>
       <h1 class="exercises-title">¿Cómo quieres practicar?</h1>
-      <p class="exercises-subtitle">Elige una lista de vocabulario y después un modo de ejercicio.</p>
+      <p class="exercises-subtitle">Elige el origen del vocabulario y después un modo de ejercicio.</p>
+      <div class="exercise-source-toggle" role="tablist" aria-label="Origen del vocabulario">
+        <button class="exercise-source-toggle__btn is-active" type="button" data-source-tab="catalog" aria-pressed="true"><i class="bi bi-grid-1x2-fill"></i><span>Catálogo</span></button>
+        <button class="exercise-source-toggle__btn" type="button" data-source-tab="saved" aria-pressed="false"><i class="bi bi-bookmarks-fill"></i><span>Tus listas</span></button>
+      </div>
       <div class="exercise-list-picker">
-        <div class="exercise-list-picker__row">
-          <select id="exerciseCollectionSelect" class="exercise-list-picker__select"></select>
+        <div class="exercise-source-panel" data-source-panel="catalog">
+          <div class="exercise-list-picker__grid">
+            <select id="exerciseCatalogLevelSelect" class="exercise-list-picker__select"></select>
+            <select id="exerciseCatalogTopicSelect" class="exercise-list-picker__select"></select>
+          </div>
+        </div>
+        <div class="exercise-source-panel" data-source-panel="saved" hidden>
+          <div class="exercise-list-picker__row">
+            <select id="exerciseCollectionSelect" class="exercise-list-picker__select"></select>
+          </div>
         </div>
       </div>
     </div>
@@ -163,7 +174,79 @@
   const BADGE_MODES = ['reading', 'listening', 'speaking', 'writing', 'mix'];
   const LIBRARY_KEY = 'lexiLibrary';
   const COLLECTIONS_KEY = 'lexiCollections';
+  const EXERCISE_SOURCE_KEY = 'lexiExerciseSource';
   const EXERCISE_COLLECTION_KEY = 'lexiExerciseCollection';
+  const EXERCISE_CATALOG_LEVEL_KEY = 'lexiExerciseCatalogLevel';
+  const EXERCISE_CATALOG_TOPIC_KEY = 'lexiExerciseCatalogTopic';
+  const CATALOG_TOPIC_ORDER = ['travel', 'food', 'work', 'business', 'education', 'health', 'science', 'technology', 'culture', 'social', 'home', 'nature', 'politics', 'sport', 'art'];
+  const TOPIC_OPTION_LABELS = {
+    travel: '✈ Viajes',
+    food: '🍽 Gastronomía',
+    work: '💼 Trabajo',
+    business: '📈 Negocios',
+    education: '🎓 Educación',
+    health: '🏥 Salud',
+    science: '🔬 Ciencia',
+    technology: '💻 Tecnología',
+    culture: '🎭 Cultura',
+    cultura: '🎭 Cultura',
+    social: '🤝 Social',
+    home: '🏠 Hogar',
+    nature: '🌿 Naturaleza',
+    politics: '🏛 Política',
+    sport: '⚽ Deporte',
+    art: '🎨 Arte'
+  };
+  const CATALOG_VOCABULARY = [
+    { id: 'w-heritage', lang: 'en', cefr: 'B2', topic: 'culture', text: 'to preserve heritage', translation: 'preservar el patrimonio' },
+    { id: 'w-growth', lang: 'en', cefr: 'B1', topic: 'business', text: 'sustainable growth', translation: 'crecimiento sostenible' },
+    { id: 'w-checkin', lang: 'en', cefr: 'A2', topic: 'travel', text: 'check in at the hotel', translation: 'hacer el check-in en el hotel' },
+    { id: 'w-energy', lang: 'en', cefr: 'B1', topic: 'science', text: 'renewable energy sources', translation: 'fuentes de energía renovable' },
+    { id: 'w-maison', lang: 'fr', cefr: 'A1', topic: 'home', text: 'la maison', translation: 'la casa' },
+    { id: 'w-breakfast', lang: 'en', cefr: 'A1', topic: 'food', text: 'have breakfast', translation: 'desayunar' },
+    { id: 'w-appointment', lang: 'en', cefr: 'A2', topic: 'health', text: 'book an appointment', translation: 'pedir una cita' },
+    { id: 'w-deadline', lang: 'en', cefr: 'B2', topic: 'work', text: 'meet a deadline', translation: 'cumplir un plazo de entrega' },
+    { id: 'w-gare', lang: 'fr', cefr: 'A2', topic: 'travel', text: 'la gare', translation: 'la estación de tren' },
+    { id: 'w-critical', lang: 'en', cefr: 'B1', topic: 'education', text: 'critical thinking', translation: 'pensamiento crítico' },
+    { id: 'w-art', lang: 'en', cefr: 'B2', topic: 'culture', text: 'art exhibition', translation: 'exposición de arte' },
+    { id: 'w-negotiate', lang: 'en', cefr: 'C1', topic: 'business', text: 'to negotiate terms', translation: 'negociar las condiciones' },
+    { id: 'w-biodiversity', lang: 'en', cefr: 'C1', topic: 'science', text: 'protect biodiversity', translation: 'proteger la biodiversidad' },
+    { id: 'w-commute', lang: 'en', cefr: 'B1', topic: 'work', text: 'daily commute', translation: 'desplazamiento diario' },
+    { id: 'w-fluent', lang: 'en', cefr: 'B2', topic: 'education', text: 'become fluent', translation: 'llegar a tener fluidez' },
+    { id: 'w-recipe', lang: 'en', cefr: 'A2', topic: 'food', text: 'follow a recipe', translation: 'seguir una receta' },
+    { id: 'w-library', lang: 'en', cefr: 'A1', topic: 'education', text: 'public library', translation: 'biblioteca pública' },
+    { id: 'w-treaty', lang: 'en', cefr: 'C1', topic: 'politics', text: 'sign a treaty', translation: 'firmar un tratado' },
+    { id: 'w-freelance', lang: 'en', cefr: 'B2', topic: 'work', text: 'freelance designer', translation: 'diseñador freelance' },
+    { id: 'w-boulangerie', lang: 'fr', cefr: 'A1', topic: 'food', text: 'la boulangerie', translation: 'la panadería' },
+    { id: 'w-zeitgeist', lang: 'en', cefr: 'C2', topic: 'culture', text: 'capture the zeitgeist', translation: 'capturar el espíritu de la época' },
+    { id: 'w-empathy', lang: 'en', cefr: 'B2', topic: 'health', text: 'show empathy', translation: 'mostrar empatía' },
+    { id: 'w-haus', lang: 'de', cefr: 'A1', topic: 'home', text: 'das Haus', translation: 'la casa' },
+    { id: 'w-arbeit', lang: 'de', cefr: 'A2', topic: 'work', text: 'die Arbeit', translation: 'el trabajo' },
+    { id: 'w-reise', lang: 'de', cefr: 'B1', topic: 'travel', text: 'die Reise', translation: 'el viaje' },
+    { id: 'w-vaer', lang: 'no', cefr: 'A1', topic: 'nature', text: 'været', translation: 'el tiempo meteorológico' },
+    { id: 'w-koulu', lang: 'fi', cefr: 'A2', topic: 'education', text: 'koulu', translation: 'la escuela' },
+    { id: 'w-annyeong', lang: 'ko', cefr: 'A1', topic: 'social', text: '안녕하세요', translation: 'hola / buenos días' },
+    { id: 'w-rabota', lang: 'ru', cefr: 'A2', topic: 'work', text: 'работа', translation: 'trabajo' },
+    { id: 'w-mangiare', lang: 'it', cefr: 'A1', topic: 'food', text: 'mangiare', translation: 'comer' },
+    { id: 'w-hej', lang: 'dk', cefr: 'A1', topic: 'social', text: 'hej', translation: 'hola' },
+    { id: 'w-thalassa', lang: 'gr', cefr: 'B1', topic: 'culture', text: 'Θάλασσα', translation: 'el mar' },
+    { id: 'w-gongzuo', lang: 'zh', cefr: 'A2', topic: 'work', text: '工作', translation: 'trabajo' },
+    { id: 'w-praia', lang: 'pt', cefr: 'A1', topic: 'travel', text: 'a praia', translation: 'la playa' },
+    { id: 'w-hej-sv', lang: 'sv', cefr: 'A1', topic: 'social', text: 'hej', translation: 'hola' },
+    { id: 'w-arigato', lang: 'ja', cefr: 'A1', topic: 'social', text: 'ありがとう', translation: 'gracias' },
+    { id: 'w-zdravey', lang: 'bg', cefr: 'A1', topic: 'social', text: 'Здравей', translation: 'hola' },
+    { id: 'w-buna-ro', lang: 'ro', cefr: 'A1', topic: 'social', text: 'buna ziua', translation: 'buenos días' },
+    { id: 'w-dobry-cs', lang: 'cs', cefr: 'A1', topic: 'social', text: 'dobrý den', translation: 'buenos días' },
+    { id: 'w-dobry-sk', lang: 'sk', cefr: 'A1', topic: 'social', text: 'dobrý deň', translation: 'buenos días' },
+    { id: 'w-jonapot', lang: 'hu', cefr: 'A1', topic: 'social', text: 'jó napot', translation: 'buenos días' },
+    { id: 'w-marhaba', lang: 'ar', cefr: 'A1', topic: 'social', text: 'مرحبا', translation: 'hola' },
+    { id: 'w-xinchao', lang: 'vi', cefr: 'A1', topic: 'social', text: 'xin chào', translation: 'hola' },
+    { id: 'w-tr-toplanti', lang: 'tr', cefr: 'B1', topic: 'work', text: 'toplantı', translation: 'reunión' },
+    { id: 'w-id-pengetahuan', lang: 'id', cefr: 'B2', topic: 'education', text: 'pengetahuan', translation: 'conocimiento' },
+    { id: 'w-he-tarbut', lang: 'he', cefr: 'B2', topic: 'culture', text: 'תַּרְבּוּת', translation: 'cultura' },
+    { id: 'w-hi-vyapar', lang: 'hi', cefr: 'B2', topic: 'work', text: 'व्यापार', translation: 'negocio / comercio' },
+    { id: 'w-th-thongthiao', lang: 'th', cefr: 'B1', topic: 'travel', text: 'ท่องเที่ยว', translation: 'viajar / turismo' }
+  ];
 
   const readStoredArray = (key) => {
     try {
@@ -194,10 +277,109 @@
     };
   }
 
+  function getCatalogVocabulary() {
+    const activeLang = localStorage.getItem('lexiLang') || 'en';
+    return CATALOG_VOCABULARY.filter(item => item.lang === activeLang);
+  }
+
+  function getCatalogLevels(items) {
+    return [...new Set(items.map(item => item.cefr))]
+      .sort((left, right) => ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].indexOf(left) - ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].indexOf(right));
+  }
+
+  function getCatalogTopics(items) {
+    const presentTopics = new Set(items.map(item => item.topic === 'cultura' ? 'culture' : item.topic));
+    return CATALOG_TOPIC_ORDER.filter(topic => presentTopics.has(topic) || TOPIC_OPTION_LABELS[topic]);
+  }
+
+  function getSelectedSourceType() {
+    return localStorage.getItem(EXERCISE_SOURCE_KEY) || 'catalog';
+  }
+
+  function getSelectedCatalogSource() {
+    const items = getCatalogVocabulary();
+    const levels = getCatalogLevels(items);
+    const topics = getCatalogTopics(items);
+    const selectedLevel = localStorage.getItem(EXERCISE_CATALOG_LEVEL_KEY) || '';
+    const selectedTopic = localStorage.getItem(EXERCISE_CATALOG_TOPIC_KEY) || '';
+    const filteredItems = items.filter(item => {
+      const matchesLevel = !selectedLevel || item.cefr === selectedLevel;
+      const matchesTopic = !selectedTopic || item.topic === selectedTopic;
+      return matchesLevel && matchesTopic;
+    });
+
+    return {
+      id: 'catalog',
+      name: [selectedLevel, selectedTopic].filter(Boolean).join(' · ') || 'Catálogo',
+      items: selectedLevel && selectedTopic ? filteredItems : [],
+      levels,
+      topics,
+      selectedLevel,
+      selectedTopic,
+    };
+  }
+
   function getSelectedVocabularySource() {
+    if (getSelectedSourceType() === 'catalog') {
+      return getSelectedCatalogSource();
+    }
+
     const { library, collections } = getVocabularySources();
-    const selectedId = localStorage.getItem(EXERCISE_COLLECTION_KEY) || 'library';
-    return collections.find(collection => String(collection.id) === selectedId) || library;
+    const selectedId = localStorage.getItem(EXERCISE_COLLECTION_KEY) || '';
+    if (!selectedId) {
+      return { id: 'saved', name: 'Mis listas', items: [] };
+    }
+    return collections.find(collection => String(collection.id) === selectedId) || (selectedId === 'library' ? library : { id: 'saved', name: 'Mis listas', items: [] });
+  }
+
+  function syncSourcePanels() {
+    const sourceType = getSelectedSourceType();
+    document.querySelectorAll('[data-source-tab]').forEach(button => {
+      const isActive = button.dataset.sourceTab === sourceType;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+    document.querySelectorAll('[data-source-panel]').forEach(panel => {
+      panel.hidden = panel.dataset.sourcePanel !== sourceType;
+    });
+  }
+
+  function setupExerciseSourceTabs() {
+    document.querySelectorAll('[data-source-tab]').forEach(button => {
+      button.addEventListener('click', () => {
+        localStorage.setItem(EXERCISE_SOURCE_KEY, button.dataset.sourceTab);
+        syncSourcePanels();
+      });
+    });
+
+    syncSourcePanels();
+  }
+
+  function setupExerciseCatalogSelects() {
+    const levelSelect = document.getElementById('exerciseCatalogLevelSelect');
+    const topicSelect = document.getElementById('exerciseCatalogTopicSelect');
+    if (!levelSelect || !topicSelect) return;
+
+    const catalogSource = getSelectedCatalogSource();
+    const levelOptionLabel = (level) => {
+      if (level === 'A1') return '▮▯▯▯▯ ' + level;
+      if (level === 'A2') return '▮▮▯▯▯ ' + level;
+      if (level === 'B1') return '▮▮▮▯▯ ' + level;
+      if (level === 'B2' || level === 'C1') return '▮▮▮▮▯ ' + level;
+      return '▮▮▮▮▮ ' + level;
+    };
+    levelSelect.innerHTML = '<option value="">Selecciona el nivel</option>' + catalogSource.levels.map(level => '<option value="' + level + '">' + levelOptionLabel(level) + '</option>').join('');
+    topicSelect.innerHTML = '<option value="">Selecciona la categoría</option>' + catalogSource.topics.map(topic => '<option value="' + topic + '">' + (TOPIC_OPTION_LABELS[topic] || topic) + '</option>').join('');
+
+    levelSelect.value = catalogSource.selectedLevel;
+    topicSelect.value = catalogSource.selectedTopic;
+
+    levelSelect.addEventListener('change', () => {
+      localStorage.setItem(EXERCISE_CATALOG_LEVEL_KEY, levelSelect.value);
+    });
+    topicSelect.addEventListener('change', () => {
+      localStorage.setItem(EXERCISE_CATALOG_TOPIC_KEY, topicSelect.value);
+    });
   }
 
   function setupExerciseCollectionSelect() {
@@ -205,22 +387,29 @@
     if (!select) return;
 
     const { library, collections } = getVocabularySources();
-    const selectedId = localStorage.getItem(EXERCISE_COLLECTION_KEY) || 'library';
+    const selectedId = localStorage.getItem(EXERCISE_COLLECTION_KEY) || '';
     const options = [library, ...collections];
 
-    select.innerHTML = options.map(source => {
+    select.innerHTML = '<option value="">Selecciona una colección</option>' + options.map(source => {
       const count = source.items.length;
       const label = source.name + ' (' + count + ')';
       return '<option value="' + String(source.id) + '">' + label + '</option>';
     }).join('');
 
     const hasSelected = options.some(source => String(source.id) === selectedId);
-    select.value = hasSelected ? selectedId : 'library';
+    select.value = hasSelected ? selectedId : '';
     localStorage.setItem(EXERCISE_COLLECTION_KEY, select.value);
 
     select.addEventListener('change', () => {
       localStorage.setItem(EXERCISE_COLLECTION_KEY, select.value);
     });
+  }
+
+  function resetExerciseSelectionState() {
+    localStorage.setItem(EXERCISE_SOURCE_KEY, 'catalog');
+    localStorage.setItem(EXERCISE_CATALOG_LEVEL_KEY, '');
+    localStorage.setItem(EXERCISE_CATALOG_TOPIC_KEY, '');
+    localStorage.setItem(EXERCISE_COLLECTION_KEY, '');
   }
 
   function buildCustomSpeakingItems(items) {
@@ -283,6 +472,9 @@
     });
   })();
 
+  resetExerciseSelectionState();
+  setupExerciseSourceTabs();
+  setupExerciseCatalogSelects();
   setupExerciseCollectionSelect();
 
   const EXERCISES = {

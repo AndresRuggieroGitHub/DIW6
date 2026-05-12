@@ -425,7 +425,7 @@
     drawer.querySelector("#closeUtilityDrawer").addEventListener("click", () => toggleUtilityDrawer(false));
     drawer.querySelector("#logoutAction").addEventListener("click", () => {
       toggleUtilityDrawer(false);
-      showAlert("Sesión cerrada (demo)", "warning");
+      window.location.href = "index.html";
     });
   };
 
@@ -1519,6 +1519,21 @@
     }).join("");
   };
 
+  const applyHeaderTooltips = () => {
+    const headerTooltips = [
+      { selector: '[data-progress-trigger]', label: 'Tu progreso' },
+      { selector: '[data-lang-trigger]',     label: 'Cambiar idioma' },
+      { selector: 'a.icon-btn[href="perfil.html"]', label: 'Perfil' },
+      { selector: '[data-cart-trigger]',     label: 'Mi lista de repaso' },
+      { selector: '[data-utility-trigger]',  label: 'Más opciones' },
+    ];
+    headerTooltips.forEach(({ selector, label }) => {
+      const el = document.querySelector(selector);
+      if (!el) return;
+      el.setAttribute('data-tooltip', label);
+    });
+  };
+
   setupObserver();
   setupNavToggle();
   setupScrollButton();
@@ -1528,6 +1543,7 @@
   setupUtilityMenu();
   setupProgressTrigger();
   setupLangDropdown();
+  applyHeaderTooltips();
   setupAddToCartButtons();
   setupCartPageEvents();
   setupSaveDropdown();
@@ -1536,19 +1552,5 @@
   setupLibraryImport();
   updateCartBadges();
   setupProfileLangChips();
-
-  // Tooltips sutiles en el header
-  const headerTooltips = [
-    { selector: '[data-progress-trigger]', label: 'Mi progreso' },
-    { selector: '[data-lang-trigger]',     label: 'Cambiar idioma' },
-    { selector: 'a.icon-btn[href="perfil.html"]', label: 'Mi perfil' },
-    { selector: '[data-cart-trigger]',     label: 'Mi lista de repaso' },
-    { selector: '[data-utility-trigger]',  label: 'Más opciones' },
-  ];
-  headerTooltips.forEach(({ selector, label }) => {
-    const el = document.querySelector(selector);
-    if (!el) return;
-    el.setAttribute('data-tooltip', label);
-  });
 
 });
