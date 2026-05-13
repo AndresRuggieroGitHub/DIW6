@@ -94,6 +94,43 @@
   };
   const saveCollections = (c) => { localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(c)); };
 
+  const MAIN_LIBRARY_NAME = "Guardado";
+
+  const isWordInMainLibrary = (wordId, library = getLibrary()) =>
+    library.some(item => item.id === wordId);
+
+  const isWordInAnyCollection = (wordId, collections = getCollections()) =>
+    collections.some(collection => (collection.items || []).some(item => item.id === wordId));
+
+  const ensureWordInMainLibrary = (wordId, wordLabel, language) => {
+    const library = getLibrary();
+    if (isWordInMainLibrary(wordId, library)) return false;
+    recordLangActivity(language || getActiveLang());
+    saveLibrary([...library, { id: wordId, label: wordLabel }]);
+    return true;
+  };
+
+  const removeWordFromAllSavedLists = (wordId) => {
+    const library = getLibrary();
+    const collections = getCollections();
+    saveLibrary(library.filter(item => item.id !== wordId));
+    saveCollections(collections.map(collection => ({
+      ...collection,
+      items: (collection.items || []).filter(item => item.id !== wordId)
+    })));
+  };
+
+  const saveWordIntoCollection = (collId, wordEntry) => {
+    const collections = getCollections();
+    const idx = collections.findIndex(collection => collection.id === collId);
+    if (idx === -1) return false;
+    const items = collections[idx].items || [];
+    if (items.some(item => item.id === wordEntry.id)) return true;
+    collections[idx].items = [...items, wordEntry];
+    saveCollections(collections);
+    return true;
+  };
+
   const updateAllBookmarkStates = () => {
     const library = getLibrary();
     const collections = getCollections();
@@ -101,21 +138,21 @@
       const mainBtn = card.querySelector("[data-save-word]");
       if (!mainBtn) return;
       const wordId = card.dataset.wordId;
-      const inMain = library.some(i => i.id === wordId);
-      const inAny = inMain || collections.some(c => (c.items || []).some(i => i.id === wordId));
-      mainBtn.classList.toggle("is-saved", inMain);
+      const inMain = isWordInMainLibrary(wordId, library);
+      const inAny = inMain || isWordInAnyCollection(wordId, collections);
+      mainBtn.classList.toggle("is-saved", inAny);
+      mainBtn.setAttribute("aria-label", inAny ? "Ver opciones de guardado" : `Guardar en ${MAIN_LIBRARY_NAME} y ver opciones`);
       mainBtn.innerHTML = `<i class="bi bi-bookmark${inAny ? "-fill" : ""}"></i>`;
-      // Arrow stays neutral but show filled if saved anywhere but not in main
-      const arrow = card.querySelector("[data-save-pick]");
-      if (arrow) arrow.style.color = (!inMain && inAny) ? "var(--brand-dark)" : "";
     });
   };
 
   const setupSaveDropdown = () => {
     const dropdown = document.getElementById("saveDropdown");
+    const mainSection = document.getElementById("saveDropdownMain");
+    const collectionsDivider = document.getElementById("saveDropdownCollectionsDivider");
     const ddList = document.getElementById("saveDropdownLists");
     const newBtn = document.getElementById("saveDropdownNewBtn");
-    if (!dropdown) return;
+    if (!dropdown || !mainSection || !collectionsDivider) return;
 
     let activeCard = null;
 
@@ -125,39 +162,68 @@
     const renderDropdown = () => {
       if (!activeCard) return;
       const wordId = activeCard.dataset.wordId;
+      const wordLabel = activeCard.dataset.wordLabel ||
+        activeCard.querySelector("h2")?.textContent?.trim() || "Palabra";
+      const wordLanguage = activeCard.dataset.language || getActiveLang();
       const library = getLibrary();
       const collections = getCollections();
       const activeLang = getActiveLang();
-      const all = [
-        { id: "__main__", name: "Mi lista", saved: library.some(i => i.id === wordId) },
-        ...collections.filter(c => !c.lang || c.lang === activeLang).map(c => ({ id: c.id, name: c.name, saved: (c.items || []).some(i => i.id === wordId) }))
-      ];
-      ddList.innerHTML = all.map(c => `
-        <li class="save-dropdown-item" data-coll-id="${c.id}">
-          <span class="save-dropdown-item-icon"><i class="bi bi-bookmark${c.saved ? "-fill" : ""}"></i></span>
-          <span>${c.name}</span>
+      const inMain = isWordInMainLibrary(wordId, library);
+      const visibleCollections = collections
+        .filter(collection => !collection.lang || collection.lang === activeLang)
+        .map(collection => ({
+          id: collection.id,
+          name: collection.name,
+          saved: (collection.items || []).some(item => item.id === wordId)
+        }));
+
+      mainSection.innerHTML = `
+        <div class="save-dropdown-main-row">
+          <span class="save-dropdown-main-label">${MAIN_LIBRARY_NAME}</span>
+          <button class="save-dropdown-main-toggle${inMain ? " is-saved" : ""}" id="saveDropdownMainToggle" type="button" aria-label="${inMain ? `Quitar de ${MAIN_LIBRARY_NAME}` : `Guardar en ${MAIN_LIBRARY_NAME}`}">
+            <i class="bi bi-bookmark${inMain ? "-fill" : ""}"></i>
+          </button>
+        </div>`;
+
+      const mainToggle = document.getElementById("saveDropdownMainToggle");
+      if (mainToggle) {
+        mainToggle.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (isWordInMainLibrary(wordId)) {
+            removeWordFromAllSavedLists(wordId);
+            updateAllBookmarkStates();
+            window.dispatchEvent(new Event("lexi-library-updated"));
+            close();
+            return;
+          }
+          ensureWordInMainLibrary(wordId, wordLabel, wordLanguage);
+          updateAllBookmarkStates();
+          renderDropdown();
+          window.dispatchEvent(new Event("lexi-library-updated"));
+        });
+      }
+
+      collectionsDivider.hidden = visibleCollections.length === 0;
+      ddList.hidden = visibleCollections.length === 0;
+      ddList.innerHTML = visibleCollections.map(collection => `
+        <li>
+          <button class="save-dropdown-item${collection.saved ? " is-saved" : ""}" type="button" data-coll-id="${collection.id}">
+            <span class="save-dropdown-item-name">${collection.name}</span>
+            <span class="save-dropdown-item-status" aria-hidden="true"><i class="bi ${collection.saved ? "bi-check2" : "bi-plus-lg"}"></i></span>
+          </button>
         </li>`).join("");
 
       ddList.querySelectorAll(".save-dropdown-item").forEach(item => {
         item.addEventListener("click", () => {
           const collId = item.dataset.collId;
-          const wordLabel = activeCard.dataset.wordLabel ||
-            activeCard.querySelector("h2")?.textContent?.trim() || "Palabra";
-          if (collId === "__main__") {
-            const lib = getLibrary();
-            const exists = lib.some(i => i.id === wordId);
-            if (exists) saveLibrary(lib.filter(i => i.id !== wordId));
-            else saveLibrary([...lib, { id: wordId, label: wordLabel }]);
-          } else {
-            const colls = getCollections();
-            const idx = colls.findIndex(c => c.id === collId);
-            if (idx === -1) return;
-            const items = colls[idx].items || [];
-            const exists = items.some(i => i.id === wordId);
-            if (exists) colls[idx].items = items.filter(i => i.id !== wordId);
-            else colls[idx].items = [...items, { id: wordId, label: wordLabel }];
-            saveCollections(colls);
-          }
+          const colls = getCollections();
+          const idx = colls.findIndex(collection => collection.id === collId);
+          if (idx === -1) return;
+          const items = colls[idx].items || [];
+          const exists = items.some(itemEntry => itemEntry.id === wordId);
+          if (exists) colls[idx].items = items.filter(itemEntry => itemEntry.id !== wordId);
+          else colls[idx].items = [...items, { id: wordId, label: wordLabel }];
+          saveCollections(colls);
           updateAllBookmarkStates();
           renderDropdown();
           window.dispatchEvent(new Event("lexi-library-updated"));
@@ -188,17 +254,32 @@
     };
 
     newBtn.addEventListener("click", () => {
-      openCreateCollectionModal(() => {
+      const currentCard = activeCard;
+      const wordId = currentCard?.dataset.wordId;
+      const wordLabel = currentCard?.dataset.wordLabel ||
+        currentCard?.querySelector("h2")?.textContent?.trim() || "Palabra";
+      const wordLanguage = currentCard?.dataset.language || getActiveLang();
+      close();
+      openCreateCollectionModal((createdCollection) => {
+        if (createdCollection && wordId) {
+          ensureWordInMainLibrary(wordId, wordLabel, wordLanguage);
+          saveWordIntoCollection(createdCollection.id, { id: wordId, label: wordLabel });
+        }
         updateAllBookmarkStates();
-        renderDropdown();
         window.dispatchEvent(new Event("lexi-library-updated"));
       });
     });
     document.addEventListener("click", e => {
       if (dropdown.hidden) return;
-      if (!dropdown.contains(e.target) && !e.target.closest("[data-save-pick]") && !e.target.closest("[data-save-word]")) close();
+      if (!dropdown.contains(e.target) && !e.target.closest("[data-save-word]")) close();
     });
     document.addEventListener("keydown", e => { if (e.key === "Escape" && !dropdown.hidden) close(); });
+    window.addEventListener("scroll", () => {
+      if (!dropdown.hidden) close();
+    }, true);
+    window.addEventListener("resize", () => {
+      if (!dropdown.hidden) close();
+    });
   };
 
   const cartTotalItems = (cart) => cart.reduce((acc, item) => acc + item.qty, 0);
@@ -633,13 +714,13 @@
       const count = filtered.length;
       const collections = getCollections().filter(c => !c.lang || c.lang === lang);
 
-      // Tarjeta "Mi lista" siempre primera
+      // Tarjeta principal de Guardado siempre primera
       let html = `
-        <div class="list-card" id="mainListCard" role="button" tabindex="0" aria-label="Abrir Mi lista">
+        <div class="list-card" id="mainListCard" role="button" tabindex="0" aria-label="Abrir ${MAIN_LIBRARY_NAME}">
           <div class="list-card-top">
             <div class="list-card-icon"><i class="bi bi-journal-bookmark-fill"></i></div>
             <div>
-              <p class="list-card-name">Mi lista</p>
+              <p class="list-card-name">${MAIN_LIBRARY_NAME}</p>
               <span class="list-card-count">${count} ${count === 1 ? "palabra" : "palabras"}</span>
             </div>
           </div>
@@ -762,7 +843,7 @@
 
     const openDetail = () => {
       activeCollId = null;
-      showDetail("Mi lista");
+      showDetail(MAIN_LIBRARY_NAME);
     };
 
     const openCollDetail = (collId) => {
@@ -903,41 +984,17 @@
     }
 
     cards.forEach((card) => {
-      // Botón principal: si está guardado en cualquier sitio → quita de todo; si no → añade a Mi lista
+      // Botón principal: guarda en Guardado si hace falta y abre opciones
       const mainBtn = card.querySelector("[data-save-word]");
       if (mainBtn) {
         mainBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           const id = card.dataset.wordId;
           const label = card.dataset.wordLabel || card.querySelector("h2")?.textContent?.trim() || "Palabra";
-          const lib = getLibrary();
-          const colls = getCollections();
-          const inMain = lib.some(i => i.id === id);
-          const inAny = inMain || colls.some(c => (c.items || []).some(i => i.id === id));
-          if (inAny) {
-            // Quitar de Mi lista y de todas las colecciones
-            saveLibrary(lib.filter(i => i.id !== id));
-            const updated = colls.map(c => ({ ...c, items: (c.items || []).filter(i => i.id !== id) }));
-            saveCollections(updated);
-          } else {
-            recordLangActivity(card.dataset.language || getActiveLang());
-            saveLibrary([...lib, { id, label }]);
-          }
+          ensureWordInMainLibrary(id, label, card.dataset.language || getActiveLang());
           updateAllBookmarkStates();
           window.dispatchEvent(new Event("lexi-library-updated"));
-        });
-      }
-      // Flecha: abre el dropdown selector de colecciones
-      const pickBtn = card.querySelector("[data-save-pick]");
-      if (pickBtn) {
-        pickBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const dropdown = document.getElementById("saveDropdown");
-          if (dropdown && !dropdown.hidden && window._activeDropdownCard === card) {
-            window._closeSaveDropdown && window._closeSaveDropdown();
-          } else {
-            if (window._openSaveDropdown) window._openSaveDropdown(card, pickBtn);
-          }
+          if (window._openSaveDropdown) window._openSaveDropdown(card, mainBtn);
         });
       }
     });
@@ -985,9 +1042,10 @@
   // ---- Modal de renombrar colección ----
   const createCollection = (name) => {
     const trimmedName = String(name || "").trim();
-    if (!trimmedName) return false;
-    saveCollections([...getCollections(), { id: "coll-" + Date.now(), name: trimmedName, lang: getActiveLang(), items: [] }]);
-    return true;
+    if (!trimmedName) return null;
+    const createdCollection = { id: "coll-" + Date.now(), name: trimmedName, lang: getActiveLang(), items: [] };
+    saveCollections([...getCollections(), createdCollection]);
+    return createdCollection;
   };
 
   const openCreateCollectionModal = (onCreated) => {
@@ -1010,9 +1068,10 @@
     };
     const onConfirm = () => {
       const name = input.value.trim();
-      if (!createCollection(name)) return;
+      const createdCollection = createCollection(name);
+      if (!createdCollection) return;
       close();
-      if (onCreated) onCreated();
+      if (onCreated) onCreated(createdCollection);
       showAlert("Colección creada");
     };
     const onKey = (e) => {
@@ -1112,7 +1171,7 @@
     const cancelBtn  = document.getElementById("clearCollCancel");
     if (!modal || !confirmBtn || !cancelBtn) return;
 
-    if (titleEl) titleEl.textContent = "Vaciar Mi lista";
+    if (titleEl) titleEl.textContent = `Vaciar ${MAIN_LIBRARY_NAME}`;
     if (bodyEl) bodyEl.textContent = "¿Vaciar tu lista principal? Se eliminarán todas las palabras guardadas en este idioma.";
 
     modal.hidden = false;
