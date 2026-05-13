@@ -466,17 +466,17 @@
       </div>
       <div class="utility-drawer-body">
         <div class="utility-drawer-section utility-drawer-section--mobile-nav">
-          <p class="utility-drawer-label">Navegación</p>
           <a class="utility-link${activeClass("app.html")}" href="app.html"><i class="bi bi-house"></i><span>Inicio</span></a>
           <a class="utility-link${activeClass("biblioteca.html")}" href="biblioteca.html"><i class="bi bi-journals"></i><span>Biblioteca</span></a>
           <a class="utility-link${activeClass("ejercicios.html")}" href="ejercicios.html"><i class="bi bi-lightning-charge"></i><span>Ejercicios</span></a>
         </div>
+        <div class="utility-drawer-divider" aria-hidden="true"></div>
         <div class="utility-drawer-section">
-          <p class="utility-drawer-label">Más opciones</p>
           <a class="utility-link utility-link--premium${activeClass("producto.html")}" href="producto.html"><i class="bi bi-gem"></i><span>Premium</span></a>
           <a class="utility-link utility-link--cart${activeClass("carrito.html")}" href="carrito.html"><i class="bi bi-bag"></i><span>Carrito</span><span class="cart-count-badge cart-count-badge--drawer" data-cart-count="0">0</span></a>
           <a class="utility-link${activeClass("contacto.html")}" href="contacto.html"><i class="bi bi-envelope"></i><span>Contacto</span></a>
           <a class="utility-link${activeClass("info.html")}" href="info.html"><i class="bi bi-info-circle"></i><span>Información</span></a>
+          <a class="utility-link utility-link--admin${activeClass("admin.html")}" href="admin.html"><i class="bi bi-shield-lock"></i><span>Administrador</span></a>
           <button class="btn btn-outline-danger utility-logout-btn" type="button" id="logoutAction"><i class="bi bi-box-arrow-right"></i><span>Cerrar sesión</span></button>
         </div>
       </div>

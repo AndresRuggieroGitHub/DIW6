@@ -3,215 +3,288 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Panel visual de administración de Lexi.">
-  <meta name="robots" content="noindex">
+  <meta name="description" content="Panel de administración de Lexi.">
+  <meta name="robots" content="noindex,follow">
   <title>Lexi | Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Inter', system-ui, sans-serif;
-      color: #111827;
-      background: linear-gradient(180deg, #f8fafc 0%, #ffffff 45%, #eef2ff 100%);
-    }
-    .admin-shell {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 280px 1fr;
-    }
-    .admin-sidebar {
-      padding: 2rem 1.4rem;
-      background: #111827;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .admin-logo {
-      color: #fff;
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 1.6rem;
-      letter-spacing: -0.04em;
-    }
-    .admin-badge {
-      display: inline-flex;
-      gap: 0.45rem;
-      align-items: center;
-      width: fit-content;
-      padding: 0.4rem 0.7rem;
-      border-radius: 999px;
-      background: rgba(124, 58, 237, 0.18);
-      color: #ddd6fe;
-      font-size: 0.78rem;
-      font-weight: 700;
-    }
-    .admin-nav { display: grid; gap: 0.5rem; }
-    .admin-nav a {
-      color: #d1d5db;
-      text-decoration: none;
-      padding: 0.8rem 0.95rem;
-      border-radius: 12px;
-      display: flex;
-      gap: 0.7rem;
-      align-items: center;
-    }
-    .admin-nav a.active, .admin-nav a:hover { background: rgba(255,255,255,0.08); color: #fff; }
-    .admin-main {
-      padding: 2rem;
-      display: grid;
-      gap: 1.5rem;
-    }
-    .admin-hero {
-      background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 60%, #c084fc 100%);
-      color: #fff;
-      border-radius: 24px;
-      padding: 2rem;
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 1rem;
-    }
-    .admin-hero h1 {
-      margin: 0 0 0.7rem;
-      font-size: clamp(1.8rem, 3vw, 2.6rem);
-      letter-spacing: -0.05em;
-    }
-    .admin-hero p { margin: 0; line-height: 1.6; color: rgba(255,255,255,0.86); }
-    .admin-pill-row { display: flex; gap: 0.7rem; flex-wrap: wrap; }
-    .admin-pill {
-      padding: 0.55rem 0.8rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.13);
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-    .admin-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
-    }
-    .admin-card {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 20px;
-      padding: 1.2rem;
-      box-shadow: 0 10px 35px rgba(15, 23, 42, 0.05);
-    }
-    .admin-card h2, .admin-card h3 { margin: 0 0 0.45rem; letter-spacing: -0.03em; }
-    .admin-card p { margin: 0; color: #6b7280; line-height: 1.55; }
-    .admin-kpis {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 1rem;
-    }
-    .admin-kpi strong {
-      display: block;
-      font-size: 1.7rem;
-      letter-spacing: -0.05em;
-      margin-bottom: 0.25rem;
-    }
-    .admin-list {
-      margin: 0;
-      padding-left: 1.1rem;
-      color: #374151;
-      line-height: 1.7;
-    }
-    .admin-actions {
-      display: flex;
-      gap: 0.8rem;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-    }
-    .admin-btn {
-      border: none;
-      border-radius: 12px;
-      padding: 0.8rem 1rem;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .admin-btn--primary { background: #7c3aed; color: #fff; }
-    .admin-btn--ghost { background: #fff; color: #111827; border: 1px solid #d1d5db; }
-    @media (max-width: 980px) {
-      .admin-shell { grid-template-columns: 1fr; }
-      .admin-sidebar { display: none; }
-      .admin-hero, .admin-grid, .admin-kpis { grid-template-columns: 1fr; }
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="admin.css">
 </head>
-<body>
+<body class="admin-body">
   <div class="admin-shell">
     <aside class="admin-sidebar">
-      <a class="admin-logo" href="app.html">Lexi</a>
-      <span class="admin-badge"><i class="bi bi-shield-lock"></i> Demo admin</span>
-      <nav class="admin-nav" aria-label="Navegación admin">
-        <a class="active" href="admin.html"><i class="bi bi-grid"></i> Resumen</a>
-        <a href="biblioteca.html"><i class="bi bi-journals"></i> Catálogo</a>
-        <a href="progreso.html"><i class="bi bi-graph-up"></i> Métricas</a>
-        <a href="perfil.html"><i class="bi bi-person"></i> Perfil</a>
-        <a href="login.html"><i class="bi bi-box-arrow-left"></i> Salir</a>
-      </nav>
+      <div class="admin-brand" aria-label="Lexi Admin">
+        <span class="admin-brand__name">Lexi Admin</span>
+        <span class="admin-brand__sub">Control panel</span>
+      </div>
+
+      <div class="admin-sidebar-footer">
+        <a href="app.html"><i class="bi bi-house-door"></i> Abrir app</a>
+        <a href="login.html"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+      </div>
     </aside>
-    <main class="admin-main">
-      <section class="admin-hero">
+
+    <main id="adminMain" class="admin-main">
+      <section class="admin-page-head">
         <div>
-          <span class="admin-badge"><i class="bi bi-lightning-charge"></i> Panel visual previo a Laravel</span>
-          <h1>Admin de Lexi listo para demo y defensa.</h1>
-          <p>Este panel te sirve para enseñar intención de producto: gestión de vocabulario, revisión de progreso y preparación de contenidos, aunque el backend todavía no esté conectado.</p>
-          <div class="admin-actions">
-            <button class="admin-btn admin-btn--primary" type="button">Nuevo lote de palabras</button>
-            <button class="admin-btn admin-btn--ghost" type="button">Revisar idiomas activos</button>
+          <h1>Panel</h1>
+          <p>Resumen general del panel de administración.</p>
+        </div>
+      </section>
+
+      <section class="admin-overview-grid">
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-people"></i></div>
+            <div>
+              <h3>Users</h3>
+              <p>Cuentas, roles y estado de acceso.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>1,284 usuarios</span>
+              <span class="admin-status admin-status--active">Activo</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-users.html">Ver todo</a>
+            </div>
           </div>
-        </div>
-        <div class="admin-pill-row">
-          <span class="admin-pill">MVP: español ↔ inglés</span>
-          <span class="admin-pill">Idiomas extra: catálogo parcial</span>
-          <span class="admin-pill">Auth real: después en Laravel</span>
-          <span class="admin-pill">Importación CSV: siguiente fase</span>
-        </div>
+        </article>
+
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-translate"></i></div>
+            <div>
+              <h3>Languages</h3>
+              <p>Idiomas activos, borradores y prioridad de catálogo.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>12 activos</span>
+              <span class="admin-status admin-status--active">Activo</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-languages.html">Ver todo</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-book"></i></div>
+            <div>
+              <h3>Words</h3>
+              <p>Diccionario global, categorías y nivel.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>18,210 palabras</span>
+              <span class="admin-status admin-status--review">124 pendientes</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-words.html">Ver todo</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-shuffle"></i></div>
+            <div>
+              <h3>Translations</h3>
+              <p>Pares origen-destino y notas de contexto.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>6,680 pares</span>
+              <span class="admin-status admin-status--active">Sincronizado</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-translations.html">Ver todo</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-collection"></i></div>
+            <div>
+              <h3>Collections</h3>
+              <p>Listas de usuario y guardado por idioma.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>9,420 colecciones</span>
+              <span class="admin-status admin-status--active">Operativo</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-collections.html">Ver todo</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-ui-checks-grid"></i></div>
+            <div>
+              <h3>Exercises</h3>
+              <p>Publicación, borradores y disponibilidad.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>240 publicados</span>
+              <span class="admin-status admin-status--draft">36 borradores</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-exercises.html">Ver todo</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-tags"></i></div>
+            <div>
+              <h3>Categories</h3>
+              <p>Taxonomía temática para palabras y ejercicios.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>28 categorías</span>
+              <span class="admin-status admin-status--active">Estructurado</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-categories.html">Ver todo</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-shield-lock"></i></div>
+            <div>
+              <h3>Roles & permissions</h3>
+              <p>Acceso administrativo, editorial y docente.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>6 roles</span>
+              <span class="admin-status admin-status--review">Controlado</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-roles.html">Ver todo</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-cash-stack"></i></div>
+            <div>
+              <h3>Billing</h3>
+              <p>Planes, suscripciones, pagos y uso premium.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>214 usuarios de pago</span>
+              <span class="admin-status admin-status--active">Ingresos</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-billing.html">Ver todo</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-graph-up-arrow"></i></div>
+            <div>
+              <h3>Analytics & progress</h3>
+              <p>Progreso, intentos y uso de aprendizaje.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>92,400 registros</span>
+              <span class="admin-status admin-status--active">Medido</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-analytics.html">Ver todo</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="admin-card">
+          <div class="admin-card__inner admin-entity-card">
+            <div class="admin-entity-card__icon"><i class="bi bi-robot"></i></div>
+            <div>
+              <h3>AI generations</h3>
+              <p>Supervisión de contenido generado y moderación.</p>
+            </div>
+            <div class="admin-entity-card__meta">
+              <span>1,340 generadas</span>
+              <span class="admin-status admin-status--review">Moderado</span>
+            </div>
+            <div class="admin-entity-card__footer">
+              <a class="admin-inline-link" href="admin-ai.html">Ver todo</a>
+            </div>
+          </div>
+        </article>
       </section>
 
-      <section class="admin-kpis">
-        <article class="admin-card admin-kpi"><strong>2</strong><p>idiomas prioritarios para la entrega</p></article>
-        <article class="admin-card admin-kpi"><strong>1</strong><p>catálogo central por consolidar</p></article>
-        <article class="admin-card admin-kpi"><strong>3</strong><p>flujos visuales de acceso cerrados</p></article>
-        <article class="admin-card admin-kpi"><strong>0</strong><p>dependencia obligatoria de API externa</p></article>
-      </section>
+      <section class="admin-bottom">
+        <article class="admin-card">
+          <div class="admin-card__inner">
+            <div class="admin-card__head">
+              <div>
+                <h2>Pendientes de revisión</h2>
+                <p>Tareas que requieren acción desde el panel.</p>
+              </div>
+              <span class="admin-chip admin-chip--amber">5 abiertas</span>
+            </div>
 
-      <section class="admin-grid">
-        <article class="admin-card">
-          <h2>Gestión de vocabulario</h2>
-          <p>Controla qué idiomas tienen catálogo real y cuáles solo aparecen como opción visual.</p>
-          <ul class="admin-list">
-            <li>Activar o desactivar idiomas visibles.</li>
-            <li>Importar términos por CSV o seed.</li>
-            <li>Marcar palabras revisadas o pendientes.</li>
-          </ul>
-        </article>
-        <article class="admin-card">
-          <h2>Usuarios y roles</h2>
-          <p>En el prototipo basta con mostrar la idea de roles. La autenticación real la haces después en Laravel.</p>
-          <ul class="admin-list">
-            <li>Estudiante</li>
-            <li>Profesor</li>
-            <li>Administrador</li>
-          </ul>
-        </article>
-        <article class="admin-card">
-          <h2>Plan sensato para el TFG</h2>
-          <p>Menos amplitud y más solidez.</p>
-          <ul class="admin-list">
-            <li>Login, registro y admin visuales ahora.</li>
-            <li>Laravel después con auth, seeds y CRUD real.</li>
-            <li>API externa solo como apoyo, no como base.</li>
-          </ul>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Área</th>
+                    <th>Tarea</th>
+                    <th>Prioridad</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Words</td>
+                    <td>124 palabras pendientes de revisión editorial</td>
+                    <td>Alta</td>
+                    <td><span class="admin-status admin-status--review">Abierta</span></td>
+                  </tr>
+                  <tr>
+                    <td>Translations</td>
+                    <td>18 conflictos de traducción por resolver</td>
+                    <td>Alta</td>
+                    <td><span class="admin-status admin-status--review">Abierta</span></td>
+                  </tr>
+                  <tr>
+                    <td>Exercises</td>
+                    <td>36 ejercicios en borrador pendientes de publicar</td>
+                    <td>Media</td>
+                    <td><span class="admin-status admin-status--draft">Borrador</span></td>
+                  </tr>
+                  <tr>
+                    <td>AI generations</td>
+                    <td>47 generaciones marcadas para moderación</td>
+                    <td>Media</td>
+                    <td><span class="admin-status admin-status--review">Revisión</span></td>
+                  </tr>
+                  <tr>
+                    <td>Billing</td>
+                    <td>18 pruebas premium próximas a vencer</td>
+                    <td>Baja</td>
+                    <td><span class="admin-status admin-status--active">Seguimiento</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </article>
       </section>
     </main>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

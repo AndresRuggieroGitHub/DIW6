@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gestión de planes, suscripciones y pagos en Lexi Admin.">
+  <meta name="robots" content="noindex,follow">
+  <title>Lexi | Admin Billing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand"><span class="admin-brand__name">Lexi Admin</span><span class="admin-brand__sub">Control panel</span></div>
+      <div class="admin-sidebar-footer">
+        <a href="app.html"><i class="bi bi-house-door"></i> Abrir app</a>
+        <a href="login.html"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+      </div>
+    </aside>
+    <main id="adminMain" class="admin-main">
+      <section class="admin-page-head"><div><h1>Billing</h1><p>Administra planes, suscripciones activas, pagos y uso premium.</p></div><div class="admin-page-actions"><a class="admin-btn admin-btn--ghost" href="admin.html"><i class="bi bi-arrow-left"></i> Panel</a><button class="admin-btn admin-btn--primary" type="button"><i class="bi bi-plus-lg"></i> Añadir</button></div></section>
+      <section class="admin-stats"><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--green">MRR</span><div class="admin-stat__icon"><i class="bi bi-cash-stack"></i></div></div><p class="admin-stat__value">4,860 EUR</p><p class="admin-stat__label">Ingreso mensual recurrente</p><span class="admin-stat__meta"><i class="bi bi-arrow-up"></i> +12.4%</span></article><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--violet">Plans</span><div class="admin-stat__icon"><i class="bi bi-gem"></i></div></div><p class="admin-stat__value">3</p><p class="admin-stat__label">Planes activos</p><span class="admin-stat__meta"><i class="bi bi-stars"></i> Free, Pro, Team</span></article><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--amber">Subscribers</span><div class="admin-stat__icon"><i class="bi bi-credit-card"></i></div></div><p class="admin-stat__value">214</p><p class="admin-stat__label">Suscripciones de pago</p><span class="admin-stat__meta"><i class="bi bi-person-hearts"></i> 18 trial</span></article></section>
+      <section class="admin-card"><div class="admin-card__inner"><div class="admin-card__head"><div><h2>Plans & subscriptions</h2><p>Estado comercial de la plataforma.</p></div><span class="admin-chip admin-chip--green">Ingresos</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Plan</th><th>Price</th><th>Subscribers</th><th>Features</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td>Free</td><td>0 EUR</td><td>1,070</td><td>Basic learning</td><td><span class="admin-status admin-status--active">Activo</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button></div></td></tr><tr><td>Pro</td><td>12 EUR</td><td>182</td><td>Unlimited collections, AI</td><td><span class="admin-status admin-status--active">Activo</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button></div></td></tr><tr><td>Team</td><td>49 EUR</td><td>32</td><td>Teacher tools</td><td><span class="admin-status admin-status--draft">Despliegue</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button></div></td></tr></tbody></table></div></div></section>
+    </main>
+  </div>
+</body>
+</html>

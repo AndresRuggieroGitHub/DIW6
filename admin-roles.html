@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gestión de roles y permisos en Lexi Admin.">
+  <meta name="robots" content="noindex,follow">
+  <title>Lexi | Admin Roles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand"><span class="admin-brand__name">Lexi Admin</span><span class="admin-brand__sub">Control panel</span></div>
+      <div class="admin-sidebar-footer">
+        <a href="app.html"><i class="bi bi-house-door"></i> Abrir app</a>
+        <a href="login.html"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+      </div>
+    </aside>
+    <main id="adminMain" class="admin-main">
+      <section class="admin-page-head"><div><h1>Roles & permissions</h1><p>Define acceso administrativo, editorial y docente.</p></div><div class="admin-page-actions"><a class="admin-btn admin-btn--ghost" href="admin.html"><i class="bi bi-arrow-left"></i> Panel</a><button class="admin-btn admin-btn--primary" type="button"><i class="bi bi-shield-plus"></i> Añadir</button></div></section>
+      <section class="admin-stats"><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--violet">Roles</span><div class="admin-stat__icon"><i class="bi bi-shield-lock"></i></div></div><p class="admin-stat__value">6</p><p class="admin-stat__label">Roles definidos</p><span class="admin-stat__meta"><i class="bi bi-person-badge"></i> Admin, editor, teacher...</span></article><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--amber">Assignments</span><div class="admin-stat__icon"><i class="bi bi-person-check"></i></div></div><p class="admin-stat__value">84</p><p class="admin-stat__label">Asignaciones especiales</p><span class="admin-stat__meta"><i class="bi bi-key"></i> Acceso elevado</span></article></section>
+      <section class="admin-card"><div class="admin-card__inner"><div class="admin-card__head"><div><h2>Role matrix</h2><p>Permisos clave por tipo de usuario.</p></div><span class="admin-chip admin-chip--violet">Seguridad</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Role</th><th>Users</th><th>Content</th><th>Billing</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td>Admin</td><td>Full</td><td>Full</td><td>Full</td><td><span class="admin-status admin-status--active">Activo</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button></div></td></tr><tr><td>Editor</td><td>Read</td><td>Full</td><td>No access</td><td><span class="admin-status admin-status--active">Activo</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button></div></td></tr><tr><td>Teacher</td><td>Read</td><td>Limited</td><td>No access</td><td><span class="admin-status admin-status--review">Revisión</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button></div></td></tr></tbody></table></div></div></section>
+    </main>
+  </div>
+</body>
+</html>

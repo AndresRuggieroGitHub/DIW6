@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gestión de traducciones en Lexi Admin.">
+  <meta name="robots" content="noindex,follow">
+  <title>Lexi | Admin Translations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <a href="#adminMain" class="skip-link">Saltar al contenido</a>
+  <div class="admin-shell"><aside class="admin-sidebar"><div class="admin-brand"><span class="admin-brand__name">Lexi Admin</span><span class="admin-brand__sub">Control panel</span></div><div class="admin-sidebar-note"><strong>Translations</strong><span>Relaciones origen-destino y notas de contexto.</span></div><div class="admin-sidebar-footer"><a href="app.html"><i class="bi bi-house-door"></i> Abrir app</a><a href="login.html"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a></div></aside><main id="adminMain" class="admin-main"><section class="admin-page-head"><div><h1>Translations</h1><p>Administra relaciones entre palabras y controla conflictos de traducción.</p></div><div class="admin-page-actions"><a class="admin-btn admin-btn--ghost" href="admin.html"><i class="bi bi-arrow-left"></i> Panel</a><button class="admin-btn admin-btn--primary" type="button"><i class="bi bi-plus-lg"></i> Añadir</button></div></section><section class="admin-stats"><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--violet">Pairs</span><div class="admin-stat__icon"><i class="bi bi-shuffle"></i></div></div><p class="admin-stat__value">6,680</p><p class="admin-stat__label">Pares de traducción</p><span class="admin-stat__meta"><i class="bi bi-link-45deg"></i> 312 actualizadas hoy</span></article><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--amber">Conflicts</span><div class="admin-stat__icon"><i class="bi bi-exclamation-triangle"></i></div></div><p class="admin-stat__value">18</p><p class="admin-stat__label">Conflictos pendientes</p><span class="admin-stat__meta"><i class="bi bi-hourglass-split"></i> Requieren revisión</span></article></section><section class="admin-card"><div class="admin-card__inner"><div class="admin-card__head"><div><h2>Translation map</h2><p>Relaciones activas entre palabras del diccionario.</p></div></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Source</th><th>Target</th><th>Context</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td>house (en)</td><td>casa (es)</td><td>General</td><td><span class="admin-status admin-status--active">Activa</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button><button type="button">Eliminar</button></div></td></tr><tr><td>house (en)</td><td>maison (fr)</td><td>General</td><td><span class="admin-status admin-status--active">Activa</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button><button type="button">Eliminar</button></div></td></tr><tr><td>bank (en)</td><td>banco (es)</td><td>Ambiguous</td><td><span class="admin-status admin-status--review">Revisión</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button><button type="button">Eliminar</button></div></td></tr></tbody></table></div></div></section></main></div>
+</body>
+</html>

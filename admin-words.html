@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gestión de palabras en Lexi Admin.">
+  <meta name="robots" content="noindex,follow">
+  <title>Lexi | Admin Words</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+  <a href="#adminMain" class="skip-link">Saltar al contenido</a>
+  <div class="admin-shell"><aside class="admin-sidebar"><div class="admin-brand"><span class="admin-brand__name">Lexi Admin</span><span class="admin-brand__sub">Control panel</span></div><div class="admin-sidebar-note"><strong>Words</strong><span>Diccionario global por idioma y control editorial.</span></div><div class="admin-sidebar-footer"><a href="app.html"><i class="bi bi-house-door"></i> Abrir app</a><a href="login.html"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a></div></aside><main id="adminMain" class="admin-main"><section class="admin-page-head"><div><h1>Words</h1><p>Administra palabras, categoría, nivel y calidad del diccionario global.</p></div><div class="admin-page-actions"><a class="admin-btn admin-btn--ghost" href="admin.html"><i class="bi bi-arrow-left"></i> Panel</a><button class="admin-btn admin-btn--primary" type="button"><i class="bi bi-plus-lg"></i> Añadir</button></div></section><section class="admin-stats"><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--amber">Words</span><div class="admin-stat__icon"><i class="bi bi-book"></i></div></div><p class="admin-stat__value">18,210</p><p class="admin-stat__label">Palabras globales</p><span class="admin-stat__meta"><i class="bi bi-hourglass-split"></i> 124 pendientes</span></article><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--green">Revisadas</span><div class="admin-stat__icon"><i class="bi bi-patch-check"></i></div></div><p class="admin-stat__value">17,804</p><p class="admin-stat__label">Entradas validadas</p><span class="admin-stat__meta"><i class="bi bi-check2-circle"></i> Calidad verificada</span></article></section><section class="admin-card"><div class="admin-card__inner"><div class="admin-card__head"><div><h2>Word inventory</h2><p>Listado principal de palabras administrables.</p></div></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Word</th><th>Language</th><th>Category</th><th>Level</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td>house</td><td>English</td><td>Home</td><td>A1</td><td><span class="admin-status admin-status--active">Revisada</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button><button type="button">Eliminar</button></div></td></tr><tr><td>travel</td><td>English</td><td>Travel</td><td>B1</td><td><span class="admin-status admin-status--review">Pendiente</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button><button type="button">Eliminar</button></div></td></tr><tr><td>maison</td><td>Français</td><td>Home</td><td>A1</td><td><span class="admin-status admin-status--draft">Borrador</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Editar</button><button type="button">Eliminar</button></div></td></tr></tbody></table></div></div></section></main></div>
+</body>
+</html>
