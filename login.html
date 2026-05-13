@@ -318,10 +318,12 @@
 
       <h2 class="login-form-title">Inicia sesión</h2>
       <p class="login-form-sub">¡Nos alegra verte de nuevo!</p>
-      <!-- Alert feedback -->
-      <div class="login-alert" id="loginAlert" role="alert"></div>
+      <div class="login-alert login-alert--error show" id="loginAlert" role="alert">
+        Esta pantalla demo ya no valida accesos por sí sola. Usa el login real servido por Laravel en <strong>/login.html</strong>.
+      </div>
 
-      <form id="loginForm" novalidate>
+      <form method="POST" action="/login.html" novalidate>
+        <input type="hidden" name="_token" value="">
         <!-- Email -->
         <div class="login-field">
           <label for="loginEmail">Correo electrónico</label>
@@ -374,49 +376,5 @@
   </section>
 </main>
 
-<script>
-(function () {
-  // Alert helper
-  const showAlert = (msg, type = 'error') => {
-    const el = document.getElementById('loginAlert');
-    el.textContent = msg;
-    el.className = `login-alert show login-alert--${type}`;
-  };
-  const hideAlert = () => {
-    document.getElementById('loginAlert').className = 'login-alert';
-  };
-
-  // Formulario (prototipo: valida localmente)
-  document.getElementById('loginForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    hideAlert();
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-
-    if (!email || !email.includes('@')) {
-      showAlert('Introduce un correo electrónico válido.');
-      document.getElementById('loginEmail').focus();
-      return;
-    }
-    if (password.length < 6) {
-      showAlert('La contraseña debe tener al menos 6 caracteres.');
-      document.getElementById('loginPassword').focus();
-      return;
-    }
-
-    // Simulación: guarda nombre de usuario a partir del email
-    const name = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    try {
-      const user = JSON.parse(localStorage.getItem('lexiUser')) || {};
-      user.name = user.name || name;
-      user.email = email;
-      localStorage.setItem('lexiUser', JSON.stringify(user));
-    } catch { /* noop */ }
-
-    showAlert('¡Bienvenido a Lexi! Redirigiendo…', 'success');
-    setTimeout(() => { window.location.href = 'app.html'; }, 900);
-  });
-})();
-</script>
 </body>
 </html>

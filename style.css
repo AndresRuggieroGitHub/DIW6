@@ -3470,26 +3470,11 @@ iframe {
   }
 
   .nav-toggle {
-    display: grid;
-    place-items: center;
+    display: none !important;
   }
 
   .nav-left {
-    display: none;
-    position: absolute;
-    top: 66px;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-    background: #fff;
-    border-bottom: 1px solid var(--line);
-    padding: 1rem 1.4rem;
-  }
-
-  .nav-left.open {
-    display: flex;
+    display: none !important;
   }
 
   .header {

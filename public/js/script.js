@@ -1,12 +1,21 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
   const isServerRenderedProfile = document.body.hasAttribute("data-server-profile");
   const hasServerLibrary = window.location.pathname.endsWith("/biblioteca.html");
+  const canUseServerProgress = ["/app.html", "/biblioteca.html", "/carrito.html", "/ejercicios.html", "/progreso.html", "/perfil.html"].includes(window.location.pathname);
+  const canUseServerSession = canUseServerProgress;
   let serverLibrary = [];
+  let serverCollections = [];
   let serverLibraryLoadPromise = null;
+  let serverProgressState = null;
+  let serverProgressLoadPromise = null;
+  let serverProgressLanguage = null;
+  let serverSessionState = null;
+  let serverSessionLoadPromise = null;
 
   const CART_KEY = "lexiCart";
   const LIBRARY_KEY = "lexiLibrary";
   const LANG_KEY = "lexiLang";
+  const SESSION_ADMIN_KEY = "lexiIsAdmin";
 
   const LANG_CONFIG = {
     // Europa Occidental (lenguas más estudiadas)
@@ -49,14 +58,13 @@
     id: { flag: "icons/flags/indonesia_flag.svg", label: "Indonesio" },
   };
 
-  const NATIVE_LANG = "es";
-
   const LANG_HISTORY_KEY = "lexiLangHistory";
+  const getNativeLang = () => serverSessionState?.user?.mother_tongue_code || "es";
   const getLangHistory = () => {
     try { return JSON.parse(localStorage.getItem(LANG_HISTORY_KEY) || "[]"); } catch { return []; }
   };
   const recordLangActivity = (lang) => {
-    if (!lang || lang === NATIVE_LANG) return;
+    if (!lang || lang === getNativeLang()) return;
     const hist = getLangHistory();
     if (!hist.find(h => h.lang === lang)) {
       hist.push({ lang, firstAt: Date.now() });
@@ -66,6 +74,40 @@
 
   const getActiveLang = () => localStorage.getItem(LANG_KEY) || "en";
   const setActiveLang = (lang) => localStorage.setItem(LANG_KEY, lang);
+  const setStoredAdminState = (isAdmin) => localStorage.setItem(SESSION_ADMIN_KEY, isAdmin ? "1" : "0");
+  const isCurrentUserAdmin = () => serverSessionState?.user?.is_admin ?? (localStorage.getItem(SESSION_ADMIN_KEY) === "1");
+
+  const syncActiveLangFlag = () => {
+    const flagImg = document.getElementById("activeLangFlag");
+    const cfg = LANG_CONFIG[getActiveLang()] || LANG_CONFIG.en;
+    if (flagImg && cfg) flagImg.src = cfg.flag;
+  };
+
+  const createPageLoader = () => {
+    if (document.getElementById("pageLoader")) return document.getElementById("pageLoader");
+
+    const loader = document.createElement("div");
+    loader.id = "pageLoader";
+    loader.className = "page-loader";
+    loader.hidden = true;
+    loader.innerHTML = `
+      <div class="page-loader__panel" role="status" aria-live="polite">
+        <span class="page-loader__spinner" aria-hidden="true"></span>
+        <span class="page-loader__label">Cargando...</span>
+      </div>
+    `;
+    document.body.appendChild(loader);
+    return loader;
+  };
+
+  const setPageLoading = (isLoading, label = "Cargando...") => {
+    if (!canUseServerSession) return;
+    const loader = createPageLoader();
+    const labelEl = loader.querySelector(".page-loader__label");
+    if (labelEl) labelEl.textContent = label;
+    loader.hidden = !isLoading;
+    document.body.classList.toggle("page-is-loading", isLoading);
+  };
 
   const getXsrfToken = () => {
     const cookie = document.cookie
@@ -95,8 +137,71 @@
     });
   };
 
-  const syncServerLibrary = (items) => {
-    serverLibrary = Array.isArray(items) ? items : [];
+  const applyServerSessionState = (payload) => {
+    serverSessionState = payload || null;
+
+    const activeCode = payload?.active_language?.code;
+    if (activeCode && LANG_CONFIG[activeCode]) {
+      setActiveLang(activeCode);
+      recordLangActivity(activeCode);
+    }
+
+    setStoredAdminState(Boolean(payload?.user?.is_admin));
+    syncActiveLangFlag();
+
+    return serverSessionState;
+  };
+
+  const loadServerSessionState = async () => {
+    if (!canUseServerSession) {
+      syncActiveLangFlag();
+      return null;
+    }
+
+    if (serverSessionState) return serverSessionState;
+    if (serverSessionLoadPromise) return serverSessionLoadPromise;
+
+    serverSessionLoadPromise = libraryApiFetch("/api/session/state")
+      .then((response) => response.ok ? response.json() : Promise.reject(response))
+      .then((payload) => applyServerSessionState(payload))
+      .catch(() => {
+        serverSessionState = null;
+        setStoredAdminState(false);
+        syncActiveLangFlag();
+        return null;
+      })
+      .finally(() => {
+        serverSessionLoadPromise = null;
+      });
+
+    return serverSessionLoadPromise;
+  };
+
+  const persistActiveLanguage = async (lang) => {
+    if (!canUseServerSession) {
+      setActiveLang(lang);
+      syncActiveLangFlag();
+      return true;
+    }
+
+    const response = await libraryApiFetch("/api/session/active-language", {
+      method: "PUT",
+      body: JSON.stringify({ language_code: lang }),
+    });
+
+    if (!response.ok) {
+      throw new Error("active-language-update-failed");
+    }
+
+    const payload = await response.json();
+    applyServerSessionState(payload);
+
+    return true;
+  };
+
+  const syncServerLibraryState = (payload = {}) => {
+    serverLibrary = Array.isArray(payload.items) ? payload.items : [];
+    serverCollections = Array.isArray(payload.collections) ? payload.collections : serverCollections;
     updateAllBookmarkStates();
     window.dispatchEvent(new Event("lexi-library-updated"));
   };
@@ -105,14 +210,14 @@
     if (!hasServerLibrary) return [];
     if (serverLibraryLoadPromise) return serverLibraryLoadPromise;
 
-    serverLibraryLoadPromise = libraryApiFetch(`/api/library/state?language=${encodeURIComponent(getActiveLang())}`)
+    serverLibraryLoadPromise = libraryApiFetch("/api/library/state")
       .then((response) => response.ok ? response.json() : Promise.reject(response))
       .then((payload) => {
-        syncServerLibrary(payload.items || []);
+        syncServerLibraryState(payload || {});
         return payload.items || [];
       })
       .catch(() => {
-        syncServerLibrary([]);
+        syncServerLibraryState({ items: [], collections: [] });
         return [];
       })
       .finally(() => {
@@ -120,6 +225,107 @@
       });
 
     return serverLibraryLoadPromise;
+  };
+
+  const buildLocalProgressState = () => {
+    const library = getLibrary();
+    let stats = {};
+    try { stats = JSON.parse(localStorage.getItem("lexiStats") || "{}"); } catch {}
+
+    const wordsByLanguageMap = {};
+    library.forEach((item) => {
+      const code = item.language || getActiveLang();
+      wordsByLanguageMap[code] = (wordsByLanguageMap[code] || 0) + 1;
+    });
+
+    const wordCount = library.length;
+    const level = getCefrLevel(wordCount);
+    const progressPercent = level.next
+      ? Math.min(100, Math.round(((wordCount - level.min) / (level.next - level.min)) * 100))
+      : 100;
+
+    return {
+      user: {
+        first_name: "",
+        full_name: "",
+      },
+      active_language: {
+        code: getActiveLang(),
+        label: LANG_CONFIG[getActiveLang()]?.label || getActiveLang().toUpperCase(),
+      },
+      summary: {
+        saved_words_total: wordCount,
+        saved_words_active: library.filter((item) => (item.language || getActiveLang()) === getActiveLang()).length,
+        collections_active: getCollections().filter((collection) => !collection.lang || collection.lang === getActiveLang()).length,
+        recent_words: [...library].reverse().slice(0, 6),
+        words_by_language: Object.entries(wordsByLanguageMap).map(([code, count]) => ({
+          code,
+          label: LANG_CONFIG[code]?.label || code.toUpperCase(),
+          count,
+        })),
+      },
+      exercises: {
+        streak: stats.streak || 0,
+        total_completed: (stats.reading || 0) + (stats.listening || 0) + (stats.speaking || 0) + (stats.writing || 0) + (stats.mix || 0),
+        modes: {
+          reading: stats.reading || 0,
+          listening: stats.listening || 0,
+          speaking: stats.speaking || 0,
+          writing: stats.writing || 0,
+          mix: stats.mix || 0,
+        },
+      },
+      level: {
+        key: level.key,
+        label: level.label,
+        description: level.desc,
+        progress_percent: progressPercent,
+        next_target: level.next,
+        next_label: level.next ? (CEFR_LEVELS.find((item) => item.min === level.next)?.label || "") : null,
+        current_words: wordCount,
+      },
+    };
+  };
+
+  const loadServerProgressState = async (forceReload = false) => {
+    const language = getActiveLang();
+
+    if (!forceReload && serverProgressState && serverProgressLanguage === language) {
+      return serverProgressState;
+    }
+
+    if (!canUseServerProgress) {
+      serverProgressState = buildLocalProgressState();
+      serverProgressLanguage = language;
+      return serverProgressState;
+    }
+
+    if (!forceReload && serverProgressLoadPromise && serverProgressLanguage === language) {
+      return serverProgressLoadPromise;
+    }
+
+    serverProgressLanguage = language;
+    serverProgressLoadPromise = libraryApiFetch(`/api/progress/state?language=${encodeURIComponent(language)}`)
+      .then((response) => {
+        const contentType = response.headers.get("content-type") || "";
+        if (!response.ok || !contentType.includes("application/json")) {
+          return Promise.reject(response);
+        }
+        return response.json();
+      })
+      .then((payload) => {
+        serverProgressState = payload;
+        return payload;
+      })
+      .catch(() => {
+        serverProgressState = buildLocalProgressState();
+        return serverProgressState;
+      })
+      .finally(() => {
+        serverProgressLoadPromise = null;
+      });
+
+    return serverProgressLoadPromise;
   };
 
   const getCart = () => {
@@ -157,9 +363,18 @@
 
   const COLLECTIONS_KEY = "lexiCollections";
   const getCollections = () => {
+    if (hasServerLibrary) return serverCollections;
+
     try { return JSON.parse(localStorage.getItem(COLLECTIONS_KEY) || "[]"); } catch { return []; }
   };
-  const saveCollections = (c) => { localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(c)); };
+  const saveCollections = (c) => {
+    if (hasServerLibrary) {
+      serverCollections = Array.isArray(c) ? c : [];
+      return;
+    }
+
+    localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(c));
+  };
 
   const MAIN_LIBRARY_NAME = "Guardado";
 
@@ -196,7 +411,7 @@
         }),
       })
         .then((response) => response.ok ? response.json() : Promise.reject(response))
-        .then((payload) => syncServerLibrary(payload.items || []))
+        .then((payload) => syncServerLibraryState(payload || {}))
         .catch(() => loadServerLibrary());
     }
 
@@ -213,7 +428,7 @@
         method: "DELETE",
       })
         .then((response) => response.ok ? response.json() : Promise.reject(response))
-        .then((payload) => syncServerLibrary(payload.items || []))
+        .then((payload) => syncServerLibraryState(payload || {}))
         .catch(() => loadServerLibrary());
     }
 
@@ -227,6 +442,25 @@
     const collections = getCollections();
     const idx = collections.findIndex(collection => collection.id === collId);
     if (idx === -1) return false;
+
+    if (hasServerLibrary) {
+      const collection = collections[idx];
+      libraryApiFetch(`/api/library/collections/${encodeURIComponent(collId)}/toggle-word`, {
+        method: "POST",
+        body: JSON.stringify({
+          client_key: wordEntry.id,
+          label: wordEntry.label,
+          language: wordEntry.language || collection.lang || getActiveLang(),
+          translation: wordEntry.translation || "",
+          cefr: wordEntry.cefr || "",
+          topic: wordEntry.topic || "",
+        }),
+      })
+        .then((response) => response.ok ? response.json() : Promise.reject(response))
+        .then((payload) => syncServerLibraryState({ items: serverLibrary, collections: payload.collections || [] }))
+        .catch(() => loadServerLibrary());
+    }
+
     const items = collections[idx].items || [];
     if (items.some(item => item.id === wordEntry.id)) return true;
     collections[idx].items = [...items, wordEntry];
@@ -273,7 +507,6 @@
       const activeLang = getActiveLang();
       const inMain = isWordInMainLibrary(wordId, library);
       const visibleCollections = collections
-        .filter(collection => !collection.lang || collection.lang === activeLang)
         .map(collection => ({
           id: collection.id,
           name: collection.name,
@@ -329,8 +562,25 @@
           const items = colls[idx].items || [];
           const exists = items.some(itemEntry => itemEntry.id === wordId);
           if (exists) colls[idx].items = items.filter(itemEntry => itemEntry.id !== wordId);
-          else colls[idx].items = [...items, { id: wordId, label: wordLabel }];
+          else colls[idx].items = [...items, {
+            id: wordId,
+            label: wordLabel,
+            language: wordLanguage,
+            translation: activeCard.dataset.translation || "",
+            cefr: activeCard.dataset.cefr || "",
+            topic: activeCard.dataset.topic || "",
+          }];
           saveCollections(colls);
+          if (hasServerLibrary) {
+            saveWordIntoCollection(collId, {
+              id: wordId,
+              label: wordLabel,
+              language: wordLanguage,
+              translation: activeCard.dataset.translation,
+              cefr: activeCard.dataset.cefr,
+              topic: activeCard.dataset.topic,
+            });
+          }
           updateAllBookmarkStates();
           renderDropdown();
           window.dispatchEvent(new Event("lexi-library-updated"));
@@ -560,6 +810,9 @@
 
     const currentPage = window.location.pathname.split("/").pop() || "app.html";
     const activeClass = (href) => currentPage === href ? " utility-link--active" : "";
+    const adminLink = isCurrentUserAdmin()
+      ? `<a class="utility-link utility-link--admin${activeClass("admin.html")}" href="admin.html"><i class="bi bi-shield-lock"></i><span>Administrador</span></a>`
+      : "";
 
     const backdrop = document.createElement("div");
     backdrop.className = "utility-drawer-backdrop";
@@ -587,7 +840,7 @@
           <a class="utility-link utility-link--cart${activeClass("carrito.html")}" href="carrito.html"><i class="bi bi-bag"></i><span>Carrito</span><span class="cart-count-badge cart-count-badge--drawer" data-cart-count="0">0</span></a>
           <a class="utility-link${activeClass("contacto.html")}" href="contacto.html"><i class="bi bi-envelope"></i><span>Contacto</span></a>
           <a class="utility-link${activeClass("info.html")}" href="info.html"><i class="bi bi-info-circle"></i><span>Información</span></a>
-          <a class="utility-link utility-link--admin${activeClass("admin.html")}" href="admin.html"><i class="bi bi-shield-lock"></i><span>Administrador</span></a>
+          ${adminLink}
           <button class="btn btn-outline-danger utility-logout-btn" type="button" id="logoutAction"><i class="bi bi-box-arrow-right"></i><span>Cerrar sesión</span></button>
         </div>
       </div>
@@ -600,15 +853,8 @@
     drawer.querySelector("#closeUtilityDrawer").addEventListener("click", () => toggleUtilityDrawer(false));
     drawer.querySelector("#logoutAction").addEventListener("click", () => {
       toggleUtilityDrawer(false);
-      window.location.href = "logout";
+      window.location.href = "/logout";
     });
-  };
-
-  const syncUtilityDrawerForViewport = () => {
-    const mobileNavSection = document.querySelector(".utility-drawer-section--mobile-nav");
-    if (!mobileNavSection) return;
-
-    mobileNavSection.hidden = window.innerWidth > 600;
   };
 
   const toggleUtilityDrawer = (open) => {
@@ -626,9 +872,6 @@
 
   const setupUtilityMenu = () => {
     createUtilityDrawer();
-    syncUtilityDrawerForViewport();
-
-    window.addEventListener("resize", syncUtilityDrawerForViewport);
 
     document.querySelectorAll("[data-utility-trigger]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -1043,7 +1286,7 @@
                   ${topic ? `<span class="topic-tag">${topic}</span>` : ""}
                 </div>
               </div>
-              <button class="remove-saved-btn" type="button" data-remove-saved="${item.id}" aria-label="Eliminar ${item.label}"><i class="bi bi-x"></i></button>
+              <button class="remove-saved-btn" type="button" data-remove-saved="${item.id}" data-remove-label="${item.label}" data-remove-language="${item.language || getActiveLang()}" data-remove-translation="${translation}" data-remove-cefr="${cefr}" data-remove-topic="${topic}" aria-label="Eliminar ${item.label}"><i class="bi bi-x"></i></button>
             </li>`;
           })
           .join("");
@@ -1069,6 +1312,16 @@
         const colls = getCollections();
         const idx = colls.findIndex(c => c.id === activeCollId);
         if (idx !== -1) { colls[idx].items = (colls[idx].items || []).filter(i => i.id !== id); saveCollections(colls); }
+        if (hasServerLibrary) {
+          saveWordIntoCollection(activeCollId, {
+            id,
+            label: btn.dataset.removeLabel || "Palabra",
+            language: btn.dataset.removeLanguage || getActiveLang(),
+            translation: btn.dataset.removeTranslation || "",
+            cefr: btn.dataset.removeCefr || "",
+            topic: btn.dataset.removeTopic || "",
+          });
+        }
       } else {
         saveLibrary(getLibrary().filter((item) => item.id !== id));
       }
@@ -1128,6 +1381,14 @@
         } else {
           openClearMainListModal(() => {
             saveLibrary([]);
+            if (hasServerLibrary) {
+              libraryApiFetch(`/api/library/words?language=${encodeURIComponent(getActiveLang())}`, {
+                method: "DELETE",
+              })
+                .then((response) => response.ok ? response.json() : Promise.reject(response))
+                .then((payload) => syncServerLibraryState(payload || {}))
+                .catch(() => loadServerLibrary());
+            }
             currentPage = 0;
             if (filterInput) filterInput.value = "";
             renderList();
@@ -1183,6 +1444,24 @@
     };
     const onConfirm = () => {
       const name = input.value.trim();
+      if (!name) return;
+
+      if (hasServerLibrary) {
+        libraryApiFetch("/api/library/collections", {
+          method: "POST",
+          body: JSON.stringify({ name, language: getActiveLang() }),
+        })
+          .then((response) => response.ok ? response.json() : Promise.reject(response))
+          .then((payload) => {
+            syncServerLibraryState({ items: serverLibrary, collections: payload.collections || [] });
+            close();
+            if (onCreated) onCreated(payload.collection || null);
+            showAlert("Colección creada");
+          })
+          .catch(() => loadServerLibrary());
+        return;
+      }
+
       const createdCollection = createCollection(name);
       if (!createdCollection) return;
       close();
@@ -1229,6 +1508,15 @@
       const updated = getCollections();
       const idx = updated.findIndex(c => c.id === collId);
       if (idx !== -1) { updated[idx].name = name; saveCollections(updated); }
+      if (hasServerLibrary) {
+        libraryApiFetch(`/api/library/collections/${encodeURIComponent(collId)}`, {
+          method: "PATCH",
+          body: JSON.stringify({ name }),
+        })
+          .then((response) => response.ok ? response.json() : Promise.reject(response))
+          .then((payload) => syncServerLibraryState({ items: serverLibrary, collections: payload.collections || [] }))
+          .catch(() => loadServerLibrary());
+      }
       close();
       if (onSaved) onSaved();
       showAlert("Lista renombrada");
@@ -1265,6 +1553,14 @@
     };
     const onConfirm = () => {
       saveCollections(getCollections().filter(c => c.id !== collId));
+      if (hasServerLibrary) {
+        libraryApiFetch(`/api/library/collections/${encodeURIComponent(collId)}`, {
+          method: "DELETE",
+        })
+          .then((response) => response.ok ? response.json() : Promise.reject(response))
+          .then((payload) => syncServerLibraryState({ items: serverLibrary, collections: payload.collections || [] }))
+          .catch(() => loadServerLibrary());
+      }
       close();
       if (onConfirmed) onConfirmed();
       showAlert("Colección eliminada", "warning");
@@ -1337,6 +1633,14 @@
       const updated = getCollections();
       const i = updated.findIndex(c => c.id === collId);
       if (i !== -1) { updated[i].items = []; saveCollections(updated); }
+      if (hasServerLibrary) {
+        libraryApiFetch(`/api/library/collections/${encodeURIComponent(collId)}/words`, {
+          method: "DELETE",
+        })
+          .then((response) => response.ok ? response.json() : Promise.reject(response))
+          .then((payload) => syncServerLibraryState({ items: serverLibrary, collections: payload.collections || [] }))
+          .catch(() => loadServerLibrary());
+      }
       close();
       if (onConfirmed) onConfirmed();
       showAlert("Lista vaciada", "warning");
@@ -1559,17 +1863,23 @@
   const setupLangDropdown = () => {
     const trigger = document.querySelector("[data-lang-trigger]");
     const dropdown = document.getElementById("langDropdown");
-    const flagImg = document.getElementById("activeLangFlag");
 
-    const applyLang = (lang, saveToStorage = true) => {
+    const applyLang = async (lang, saveToStorage = true) => {
       const cfg = LANG_CONFIG[lang];
       if (!cfg) return;
       if (saveToStorage) {
-        setActiveLang(lang);
-        location.href = location.pathname + location.search;
+        setPageLoading(true, "Cambiando idioma...");
+        try {
+          await persistActiveLanguage(lang);
+          location.href = location.pathname + location.search;
+        } catch {
+          setPageLoading(false);
+          showAlert("No se pudo cambiar el idioma activo.", "danger");
+        }
         return;
       }
       // Initial load: sync saved list with active lang
+      syncActiveLangFlag();
       window.dispatchEvent(new CustomEvent("lexi-lang-changed", { detail: { lang } }));
     };
 
@@ -1577,7 +1887,7 @@
       // Build dropdown items
       dropdown.innerHTML = Object.entries(LANG_CONFIG)
         .map(([code, cfg]) => {
-          const isNative = code === NATIVE_LANG;
+          const isNative = code === getNativeLang();
           return `<button
             class="lang-option${isNative ? " lang-option--native" : ""}"
             type="button"
@@ -1627,6 +1937,11 @@
     { key: "a1", label: "A1", min: 0,  next: 10,    desc: "Principiante" },
   ];
 
+  const PALETTE = [
+    "#7c3aed", "#a855f7", "#4f8ef7", "#2dc98b", "#f9b233",
+    "#f76b4f", "#06b6d4", "#ec4899", "#84cc16", "#f59e0b",
+  ];
+
   const getCefrLevel = (wordCount) =>
     CEFR_LEVELS.find((l) => wordCount >= l.min) || CEFR_LEVELS[CEFR_LEVELS.length - 1];
 
@@ -1671,14 +1986,8 @@
   const renderProgressDrawer = () => {
     const body = document.getElementById("progressDrawerBody");
     if (!body) return;
+    body.innerHTML = `<p style="margin:0;color:var(--muted)">Cargando progreso...</p>`;
 
-    const library = getLibrary();
-    const wordCount = library.length;
-
-    let stats = {};
-    try { stats = JSON.parse(localStorage.getItem("lexiStats") || "{}"); } catch (e) {}
-
-    const streak = stats.streak || 0;
     const modeData = [
       { key: "reading",   label: "Lectura",   icon: "bi-book-half",         color: "#4f8ef7" },
       { key: "listening", label: "Escucha",   icon: "bi-headphones",        color: "#f76b4f" },
@@ -1686,15 +1995,23 @@
       { key: "writing",   label: "Escritura", icon: "bi-pencil-fill",       color: "#a855f7" },
       { key: "mix",       label: "Combinado", icon: "bi-shuffle",           color: "#f9b233" },
     ];
-    const totalEx = modeData.reduce((acc, m) => acc + (stats[m.key] || 0), 0);
 
-    const level = getCefrLevel(wordCount);
-    const pct = level.next
-      ? Math.min(100, Math.round(((wordCount - level.min) / (level.next - level.min)) * 100))
-      : 100;
-    const toNext = level.next ? level.next - wordCount : 0;
+    loadServerProgressState().then((state) => {
+      const streak = state?.exercises?.streak || 0;
+      const wordCount = state?.summary?.saved_words_total || 0;
+      const totalEx = state?.exercises?.total_completed || 0;
+      const level = state?.level || {
+        key: "a1",
+        label: "A1",
+        description: "Principiante",
+        progress_percent: 0,
+        next_target: 10,
+        next_label: "A2",
+        current_words: 0,
+      };
+      const toNext = level.next_target ? Math.max(level.next_target - level.current_words, 0) : 0;
 
-    body.innerHTML = `
+      body.innerHTML = `
       <!-- Racha -->
       <div>
         <p class="pd-section-title">Racha diaria</p>
@@ -1717,9 +2034,9 @@
         <div class="pd-level-row">
           <div class="pd-level-badge cefr-${level.key}">${level.label}</div>
           <div class="pd-level-info">
-            <div class="pd-level-desc">${level.desc}</div>
-            <div class="pd-bar-wrap"><div class="pd-bar" style="width:${pct}%"></div></div>
-            <p class="pd-bar-next">${level.next ? `${toNext} palabra${toNext !== 1 ? "s" : ""} para ${CEFR_LEVELS.find(l => l.min === level.next)?.label || ""}` : "Nivel máximo alcanzado 🎉"}</p>
+            <div class="pd-level-desc">${level.description}</div>
+            <div class="pd-bar-wrap"><div class="pd-bar" style="width:${level.progress_percent || 0}%"></div></div>
+            <p class="pd-bar-next">${level.next_target ? `${toNext} palabra${toNext !== 1 ? "s" : ""} para ${level.next_label || ""}` : "Nivel máximo alcanzado 🎉"}</p>
           </div>
         </div>
       </div>
@@ -1731,13 +2048,175 @@
           ${modeData.map(m => `
             <div class="pd-mode">
               <div class="pd-mode-icon" style="--mc:${m.color}"><i class="bi ${m.icon}"></i></div>
-              <div class="pd-mode-count">${stats[m.key] || 0}</div>
+              <div class="pd-mode-count">${state?.exercises?.modes?.[m.key] || 0}</div>
               <div class="pd-mode-label">${m.label}</div>
             </div>
           `).join("")}
         </div>
       </div>
     `;
+    });
+  };
+
+  const setupDashboardPage = () => {
+    const title = document.querySelector("[data-dashboard-title]");
+    const subtitle = document.querySelector("[data-dashboard-subtitle]");
+    if (!title || !subtitle) return;
+
+    loadServerProgressState().then((state) => {
+      const firstName = state?.user?.first_name || "";
+      const activeLanguage = state?.active_language?.label || "tu idioma";
+      const savedWords = state?.summary?.saved_words_active ?? 0;
+      const collections = state?.summary?.collections_active ?? 0;
+      const level = state?.level?.label || "A1";
+
+      if (firstName) {
+        title.textContent = `Hola, ${firstName}`;
+      }
+
+      subtitle.textContent = `${activeLanguage} activo · ${savedWords} palabra${savedWords === 1 ? "" : "s"} guardada${savedWords === 1 ? "" : "s"} · ${collections} coleccion${collections === 1 ? "" : "es"} · Nivel ${level}`;
+    });
+  };
+
+  const setupProgressPage = () => {
+    const streakNum = document.getElementById("streakNum");
+    if (!streakNum) return;
+
+    let donutChart = null;
+    let barChart = null;
+
+    const renderCharts = (state) => {
+      if (typeof Chart === "undefined") return;
+
+      const byLanguage = state?.summary?.words_by_language || [];
+      const donutCanvas = document.getElementById("langDonutChart");
+      const donutEmpty = document.getElementById("donutEmpty");
+      const barCanvas = document.getElementById("modeBarChart");
+      const barEmpty = document.getElementById("barEmpty");
+      const modeCounts = ["reading", "listening", "speaking", "writing", "mix"].map((key) => state?.exercises?.modes?.[key] || 0);
+
+      if (donutChart) donutChart.destroy();
+      if (barChart) barChart.destroy();
+
+      if (!byLanguage.length) {
+        if (donutCanvas) donutCanvas.hidden = true;
+        if (donutEmpty) donutEmpty.hidden = false;
+      } else if (donutCanvas) {
+        donutCanvas.hidden = false;
+        if (donutEmpty) donutEmpty.hidden = true;
+        donutChart = new Chart(donutCanvas, {
+          type: "doughnut",
+          data: {
+            labels: byLanguage.map((item) => item.label),
+            datasets: [{
+              data: byLanguage.map((item) => item.count),
+              backgroundColor: byLanguage.map((_, index) => PALETTE[index % PALETTE.length]),
+              borderWidth: 2,
+              borderColor: "#fff",
+              hoverOffset: 8,
+            }],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: "bottom", labels: { font: { family: "Inter", size: 12 }, padding: 12, color: "#374151" } },
+              tooltip: { callbacks: { label: (ctx) => ` ${ctx.label}: ${ctx.parsed} ${ctx.parsed === 1 ? "palabra" : "palabras"}` } },
+            },
+            cutout: "62%",
+          },
+        });
+      }
+
+      if (!modeCounts.reduce((total, count) => total + count, 0)) {
+        if (barCanvas) barCanvas.hidden = true;
+        if (barEmpty) barEmpty.hidden = false;
+      } else if (barCanvas) {
+        barCanvas.hidden = false;
+        if (barEmpty) barEmpty.hidden = true;
+        barChart = new Chart(barCanvas, {
+          type: "bar",
+          data: {
+            labels: ["Lectura", "Escucha", "Habla", "Escritura", "Combinado"],
+            datasets: [{
+              data: modeCounts,
+              backgroundColor: ["#4f8ef7", "#f76b4f", "#2dc98b", "#a855f7", "#f9b233"],
+              borderRadius: 8,
+              borderSkipped: false,
+            }],
+          },
+          options: {
+            responsive: true,
+            indexAxis: "y",
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: (ctx) => ` ${ctx.parsed.x} ${ctx.parsed.x === 1 ? "sesión" : "sesiones"}` } },
+            },
+            scales: {
+              x: { grid: { color: "#f3f4f6" }, ticks: { font: { family: "Inter", size: 11 }, color: "#6b7280", stepSize: 1 } },
+              y: { grid: { display: false }, ticks: { font: { family: "Inter", size: 12 }, color: "#374151" } },
+            },
+          },
+        });
+      }
+    };
+
+    const renderPage = () => {
+      loadServerProgressState().then((state) => {
+        const streak = state?.exercises?.streak || 0;
+        const totalWords = state?.summary?.saved_words_total || 0;
+        const level = state?.level || {};
+        const recentWords = state?.summary?.recent_words || [];
+        const activeLanguage = state?.active_language?.label || "?";
+        const recentWordsList = document.getElementById("recentWordsList");
+
+        document.getElementById("streakNum").textContent = streak;
+        document.getElementById("streakFire").textContent = streak > 0 ? "🔥" : "🌱";
+        document.getElementById("streakMsg").textContent = streak > 1
+          ? `¡Llevas ${streak} días seguidos! Sigue así.`
+          : streak === 1
+          ? "¡Buen comienzo! Vuelve mañana para mantener la racha."
+          : "Completa un ejercicio hoy para empezar tu racha.";
+
+        document.getElementById("statWords").textContent = totalWords;
+        document.getElementById("statExDone").textContent = state?.exercises?.total_completed || 0;
+        document.getElementById("statLang").textContent = activeLanguage;
+        document.getElementById("levelBadge").textContent = level.label || "A1";
+        document.getElementById("levelBadge").className = `profile-level-badge cefr-${level.key || "a1"}`;
+        document.getElementById("levelDesc").textContent = level.description || "Estás empezando. ¡Cada palabra cuenta!";
+        document.getElementById("levelBar").style.width = `${level.progress_percent || 0}%`;
+        document.getElementById("levelNext").textContent = level.next_target
+          ? `${level.current_words || 0} / ${level.next_target} palabras para ${level.next_label || ""}`
+          : "¡Nivel máximo alcanzado!";
+
+        document.getElementById("modeReading").textContent = state?.exercises?.modes?.reading || 0;
+        document.getElementById("modeListening").textContent = state?.exercises?.modes?.listening || 0;
+        document.getElementById("modeSpeaking").textContent = state?.exercises?.modes?.speaking || 0;
+        document.getElementById("modeWriting").textContent = state?.exercises?.modes?.writing || 0;
+        document.getElementById("modeMix").textContent = state?.exercises?.modes?.mix || 0;
+
+        if (recentWordsList) {
+          recentWordsList.innerHTML = "";
+          if (!recentWords.length) {
+            recentWordsList.innerHTML = '<li class="profile-words-empty">Aún no has guardado ninguna palabra. <a href="biblioteca.html">Explorar biblioteca</a></li>';
+          } else {
+            recentWords.forEach((item) => {
+              const li = document.createElement("li");
+              li.className = "profile-word-item";
+              li.innerHTML = `<i class="bi bi-bookmark-fill" style="color:var(--brand)"></i> <span>${item.label}</span>`;
+              recentWordsList.appendChild(li);
+            });
+          }
+        }
+
+        renderCharts(state);
+      });
+    };
+
+    renderPage();
+    window.addEventListener("lexi-lang-changed", () => {
+      serverProgressState = null;
+      renderPage();
+    });
   };
 
   const setupProgressTrigger = () => {
@@ -1771,6 +2250,8 @@
     }).join("");
   };
 
+  window.lexiSessionReady = loadServerSessionState();
+
   const applyHeaderTooltips = () => {
     const headerTooltips = [
       { selector: '[data-progress-trigger]', label: 'Tu progreso' },
@@ -1786,30 +2267,44 @@
     });
   };
 
-  setupObserver();
-  setupNavToggle();
-  setupScrollButton();
-  setupKeyboardShortcut();
-  setupActionButtons();
-  setupCartTriggers();
-  setupUtilityMenu();
-  setupProgressTrigger();
-  setupLangDropdown();
-  applyHeaderTooltips();
-  setupAddToCartButtons();
-  setupCartPageEvents();
-  setupSaveDropdown();
-  setupLibrarySearch();
-  setupLibraryList();
-  setupLibraryImport();
-  if (hasServerLibrary) {
-    loadServerLibrary();
-    window.addEventListener("lexi-lang-changed", () => {
-      serverLibrary = [];
-      loadServerLibrary();
-    });
-  }
-  updateCartBadges();
-  setupProfileLangChips();
+  const initializeApp = async () => {
+    if (canUseServerSession) {
+      setPageLoading(true);
+      await window.lexiSessionReady;
+    } else {
+      syncActiveLangFlag();
+    }
+
+    setupObserver();
+    setupNavToggle();
+    setupScrollButton();
+    setupKeyboardShortcut();
+    setupActionButtons();
+    setupCartTriggers();
+    setupUtilityMenu();
+    setupProgressTrigger();
+    setupLangDropdown();
+    applyHeaderTooltips();
+    setupAddToCartButtons();
+    setupCartPageEvents();
+    setupSaveDropdown();
+    setupLibrarySearch();
+    setupLibraryList();
+    setupLibraryImport();
+    if (hasServerLibrary) {
+      await loadServerLibrary();
+      window.addEventListener("lexi-lang-changed", () => {
+        serverLibrary = [];
+        loadServerLibrary();
+      });
+    }
+    setupDashboardPage();
+    setupProgressPage();
+    updateCartBadges();
+    setupProfileLangChips();
+    setPageLoading(false);
+  };
+
+  initializeApp();
 
 });

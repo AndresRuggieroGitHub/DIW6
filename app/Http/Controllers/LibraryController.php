@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Translation;
 use App\Models\User;
+use App\Models\UserCollection;
 use App\Models\UserWord;
 use App\Models\Word;
 use Illuminate\Http\JsonResponse;
@@ -22,6 +23,7 @@ class LibraryController extends Controller
 
         return response()->json([
             'items' => $this->libraryItems($request->user(), $validated['language'] ?? null),
+            'collections' => $this->collectionItems($request->user()),
         ]);
     }
 
@@ -55,6 +57,7 @@ class LibraryController extends Controller
 
         return response()->json([
             'items' => $this->libraryItems($request->user(), $validated['language']),
+            'collections' => $this->collectionItems($request->user(), $validated['language']),
         ]);
     }
 
@@ -67,10 +70,17 @@ class LibraryController extends Controller
                 ->where('user_id', $request->user()->id)
                 ->where('word_id', $wordId)
                 ->delete();
+
+            UserCollection::query()
+                ->where('user_id', $request->user()->id)
+                ->each(function (UserCollection $collection) use ($wordId) {
+                    $collection->words()->detach($wordId);
+                });
         }
 
         return response()->json([
             'items' => $this->libraryItems($request->user(), $request->query('language')),
+            'collections' => $this->collectionItems($request->user(), $request->query('language')),
         ]);
     }
 
@@ -96,6 +106,140 @@ class LibraryController extends Controller
 
         return response()->json([
             'items' => $this->libraryItems($request->user(), $validated['language']),
+            'collections' => $this->collectionItems($request->user(), $validated['language']),
+        ]);
+    }
+
+    public function clearLibrary(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'language' => ['required', Rule::exists('languages', 'code')],
+        ]);
+
+        $wordIds = UserWord::query()
+            ->where('user_id', $request->user()->id)
+            ->whereHas('word', function ($query) use ($validated) {
+                $query->where('language_code', $validated['language']);
+            })
+            ->pluck('word_id')
+            ->all();
+
+        UserWord::query()
+            ->where('user_id', $request->user()->id)
+            ->whereIn('word_id', $wordIds)
+            ->delete();
+
+        if ($wordIds !== []) {
+            UserCollection::query()
+                ->where('user_id', $request->user()->id)
+                ->where('language_code', $validated['language'])
+                ->each(function (UserCollection $collection) use ($wordIds) {
+                    $collection->words()->detach($wordIds);
+                });
+        }
+
+        return response()->json([
+            'items' => $this->libraryItems($request->user(), $validated['language']),
+            'collections' => $this->collectionItems($request->user(), $validated['language']),
+        ]);
+    }
+
+    public function storeCollection(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:120'],
+            'language' => ['required', Rule::exists('languages', 'code')],
+        ]);
+
+        $collection = UserCollection::query()->create([
+            'user_id' => $request->user()->id,
+            'language_code' => $validated['language'],
+            'name' => trim($validated['name']),
+            'is_default' => false,
+        ]);
+
+        return response()->json([
+            'collection' => [
+                'id' => (string) $collection->id,
+                'name' => $collection->name,
+                'lang' => $collection->language_code,
+                'items' => [],
+            ],
+            'collections' => $this->collectionItems($request->user(), $validated['language']),
+        ]);
+    }
+
+    public function updateCollection(Request $request, UserCollection $collection): JsonResponse
+    {
+        abort_unless($collection->user_id === $request->user()->id, 404);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:120'],
+        ]);
+
+        $collection->update([
+            'name' => trim($validated['name']),
+        ]);
+
+        return response()->json([
+            'collections' => $this->collectionItems($request->user(), $collection->language_code),
+        ]);
+    }
+
+    public function destroyCollection(Request $request, UserCollection $collection): JsonResponse
+    {
+        abort_unless($collection->user_id === $request->user()->id, 404);
+
+        $language = $collection->language_code;
+        $collection->delete();
+
+        return response()->json([
+            'collections' => $this->collectionItems($request->user(), $language),
+        ]);
+    }
+
+    public function clearCollection(Request $request, UserCollection $collection): JsonResponse
+    {
+        abort_unless($collection->user_id === $request->user()->id, 404);
+
+        $collection->words()->detach();
+
+        return response()->json([
+            'collections' => $this->collectionItems($request->user(), $collection->language_code),
+        ]);
+    }
+
+    public function toggleCollectionWord(Request $request, UserCollection $collection): JsonResponse
+    {
+        abort_unless($collection->user_id === $request->user()->id, 404);
+
+        $validated = $request->validate([
+            'client_key' => ['required', 'string', 'max:120'],
+            'label' => ['required', 'string', 'max:255'],
+            'language' => ['required', Rule::exists('languages', 'code')],
+            'translation' => ['nullable', 'string', 'max:255'],
+            'cefr' => ['nullable', 'string', 'max:2'],
+            'topic' => ['nullable', 'string', 'max:80'],
+        ]);
+
+        $word = $this->upsertWord(
+            $validated['client_key'],
+            $validated['label'],
+            $validated['language'],
+            $validated['cefr'] ?? null,
+            $validated['topic'] ?? null
+        );
+
+        $this->upsertTranslation($request->user(), $word, $validated['translation'] ?? null);
+
+        if ($collection->words()->where('words.id', $word->id)->exists()) {
+            $collection->words()->detach($word->id);
+        } else {
+            $collection->words()->syncWithoutDetaching([$word->id]);
+        }
+
+        return response()->json([
+            'collections' => $this->collectionItems($request->user(), $collection->language_code),
         ]);
     }
 
@@ -122,6 +266,37 @@ class LibraryController extends Controller
                 'translation' => $word->translations->first()?->targetWord?->text,
                 'cefr' => $word->cefr_level,
                 'topic' => $word->category?->name,
+            ];
+        })->values()->all();
+    }
+
+    private function collectionItems(User $user, ?string $language = null): array
+    {
+        $query = UserCollection::query()
+            ->with(['words.category', 'words.translations.targetWord'])
+            ->where('user_id', $user->id)
+            ->where('is_default', false)
+            ->orderBy('name');
+
+        if ($language) {
+            $query->where('language_code', $language);
+        }
+
+        return $query->get()->map(function (UserCollection $collection) {
+            return [
+                'id' => (string) $collection->id,
+                'name' => $collection->name,
+                'lang' => $collection->language_code,
+                'items' => $collection->words->map(function (Word $word) {
+                    return [
+                        'id' => $word->client_key,
+                        'label' => $word->text,
+                        'language' => $word->language_code,
+                        'translation' => $word->translations->first()?->targetWord?->text,
+                        'cefr' => $word->cefr_level,
+                        'topic' => $word->category?->name,
+                    ];
+                })->values()->all(),
             ];
         })->values()->all();
     }

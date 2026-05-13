@@ -10,6 +10,7 @@ use App\Models\UserLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
@@ -26,11 +27,21 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        $user = User::query()->where('email', $credentials['email'])->first();
+
+        if (! $user) {
             return back()->withInput($request->only('email'))->withErrors([
-                'email' => 'Las credenciales no son correctas.',
+                'email' => 'No existe ninguna cuenta con ese correo.',
             ]);
         }
+
+        if (! Hash::check($credentials['password'], $user->password)) {
+            return back()->withInput($request->only('email'))->withErrors([
+                'password' => 'La contraseña no es válida.',
+            ]);
+        }
+
+        Auth::login($user, $request->boolean('remember'));
 
         $request->session()->regenerate();
 
@@ -96,6 +107,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login.html');
+        return redirect('/');
     }
 }

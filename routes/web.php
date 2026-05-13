@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProgressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,12 +41,20 @@ $adminStaticPages = [
     'admin-ai' => 'admin-ai.html',
 ];
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
+    if ($request->user()) {
+        return redirect('/app.html');
+    }
+
     return response()->file(base_path('index.html'));
 });
 
 foreach ($publicStaticPages as $slug => $file) {
-    Route::get("/{$file}", function () use ($file) {
+    Route::get("/{$file}", function (Request $request) use ($file) {
+        if ($file === 'index.html' && $request->user()) {
+            return redirect('/app.html');
+        }
+
         return response()->file(base_path($file));
     })->name($slug);
 }
@@ -67,17 +77,33 @@ Route::middleware('auth')->group(function () use ($protectedStaticPages) {
 
     Route::get('/perfil.html', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/perfil.html', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/api/session/state', [ProfileController::class, 'sessionState'])->name('session.state');
+    Route::put('/api/session/active-language', [ProfileController::class, 'updateActiveLanguage'])->name('session.active-language');
     Route::get('/logout', [AuthController::class, 'logout']);
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::delete('/perfil.html', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/api/library/state', [\App\Http\Controllers\LibraryController::class, 'state'])->name('library.state');
+    Route::get('/api/progress/state', [ProgressController::class, 'state'])->name('progress.state');
+    Route::post('/api/exercise-attempts', [ExerciseController::class, 'storeAttempt'])->name('exercise-attempts.store');
     Route::post('/api/library/words', [\App\Http\Controllers\LibraryController::class, 'storeWord'])->name('library.words.store');
+    Route::delete('/api/library/words', [\App\Http\Controllers\LibraryController::class, 'clearLibrary'])->name('library.words.clear');
     Route::delete('/api/library/words/{clientKey}', [\App\Http\Controllers\LibraryController::class, 'destroyWord'])->name('library.words.destroy');
     Route::post('/api/library/import', [\App\Http\Controllers\LibraryController::class, 'import'])->name('library.import');
+    Route::post('/api/library/collections', [\App\Http\Controllers\LibraryController::class, 'storeCollection'])->name('library.collections.store');
+    Route::patch('/api/library/collections/{collection}', [\App\Http\Controllers\LibraryController::class, 'updateCollection'])->name('library.collections.update');
+    Route::delete('/api/library/collections/{collection}', [\App\Http\Controllers\LibraryController::class, 'destroyCollection'])->name('library.collections.destroy');
+    Route::delete('/api/library/collections/{collection}/words', [\App\Http\Controllers\LibraryController::class, 'clearCollection'])->name('library.collections.clear');
+    Route::post('/api/library/collections/{collection}/toggle-word', [\App\Http\Controllers\LibraryController::class, 'toggleCollectionWord'])->name('library.collections.toggle-word');
 });
 
 Route::middleware('auth')->group(function () use ($adminStaticPages) {
     foreach ($adminStaticPages as $slug => $file) {
+        Route::get("/{$slug}", function (Request $request) use ($file) {
+            abort_unless($request->user()?->isAdmin(), 403);
+
+            return response()->file(base_path($file));
+        });
+
         Route::get("/{$file}", function (Request $request) use ($file) {
             abort_unless($request->user()?->isAdmin(), 403);
 

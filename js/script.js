@@ -491,15 +491,8 @@
     drawer.querySelector("#closeUtilityDrawer").addEventListener("click", () => toggleUtilityDrawer(false));
     drawer.querySelector("#logoutAction").addEventListener("click", () => {
       toggleUtilityDrawer(false);
-      window.location.href = "logout";
+      window.location.href = "/logout";
     });
-  };
-
-  const syncUtilityDrawerForViewport = () => {
-    const mobileNavSection = document.querySelector(".utility-drawer-section--mobile-nav");
-    if (!mobileNavSection) return;
-
-    mobileNavSection.hidden = window.innerWidth > 600;
   };
 
   const toggleUtilityDrawer = (open) => {
@@ -517,9 +510,6 @@
 
   const setupUtilityMenu = () => {
     createUtilityDrawer();
-    syncUtilityDrawerForViewport();
-
-    window.addEventListener("resize", syncUtilityDrawerForViewport);
 
     document.querySelectorAll("[data-utility-trigger]").forEach((btn) => {
       btn.addEventListener("click", () => {

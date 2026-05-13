@@ -39,6 +39,8 @@
     .login-alert { padding:0.7rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:500; margin-bottom:1.1rem; }
     .login-alert--error { background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; }
     .login-alert--success { background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; }
+    .login-input.is-invalid { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,0.1); background:#fff; }
+    .login-field-error { display:block; margin-top:0.4rem; font-size:0.8rem; color:#b91c1c; }
     @media (max-width: 860px) { .login-card { grid-template-columns:1fr; } .login-brand-panel,.login-form-panel { padding:2rem; } .login-brand-content { width:100%; max-width:400px; margin:0 auto; } }
     @media (max-width: 640px) { .login-page { padding:0.8rem; place-items:stretch; } .login-card { width:100%; min-height:calc(100vh - 1.6rem); border-radius:20px; box-shadow:0 18px 40px rgba(76, 29, 149, 0.12); } .login-brand-panel { padding:1.1rem 1.1rem 1.35rem; } .login-form-panel { padding:1.35rem 1.1rem 2rem; } .login-brand-content { max-width:none; } .login-brand-headline { font-size:1.45rem; line-height:1.15; } .login-brand-desc { max-width:none; font-size:0.95rem; line-height:1.55; } .login-form-title { font-size:1.6rem; } }
   </style>
@@ -50,7 +52,7 @@
     <div class="login-form-panel"><div class="login-form-wrap">
       <h2 class="login-form-title">Inicia sesión</h2>
       <p class="login-form-sub">¡Nos alegra verte de nuevo!</p>
-      @if ($errors->any())
+      @if ($errors->any() && ! $errors->has('email') && ! $errors->has('password'))
         <div class="login-alert login-alert--error" role="alert">{{ $errors->first() }}</div>
       @endif
       @if (session('status'))
@@ -58,8 +60,8 @@
       @endif
       <form method="POST" action="{{ route('login.attempt') }}" novalidate>
         @csrf
-        <div class="login-field"><label for="loginEmail">Correo electrónico</label><div class="login-input-wrap"><i class="bi bi-envelope"></i><input type="email" id="loginEmail" name="email" class="login-input" placeholder="tú@ejemplo.com" autocomplete="email" value="{{ old('email') }}" required></div></div>
-        <div class="login-field"><label for="loginPassword">Contraseña</label><div class="login-input-wrap"><i class="bi bi-lock"></i><input type="password" id="loginPassword" name="password" class="login-input" placeholder="••••••••" autocomplete="current-password" required></div><a href="{{ route('password.request') }}" class="login-forgot">¿Olvidaste tu contraseña?</a></div>
+        <div class="login-field"><label for="loginEmail">Correo electrónico</label><div class="login-input-wrap"><i class="bi bi-envelope"></i><input type="email" id="loginEmail" name="email" class="login-input{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="tú@ejemplo.com" autocomplete="email" value="{{ old('email') }}" required></div>@error('email')<span class="login-field-error">{{ $message }}</span>@enderror</div>
+        <div class="login-field"><label for="loginPassword">Contraseña</label><div class="login-input-wrap"><i class="bi bi-lock"></i><input type="password" id="loginPassword" name="password" class="login-input{{ $errors->has('password') ? ' is-invalid' : '' }}" placeholder="••••••••" autocomplete="current-password" required></div>@error('password')<span class="login-field-error">{{ $message }}</span>@enderror<a href="{{ route('password.request') }}" class="login-forgot">¿Olvidaste tu contraseña?</a></div>
         <button type="submit" class="login-btn-primary">Entrar</button>
       </form>
       <p class="login-register-note">¿No tienes cuenta? <a href="{{ route('register') }}">Crear cuenta</a></p>

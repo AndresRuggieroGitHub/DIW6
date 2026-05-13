@@ -172,12 +172,24 @@
     es: ['Lectura',     'Escucha',   'Habla',       'Escritura',  'Mix'],
   };
   const BADGE_MODES = ['reading', 'listening', 'speaking', 'writing', 'mix'];
-  const LIBRARY_KEY = 'lexiLibrary';
-  const COLLECTIONS_KEY = 'lexiCollections';
   const EXERCISE_SOURCE_KEY = 'lexiExerciseSource';
   const EXERCISE_COLLECTION_KEY = 'lexiExerciseCollection';
   const EXERCISE_CATALOG_LEVEL_KEY = 'lexiExerciseCatalogLevel';
   const EXERCISE_CATALOG_TOPIC_KEY = 'lexiExerciseCatalogTopic';
+  let serverVocabularyState = { library: { id: 'library', name: 'Guardado', items: [] }, collections: [] };
+
+  function setExerciseCollectionsLoading(isLoading) {
+    const select = document.getElementById('exerciseCollectionSelect');
+    if (!select) return;
+
+    if (isLoading) {
+      select.innerHTML = '<option selected disabled>Cargando listas...</option>';
+      select.disabled = true;
+      return;
+    }
+
+    select.disabled = false;
+  }
   const CATALOG_TOPIC_ORDER = ['travel', 'food', 'work', 'business', 'education', 'health', 'science', 'technology', 'culture', 'social', 'home', 'nature', 'politics', 'sport', 'art'];
   const TOPIC_OPTION_LABELS = {
     travel: '✈ Viajes',
@@ -248,22 +260,59 @@
     { id: 'w-th-thongthiao', lang: 'th', cefr: 'B1', topic: 'travel', text: 'ท่องเที่ยว', translation: 'viajar / turismo' }
   ];
 
-  const readStoredArray = (key) => {
-    try {
-      return JSON.parse(localStorage.getItem(key) || '[]');
-    } catch {
-      return [];
-    }
+  const getActiveLang = () => localStorage.getItem('lexiLang') || 'en';
+
+  const getXsrfToken = () => {
+    const match = document.cookie.match(/(?:^|; )XSRF-TOKEN=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : '';
   };
 
+  const exerciseApiFetch = (url, options = {}) => {
+    const headers = new Headers(options.headers || {});
+    if (!headers.has('Accept')) headers.set('Accept', 'application/json');
+    if (options.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+    const xsrfToken = getXsrfToken();
+    if (xsrfToken && !headers.has('X-XSRF-TOKEN')) headers.set('X-XSRF-TOKEN', xsrfToken);
+
+    return fetch(url, {
+      credentials: 'same-origin',
+      ...options,
+      headers,
+    });
+  };
+
+  async function loadVocabularySources() {
+    setExerciseCollectionsLoading(true);
+
+    try {
+      const response = await exerciseApiFetch('/api/library/state');
+      if (!response.ok) throw new Error('library-state-error');
+      const payload = await response.json();
+      serverVocabularyState = {
+        library: {
+          id: 'library',
+          name: 'Guardado',
+          items: Array.isArray(payload.items) ? payload.items : [],
+        },
+        collections: Array.isArray(payload.collections) ? payload.collections : [],
+      };
+    } catch {
+      serverVocabularyState = {
+        library: { id: 'library', name: 'Guardado', items: [] },
+        collections: [],
+      };
+    } finally {
+      setExerciseCollectionsLoading(false);
+    }
+  }
+
   function getVocabularySources() {
-    const activeLang = localStorage.getItem('lexiLang') || 'en';
-    const libraryItems = readStoredArray(LIBRARY_KEY)
-      .filter(item => !item.lang || item.lang === activeLang);
-    const collections = readStoredArray(COLLECTIONS_KEY).map(collection => ({
+    const activeLang = getActiveLang();
+    const libraryItems = (serverVocabularyState.library?.items || []).filter(item => !item.language || item.language === activeLang);
+    const collections = (serverVocabularyState.collections || []).map(collection => ({
       id: collection.id,
       name: collection.name,
-      items: (collection.items || []).filter(item => !item.lang || item.lang === activeLang),
+      items: (collection.items || []).filter(item => !item.language || item.language === activeLang),
     }));
 
     return {
@@ -278,8 +327,9 @@
   }
 
   function getCatalogVocabulary() {
-    const activeLang = localStorage.getItem('lexiLang') || 'en';
-    return CATALOG_VOCABULARY.filter(item => item.lang === activeLang);
+    const activeLang = getActiveLang();
+    const items = CATALOG_VOCABULARY.filter(item => item.lang === activeLang);
+    return items.length ? items : CATALOG_VOCABULARY.filter(item => item.lang === 'en');
   }
 
   function getCatalogLevels(items) {
@@ -346,11 +396,12 @@
 
   function setupExerciseSourceTabs() {
     document.querySelectorAll('[data-source-tab]').forEach(button => {
-      button.addEventListener('click', () => {
+      button.addEventListener('click', async () => {
         localStorage.setItem(EXERCISE_SOURCE_KEY, button.dataset.sourceTab);
         localStorage.setItem(EXERCISE_CATALOG_LEVEL_KEY, '');
         localStorage.setItem(EXERCISE_CATALOG_TOPIC_KEY, '');
         localStorage.setItem(EXERCISE_COLLECTION_KEY, '');
+        await loadVocabularySources();
         syncSourcePanels();
         setupExerciseCatalogSelects();
         setupExerciseCollectionSelect();
@@ -465,9 +516,25 @@
     return { title: base.title, items: base.items };
   }
 
+  async function registerExerciseAttempt() {
+    try {
+      const source = getSelectedVocabularySource();
+      await exerciseApiFetch('/api/exercise-attempts', {
+        method: 'POST',
+        body: JSON.stringify({
+          mode: currentMode,
+          source_type: getSelectedSourceType(),
+          source_name: source?.name || null,
+        }),
+      });
+    } catch {
+      // noop: no bloquea la UX del ejercicio
+    }
+  }
+
   // Actualizar badges según el idioma activo
   (function updateBadges() {
-    const lang = localStorage.getItem('lexiLang') || 'en';
+    const lang = getActiveLang();
     const labels = SKILL_LABELS[lang] || SKILL_LABELS['en'];
     document.querySelectorAll('.exercise-card[data-mode]').forEach(card => {
       const idx = BADGE_MODES.indexOf(card.dataset.mode);
@@ -477,10 +544,28 @@
     });
   })();
 
-  resetExerciseSelectionState();
-  setupExerciseSourceTabs();
-  setupExerciseCatalogSelects();
-  setupExerciseCollectionSelect();
+  async function bootstrapExercises() {
+    if (window.lexiSessionReady) {
+      try {
+        await window.lexiSessionReady;
+      } catch {}
+    }
+
+    resetExerciseSelectionState();
+    await loadVocabularySources();
+    setupExerciseSourceTabs();
+    setupExerciseCatalogSelects();
+    setupExerciseCollectionSelect();
+  }
+
+  bootstrapExercises();
+
+  window.addEventListener('lexi-lang-changed', async () => {
+    await loadVocabularySources();
+    setupExerciseCatalogSelects();
+    setupExerciseCollectionSelect();
+    syncSourcePanels();
+  });
 
   const EXERCISES = {
     reading: {
@@ -829,29 +914,7 @@
   }
 
   function showCompletion() {
-    // Registrar sesión completada en estadísticas
-    try {
-      const s = JSON.parse(localStorage.getItem('lexiStats') || '{}');
-      s[currentMode] = (s[currentMode] || 0) + 1;
-      const today = new Date().toISOString().slice(0, 10);
-      if (!s.lastVisit) { s.lastVisit = today; s.streak = 1; }
-      else {
-        const diff = Math.round((new Date(today) - new Date(s.lastVisit)) / 86400000);
-        if (diff === 1) { s.streak = (s.streak || 1) + 1; s.lastVisit = today; }
-        else if (diff > 1) { s.streak = 1; s.lastVisit = today; }
-      }
-      localStorage.setItem('lexiStats', JSON.stringify(s));
-      // Registrar idioma como estudiado
-      try {
-        const hKey = 'lexiLangHistory';
-        const studyLang = localStorage.getItem('lexiLang') || 'en';
-        const hist = JSON.parse(localStorage.getItem(hKey) || '[]');
-        if (!hist.find(h => h.lang === studyLang)) {
-          hist.push({ lang: studyLang, firstAt: Date.now() });
-          localStorage.setItem(hKey, JSON.stringify(hist));
-        }
-      } catch (e2) {}
-    } catch (e) {}
+    registerExerciseAttempt();
 
     document.getElementById('exercisePanel').hidden = true;
     const modal = document.getElementById('exCompleteModal');
