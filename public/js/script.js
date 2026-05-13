@@ -1,4 +1,9 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
+  const isServerRenderedProfile = document.body.hasAttribute("data-server-profile");
+  const hasServerLibrary = window.location.pathname.endsWith("/biblioteca.html");
+  let serverLibrary = [];
+  let serverLibraryLoadPromise = null;
+
   const CART_KEY = "lexiCart";
   const LIBRARY_KEY = "lexiLibrary";
   const LANG_KEY = "lexiLang";
@@ -62,6 +67,61 @@
   const getActiveLang = () => localStorage.getItem(LANG_KEY) || "en";
   const setActiveLang = (lang) => localStorage.setItem(LANG_KEY, lang);
 
+  const getXsrfToken = () => {
+    const cookie = document.cookie
+      .split("; ")
+      .find((item) => item.startsWith("XSRF-TOKEN="));
+
+    return cookie ? decodeURIComponent(cookie.split("=")[1]) : "";
+  };
+
+  const libraryApiFetch = async (url, options = {}) => {
+    const method = (options.method || "GET").toUpperCase();
+    const headers = {
+      Accept: "application/json",
+      "X-Requested-With": "XMLHttpRequest",
+      ...(options.headers || {}),
+    };
+
+    if (method !== "GET") {
+      headers["Content-Type"] = "application/json";
+      headers["X-XSRF-TOKEN"] = getXsrfToken();
+    }
+
+    return fetch(url, {
+      credentials: "same-origin",
+      ...options,
+      headers,
+    });
+  };
+
+  const syncServerLibrary = (items) => {
+    serverLibrary = Array.isArray(items) ? items : [];
+    updateAllBookmarkStates();
+    window.dispatchEvent(new Event("lexi-library-updated"));
+  };
+
+  const loadServerLibrary = async () => {
+    if (!hasServerLibrary) return [];
+    if (serverLibraryLoadPromise) return serverLibraryLoadPromise;
+
+    serverLibraryLoadPromise = libraryApiFetch(`/api/library/state?language=${encodeURIComponent(getActiveLang())}`)
+      .then((response) => response.ok ? response.json() : Promise.reject(response))
+      .then((payload) => {
+        syncServerLibrary(payload.items || []);
+        return payload.items || [];
+      })
+      .catch(() => {
+        syncServerLibrary([]);
+        return [];
+      })
+      .finally(() => {
+        serverLibraryLoadPromise = null;
+      });
+
+    return serverLibraryLoadPromise;
+  };
+
   const getCart = () => {
     try {
       const raw = localStorage.getItem(CART_KEY);
@@ -76,6 +136,8 @@
   };
 
   const getLibrary = () => {
+    if (hasServerLibrary) return serverLibrary;
+
     try {
       const raw = localStorage.getItem(LIBRARY_KEY);
       return raw ? JSON.parse(raw) : [];
@@ -85,6 +147,11 @@
   };
 
   const saveLibrary = (items) => {
+    if (hasServerLibrary) {
+      serverLibrary = Array.isArray(items) ? items : [];
+      return;
+    }
+
     localStorage.setItem(LIBRARY_KEY, JSON.stringify(items));
   };
 
@@ -102,11 +169,37 @@
   const isWordInAnyCollection = (wordId, collections = getCollections()) =>
     collections.some(collection => (collection.items || []).some(item => item.id === wordId));
 
-  const ensureWordInMainLibrary = (wordId, wordLabel, language) => {
+  const ensureWordInMainLibrary = (wordId, wordLabel, language, meta = {}) => {
     const library = getLibrary();
     if (isWordInMainLibrary(wordId, library)) return false;
     recordLangActivity(language || getActiveLang());
-    saveLibrary([...library, { id: wordId, label: wordLabel }]);
+
+    saveLibrary([...library, {
+      id: wordId,
+      label: wordLabel,
+      language: language || getActiveLang(),
+      translation: meta.translation || "",
+      cefr: meta.cefr || "",
+      topic: meta.topic || "",
+    }]);
+
+    if (hasServerLibrary) {
+      libraryApiFetch("/api/library/words", {
+        method: "POST",
+        body: JSON.stringify({
+          client_key: wordId,
+          label: wordLabel,
+          language: language || getActiveLang(),
+          translation: meta.translation || "",
+          cefr: meta.cefr || "",
+          topic: meta.topic || "",
+        }),
+      })
+        .then((response) => response.ok ? response.json() : Promise.reject(response))
+        .then((payload) => syncServerLibrary(payload.items || []))
+        .catch(() => loadServerLibrary());
+    }
+
     return true;
   };
 
@@ -114,6 +207,16 @@
     const library = getLibrary();
     const collections = getCollections();
     saveLibrary(library.filter(item => item.id !== wordId));
+
+    if (hasServerLibrary) {
+      libraryApiFetch(`/api/library/words/${encodeURIComponent(wordId)}?language=${encodeURIComponent(getActiveLang())}`, {
+        method: "DELETE",
+      })
+        .then((response) => response.ok ? response.json() : Promise.reject(response))
+        .then((payload) => syncServerLibrary(payload.items || []))
+        .catch(() => loadServerLibrary());
+    }
+
     saveCollections(collections.map(collection => ({
       ...collection,
       items: (collection.items || []).filter(item => item.id !== wordId)
@@ -196,7 +299,11 @@
             close();
             return;
           }
-          ensureWordInMainLibrary(wordId, wordLabel, wordLanguage);
+          ensureWordInMainLibrary(wordId, wordLabel, wordLanguage, {
+            translation: activeCard.dataset.translation,
+            cefr: activeCard.dataset.cefr,
+            topic: activeCard.dataset.topic,
+          });
           updateAllBookmarkStates();
           renderDropdown();
           window.dispatchEvent(new Event("lexi-library-updated"));
@@ -262,7 +369,11 @@
       close();
       openCreateCollectionModal((createdCollection) => {
         if (createdCollection && wordId) {
-          ensureWordInMainLibrary(wordId, wordLabel, wordLanguage);
+          ensureWordInMainLibrary(wordId, wordLabel, wordLanguage, {
+            translation: currentCard?.dataset.translation,
+            cefr: currentCard?.dataset.cefr,
+            topic: currentCard?.dataset.topic,
+          });
           saveWordIntoCollection(createdCollection.id, { id: wordId, label: wordLabel });
         }
         updateAllBookmarkStates();
@@ -489,7 +600,7 @@
     drawer.querySelector("#closeUtilityDrawer").addEventListener("click", () => toggleUtilityDrawer(false));
     drawer.querySelector("#logoutAction").addEventListener("click", () => {
       toggleUtilityDrawer(false);
-      window.location.href = "index.html";
+      window.location.href = "logout";
     });
   };
 
@@ -991,7 +1102,11 @@
           e.stopPropagation();
           const id = card.dataset.wordId;
           const label = card.dataset.wordLabel || card.querySelector("h2")?.textContent?.trim() || "Palabra";
-          ensureWordInMainLibrary(id, label, card.dataset.language || getActiveLang());
+          ensureWordInMainLibrary(id, label, card.dataset.language || getActiveLang(), {
+            translation: card.dataset.translation,
+            cefr: card.dataset.cefr,
+            topic: card.dataset.topic,
+          });
           updateAllBookmarkStates();
           window.dispatchEvent(new Event("lexi-library-updated"));
           if (window._openSaveDropdown) window._openSaveDropdown(card, mainBtn);
@@ -1263,21 +1378,39 @@
       const saved = getLibrary();
       const seen = new Set(saved.map((item) => normalize(item.label)));
       let added = 0;
+      const importedEntries = [];
 
       words.forEach((rawLabel) => {
         const label = rawLabel.trim();
         const key = normalize(label);
         if (!key || seen.has(key)) return;
 
+        const suffix = key.replace(/[^a-z0-9]+/g, "-") || Array.from(label).map((char) => char.charCodeAt(0).toString(16)).join("").slice(0, 24);
+        const clientKey = `custom-${language}-${suffix}`;
+
         saved.push({
-          id: `custom-${language}-${key.replace(/[^a-z0-9]+/g, "-")}`,
-          label
+          id: clientKey,
+          label,
+          language,
+          translation: "",
         });
+        importedEntries.push({ client_key: clientKey, label });
         seen.add(key);
         added += 1;
       });
 
       saveLibrary(saved);
+
+      if (hasServerLibrary && importedEntries.length) {
+        libraryApiFetch("/api/library/import", {
+          method: "POST",
+          body: JSON.stringify({ language, entries: importedEntries }),
+        })
+          .then((response) => response.ok ? response.json() : Promise.reject(response))
+          .then((payload) => syncServerLibrary(payload.items || []))
+          .catch(() => loadServerLibrary());
+      }
+
       return added;
     };
 
@@ -1315,7 +1448,7 @@
         const reader = new FileReader();
         reader.onload = () => {
           const words = parseWords(reader.result);
-          const added = addWords(words, manualLang?.value || "en");
+          const added = addWords(words, getActiveLang());
           showAlert(`${added} palabras importadas`, added ? "success" : "warning");
           window.dispatchEvent(new Event("lexi-library-updated"));
         };
@@ -1326,14 +1459,12 @@
     if (importPasteBtn && pasteInput) {
       importPasteBtn.addEventListener("click", () => {
         const words = parseWords(pasteInput.value);
-        const added = addWords(words, manualLang?.value || "en");
+        const added = addWords(words, getActiveLang());
         showAlert(`${added} palabras importadas`, added ? "success" : "warning");
         if (added) pasteInput.value = "";
         window.dispatchEvent(new Event("lexi-library-updated"));
       });
     }
-
-    window.addEventListener("lexi-library-updated", renderList);
   };
 
   const setupLibrarySearch = () => {
@@ -1622,7 +1753,7 @@
 
   const setupProfileLangChips = () => {
     const container = document.getElementById("langChips");
-    if (!container) return;
+    if (!container || isServerRenderedProfile) return;
     const activeLang = getActiveLang();
     const hist = getLangHistory().sort((a, b) => a.firstAt - b.firstAt);
     if (!hist.length) {
@@ -1671,6 +1802,13 @@
   setupLibrarySearch();
   setupLibraryList();
   setupLibraryImport();
+  if (hasServerLibrary) {
+    loadServerLibrary();
+    window.addEventListener("lexi-lang-changed", () => {
+      serverLibrary = [];
+      loadServerLibrary();
+    });
+  }
   updateCartBadges();
   setupProfileLangChips();
 

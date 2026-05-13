@@ -1,4 +1,6 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
+  const isServerRenderedProfile = document.body.hasAttribute("data-server-profile");
+
   const CART_KEY = "lexiCart";
   const LIBRARY_KEY = "lexiLibrary";
   const LANG_KEY = "lexiLang";
@@ -489,7 +491,7 @@
     drawer.querySelector("#closeUtilityDrawer").addEventListener("click", () => toggleUtilityDrawer(false));
     drawer.querySelector("#logoutAction").addEventListener("click", () => {
       toggleUtilityDrawer(false);
-      window.location.href = "index.html";
+      window.location.href = "logout";
     });
   };
 
@@ -1622,7 +1624,7 @@
 
   const setupProfileLangChips = () => {
     const container = document.getElementById("langChips");
-    if (!container) return;
+    if (!container || isServerRenderedProfile) return;
     const activeLang = getActiveLang();
     const hist = getLangHistory().sort((a, b) => a.firstAt - b.firstAt);
     if (!hist.length) {
