@@ -326,6 +326,73 @@ class CoreBackendFlowsTest extends TestCase
         $response->assertSee('50%');
     }
 
+    public function test_admin_exercises_page_shows_normalized_template_inventory(): void
+    {
+        $user = User::factory()->create([
+            'name' => 'Admin',
+            'surname' => 'Templates',
+        ]);
+        $this->attachAdminRole($user);
+
+        $templateId = DB::table('exercise_templates')->insertGetId([
+            'type' => 'reading',
+            'title' => 'Travel Basics Reading',
+            'source' => 'manual',
+            'schema_version' => 1,
+            'payload' => json_encode(['topic' => 'travel']),
+            'created_by' => $user->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $itemId = DB::table('exercise_items')->insertGetId([
+            'template_id' => $templateId,
+            'item_order' => 1,
+            'item_type' => 'choice',
+            'question_text' => 'Traduce "house" al español.',
+            'correct_answer' => 'casa',
+            'payload' => json_encode(['hint' => 'vocabulario cotidiano']),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('exercise_options')->insert([
+            [
+                'item_id' => $itemId,
+                'option_text' => 'casa',
+                'is_correct' => true,
+                'option_order' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'item_id' => $itemId,
+                'option_text' => 'perro',
+                'is_correct' => false,
+                'option_order' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        DB::table('exercise_instances')->insert([
+            'user_id' => $user->id,
+            'template_id' => $templateId,
+            'assigned_language_code' => null,
+            'generated_payload' => json_encode(['audience' => 'admin-demo']),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user)->get('/admin-exercises.html');
+
+        $response->assertOk();
+        $response->assertSee('Template inventory');
+        $response->assertSee('Travel Basics Reading');
+        $response->assertSee('1');
+        $response->assertSee('Admin Templates');
+    }
+
     public function test_admin_words_pagination_uses_custom_labels_without_default_laravel_copy(): void
     {
         $this->seedLanguages();

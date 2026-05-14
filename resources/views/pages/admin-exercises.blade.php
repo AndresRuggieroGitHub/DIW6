@@ -41,6 +41,16 @@
 		<p class="admin-stat__label">Respuestas detalladas</p>
 		<span class="admin-stat__meta"><i class="bi bi-bullseye"></i> {{ $stats['accuracy_rate'] !== null ? $stats['accuracy_rate'] . '%' : 'Sin precisión aún' }}</span>
 	</article>
+
+	<article class="admin-card admin-stat">
+		<div class="admin-stat__row">
+			<span class="admin-chip admin-chip--violet">Plantillas</span>
+			<div class="admin-stat__icon"><i class="bi bi-diagram-3"></i></div>
+		</div>
+		<p class="admin-stat__value">{{ number_format($stats['templates']) }}</p>
+		<p class="admin-stat__label">Templates normalizadas</p>
+		<span class="admin-stat__meta"><i class="bi bi-list-ol"></i> {{ number_format($stats['template_items']) }} items</span>
+	</article>
 </section>
 
 <section class="admin-card">
@@ -112,6 +122,57 @@
 				<div>{{ $exercises->onEachSide(1)->links() }}</div>
 			</div>
 		@endif
+	</div>
+</section>
+
+<section class="admin-card">
+	<div class="admin-card__inner">
+		<div class="admin-card__head">
+			<div>
+				<h2>Template inventory</h2>
+				<p>Plantillas normalizadas ya presentes en la base: items, opciones e instancias generadas.</p>
+			</div>
+		</div>
+
+		<div class="admin-table-wrap">
+			<table class="admin-table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Template</th>
+						<th>Type</th>
+						<th>Source</th>
+						<th>Version</th>
+						<th>Items</th>
+						<th>Options</th>
+						<th>Instances</th>
+						<th>Author</th>
+					</tr>
+				</thead>
+				<tbody>
+					@forelse($templates as $template)
+						@php
+							$author = trim(($template->author_name ?? '') . ' ' . ($template->author_surname ?? '')) ?: 'Sistema';
+						@endphp
+						<tr>
+							<td>{{ $template->id }}</td>
+							<td>{{ $template->title ?: 'Sin título' }}</td>
+							<td>{{ ucfirst($template->type) }}</td>
+							<td>{{ $template->source ?: 'manual' }}</td>
+							<td>v{{ $template->schema_version }}</td>
+							<td>{{ number_format($template->items_total) }}</td>
+							<td>{{ number_format($template->options_total) }}</td>
+							<td>{{ number_format($template->instances_total) }}</td>
+							<td>{{ $author }}</td>
+						</tr>
+					@empty
+						<tr>
+							<td colspan="9">No hay plantillas de ejercicios todavía.</td>
+						</tr>
+					@endforelse
+				</tbody>
+			</table>
+		</div>
 	</div>
 </section>
 @endsection

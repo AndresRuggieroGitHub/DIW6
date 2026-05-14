@@ -48,12 +48,49 @@ class AdminExercisesController extends Controller
             ->paginate(20)
             ->withQueryString();
 
+        $templateItemCounts = DB::table('exercise_items')
+            ->select('template_id', DB::raw('count(*) as items_total'))
+            ->groupBy('template_id');
+
+        $templateOptionCounts = DB::table('exercise_items')
+            ->join('exercise_options', 'exercise_options.item_id', '=', 'exercise_items.id')
+            ->select('exercise_items.template_id', DB::raw('count(exercise_options.id) as options_total'))
+            ->groupBy('exercise_items.template_id');
+
+        $templateInstanceCounts = DB::table('exercise_instances')
+            ->select('template_id', DB::raw('count(*) as instances_total'))
+            ->groupBy('template_id');
+
+        $templates = DB::table('exercise_templates')
+            ->leftJoin('users', 'users.id', '=', 'exercise_templates.created_by')
+            ->leftJoinSub($templateItemCounts, 'template_item_counts', fn ($join) => $join->on('exercise_templates.id', '=', 'template_item_counts.template_id'))
+            ->leftJoinSub($templateOptionCounts, 'template_option_counts', fn ($join) => $join->on('exercise_templates.id', '=', 'template_option_counts.template_id'))
+            ->leftJoinSub($templateInstanceCounts, 'template_instance_counts', fn ($join) => $join->on('exercise_templates.id', '=', 'template_instance_counts.template_id'))
+            ->when($search !== '', fn ($query) => $query->where('exercise_templates.title', 'like', '%' . $search . '%'))
+            ->select(
+                'exercise_templates.id',
+                'exercise_templates.title',
+                'exercise_templates.type',
+                'exercise_templates.source',
+                'exercise_templates.schema_version',
+                'users.name as author_name',
+                'users.surname as author_surname',
+                DB::raw('coalesce(template_item_counts.items_total, 0) as items_total'),
+                DB::raw('coalesce(template_option_counts.options_total, 0) as options_total'),
+                DB::raw('coalesce(template_instance_counts.instances_total, 0) as instances_total')
+            )
+            ->orderByDesc('instances_total')
+            ->orderBy('exercise_templates.title')
+            ->limit(12)
+            ->get();
+
         $answersTotal = (int) DB::table('attempt_answers')->count();
         $correctAnswersTotal = (int) DB::table('attempt_answers')->where('is_correct', true)->count();
         $accuracyRate = $answersTotal > 0 ? (int) round(($correctAnswersTotal / $answersTotal) * 100) : null;
 
         return view('pages.admin-exercises', [
             'exercises' => $exercises,
+            'templates' => $templates,
             'filters' => ['q' => $search],
             'stats' => [
                 'published' => DB::table('exercises')->count(),
@@ -61,6 +98,8 @@ class AdminExercisesController extends Controller
                 'attempts' => DB::table('exercise_attempts')->count(),
                 'answers' => $answersTotal,
                 'accuracy_rate' => $accuracyRate,
+                'templates' => DB::table('exercise_templates')->count(),
+                'template_items' => DB::table('exercise_items')->count(),
             ],
         ]);
     }
