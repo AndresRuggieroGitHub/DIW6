@@ -113,6 +113,7 @@ Scripts útiles ya preparados:
 
 - `scripts/mysql-smoke-test.ps1` para migrar, sembrar y comprobar conteos sobre MySQL local.
 - `scripts/serve-mysql-local.ps1` para arrancar Lexi en otro puerto usando MySQL sin tocar `.env`.
+- Ambos scripts aceptan parámetros `-DbUser`, `-DbPassword`, `-DbHost`, `-DbPort` y `-DbName`, útiles para XAMPP o MySQL local existente.
 
 ## ¿Hay que pasar todo a Blade?
 

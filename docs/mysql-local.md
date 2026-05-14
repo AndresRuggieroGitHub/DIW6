@@ -37,6 +37,12 @@ Atajo ya preparado:
 powershell -ExecutionPolicy Bypass -File .\scripts\mysql-smoke-test.ps1
 ```
 
+Si usas XAMPP con `root` y sin password:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\mysql-smoke-test.ps1 -DbUser root -EmptyPassword
+```
+
 ## Arrancar Lexi sobre MySQL sin tocar `.env`
 
 También queda preparado un script para levantar un segundo servidor Laravel usando variables temporales de entorno:
@@ -46,6 +52,12 @@ powershell -ExecutionPolicy Bypass -File .\scripts\serve-mysql-local.ps1
 ```
 
 Por defecto sirve Lexi en `http://127.0.0.1:8001`.
+
+Con XAMPP y `root` sin password:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\serve-mysql-local.ps1 -DbUser root -EmptyPassword
+```
 
 ## Acceso visual
 

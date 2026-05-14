@@ -2114,56 +2114,12 @@
       const savedWords = state?.summary?.saved_words_active ?? 0;
       const collections = state?.summary?.collections_active ?? 0;
       const level = state?.level?.label || "A1";
-      const levelDescription = state?.level?.description || "Estás empezando.";
-      const levelProgress = state?.level?.progress_percent || 0;
-      const totalExercises = state?.exercises?.total_completed || 0;
-      const recentWords = state?.summary?.recent_words || [];
-      const activeLanguageNode = document.querySelector("[data-dashboard-active-language]");
-      const savedWordsNode = document.querySelector("[data-dashboard-saved-words]");
-      const collectionsNode = document.querySelector("[data-dashboard-collections]");
-      const exercisesNode = document.querySelector("[data-dashboard-exercises]");
-      const levelNode = document.querySelector("[data-dashboard-level]");
-      const levelDescriptionNode = document.querySelector("[data-dashboard-level-description]");
-      const levelBarNode = document.querySelector("[data-dashboard-level-bar]");
-      const recentWordsList = document.querySelector("[data-dashboard-recent-words]");
 
       if (firstName) {
         title.textContent = `Hola, ${firstName}`;
       }
 
       subtitle.textContent = `${activeLanguage} activo · ${savedWords} palabra${savedWords === 1 ? "" : "s"} guardada${savedWords === 1 ? "" : "s"} · ${collections} coleccion${collections === 1 ? "" : "es"} · Nivel ${level}`;
-
-      if (activeLanguageNode) activeLanguageNode.textContent = activeLanguage;
-      if (savedWordsNode) savedWordsNode.textContent = savedWords;
-      if (collectionsNode) collectionsNode.textContent = collections;
-      if (exercisesNode) exercisesNode.textContent = totalExercises;
-      if (levelNode) levelNode.textContent = level;
-      if (levelDescriptionNode) levelDescriptionNode.textContent = levelDescription;
-      if (levelBarNode) levelBarNode.style.width = `${levelProgress}%`;
-
-      if (recentWordsList) {
-        recentWordsList.innerHTML = "";
-
-        if (!recentWords.length) {
-          recentWordsList.innerHTML = '<li class="home-dashboard-recent-empty">Aún no has guardado palabras.</li>';
-        } else {
-          recentWords.slice(0, 4).forEach((item) => {
-            const li = document.createElement("li");
-            li.className = "home-dashboard-recent-item";
-            const translation = item.translation ? `<span class="home-dashboard-recent-translation">${item.translation}</span>` : "";
-            const meta = [item.language ? item.language.toUpperCase() : "", item.cefr || "", item.topic || ""]
-              .filter(Boolean)
-              .join(" · ");
-
-            li.innerHTML = `
-              <span class="home-dashboard-recent-label">${item.label || "Palabra"}</span>
-              ${translation}
-              ${meta ? `<span class="home-dashboard-recent-meta">${meta}</span>` : ""}
-            `;
-            recentWordsList.appendChild(li);
-          });
-        }
-      }
     });
   };
 

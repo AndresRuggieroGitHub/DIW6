@@ -23,7 +23,6 @@
             <select id="exerciseCollectionSelect" class="exercise-list-picker__select"></select>
           </div>
         </div>
-        <p class="exercise-source-summary" id="exerciseSourceSummary">Selecciona el origen del vocabulario para personalizar la práctica.</p>
       </div>
     </div>
     <section class="exercise-grid">
@@ -291,7 +290,7 @@
   }
 
   function getCatalogLevels(items) {
-    return [...new Set(items.map(item => item.cefr))]
+    return [...new Set(items.map(item => item.cefr).filter(Boolean))]
       .sort((left, right) => ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].indexOf(left) - ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].indexOf(right));
   }
 
@@ -352,34 +351,6 @@
     document.querySelectorAll('[data-source-panel]').forEach(panel => {
       panel.hidden = panel.dataset.sourcePanel !== sourceType;
     });
-
-    renderExerciseSourceSummary();
-  }
-
-  function renderExerciseSourceSummary() {
-    const summary = document.getElementById('exerciseSourceSummary');
-    if (!summary) return;
-
-    const sourceType = getSelectedSourceType();
-    const source = getSelectedVocabularySource();
-    const count = source?.items?.length || 0;
-
-    if (sourceType === 'catalog') {
-      if (!source?.items?.length) {
-        summary.textContent = 'Elige nivel y categoría para usar vocabulario real del catálogo. Si no lo haces, se usarán ejercicios base.';
-        return;
-      }
-
-      summary.textContent = `Catálogo listo: ${count} palabra${count === 1 ? '' : 's'} en ${source.name}.`;
-      return;
-    }
-
-    if (!source?.items?.length) {
-      summary.textContent = 'Selecciona una lista guardada con contenido para personalizar los ejercicios. Si no, se usarán ejercicios base.';
-      return;
-    }
-
-    summary.textContent = `Lista lista: ${count} palabra${count === 1 ? '' : 's'} disponibles en ${source.name}.`;
   }
 
   function setupExerciseSourceTabs() {
@@ -420,14 +391,10 @@
 
     levelSelect.addEventListener('change', () => {
       localStorage.setItem(EXERCISE_CATALOG_LEVEL_KEY, levelSelect.value);
-      renderExerciseSourceSummary();
     });
     topicSelect.addEventListener('change', () => {
       localStorage.setItem(EXERCISE_CATALOG_TOPIC_KEY, topicSelect.value);
-      renderExerciseSourceSummary();
     });
-
-    renderExerciseSourceSummary();
   }
 
   function setupExerciseCollectionSelect() {
@@ -450,10 +417,7 @@
 
     select.addEventListener('change', () => {
       localStorage.setItem(EXERCISE_COLLECTION_KEY, select.value);
-      renderExerciseSourceSummary();
     });
-
-    renderExerciseSourceSummary();
   }
 
   function resetExerciseSelectionState() {
@@ -474,6 +438,29 @@
       .slice(0, 5);
   }
 
+  function buildCustomReadingItems(items) {
+    return items
+      .filter(item => item.text && item.translation)
+      .slice(0, 5)
+      .map(item => {
+        const correctAnswer = item.translation;
+        const options = shuffleArray([
+          correctAnswer,
+          `not ${correctAnswer}`,
+          item.topic ? `related to ${item.topic}` : 'an unrelated idea',
+          item.cefr ? `level ${item.cefr}` : 'a grammar rule',
+        ]);
+
+        return {
+          type: 'mcq',
+          passage: `${item.text} means ${correctAnswer} in Spanish.${item.topic ? ' It belongs to the topic of ' + item.topic + '.' : ''}`,
+          question: `What is the best translation of "${item.text}"?`,
+          options,
+          correct: options.indexOf(correctAnswer),
+        };
+      });
+  }
+
   function buildCustomWritingItems(items) {
     return items
       .map(item => ({
@@ -486,12 +473,50 @@
       .slice(0, 3);
   }
 
+  function buildCustomListeningItems(items) {
+    return items
+      .filter(item => item.text && item.translation)
+      .slice(0, 3)
+      .map(item => ({
+        type: 'fillin',
+        transcript: `${item.text} means ${item.translation}. Listen carefully and identify the missing word.`,
+        question: 'Completa la frase con la palabra correcta:',
+        sentence: `${item.translation} in English is ________.`,
+        answer: item.text,
+      }));
+  }
+
+  function buildCustomMixItems(items) {
+    const readingItems = buildCustomReadingItems(items).slice(0, 1);
+    const listeningItems = buildCustomListeningItems(items).slice(0, 1);
+    const speakingItems = buildCustomSpeakingItems(items).slice(0, 1);
+    const writingItems = buildCustomWritingItems(items).slice(0, 1);
+
+    return [...readingItems, ...listeningItems, ...speakingItems, ...writingItems].filter(item => item && item.type);
+  }
+
+  function shuffleArray(items) {
+    const clone = [...items];
+    for (let index = clone.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [clone[index], clone[randomIndex]] = [clone[randomIndex], clone[index]];
+    }
+    return clone;
+  }
+
   function getModeData(mode) {
     const base = EXERCISES[mode];
     const source = getSelectedVocabularySource();
 
     if (!source.items.length) {
       return { title: base.title, items: base.items };
+    }
+
+    if (mode === 'reading') {
+      const customItems = buildCustomReadingItems(source.items);
+      if (customItems.length) {
+        return { title: base.title + ' · ' + source.name, items: customItems };
+      }
     }
 
     if (mode === 'speaking') {
@@ -501,8 +526,22 @@
       }
     }
 
+    if (mode === 'listening') {
+      const customItems = buildCustomListeningItems(source.items);
+      if (customItems.length) {
+        return { title: base.title + ' · ' + source.name, items: customItems };
+      }
+    }
+
     if (mode === 'writing') {
       const customItems = buildCustomWritingItems(source.items);
+      if (customItems.length) {
+        return { title: base.title + ' · ' + source.name, items: customItems };
+      }
+    }
+
+    if (mode === 'mix') {
+      const customItems = buildCustomMixItems(source.items);
       if (customItems.length) {
         return { title: base.title + ' · ' + source.name, items: customItems };
       }
@@ -549,7 +588,6 @@
     setupExerciseSourceTabs();
     setupExerciseCatalogSelects();
     setupExerciseCollectionSelect();
-    renderExerciseSourceSummary();
   }
 
   bootstrapExercises();
@@ -559,7 +597,6 @@
     setupExerciseCatalogSelects();
     setupExerciseCollectionSelect();
     syncSourcePanels();
-    renderExerciseSourceSummary();
   });
 
   const EXERCISES = {
