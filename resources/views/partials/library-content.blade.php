@@ -1,3 +1,18 @@
+@php
+  $cefrLevels = config('lexi.cefr_levels', ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']);
+  $catalogTopics = config('lexi.catalog_topics', []);
+
+  $levelOptionLabel = static function (string $level): string {
+      return match ($level) {
+          'A1' => '▮▯▯▯▯ A1',
+          'A2' => '▮▮▯▯▯ A2',
+          'B1' => '▮▮▮▯▯ B1',
+          'B2', 'C1' => '▮▮▮▮▯ ' . $level,
+          default => '▮▮▮▮▮ ' . $level,
+      };
+  };
+@endphp
+
 <main id="mainContent" class="page-main container section-space">
   <h1 class="library-page-title">Tu vocabulario personal</h1>
 
@@ -89,33 +104,15 @@
           <div class="catalog-filters">
             <select id="cefrFilter" class="form-select form-select-sm">
               <option value="all">Todos los niveles</option>
-              <option value="A1">▮▯▯▯▯ A1</option>
-              <option value="A2">▮▮▯▯▯ A2</option>
-              <option value="B1">▮▮▮▯▯ B1</option>
-              <option value="B2">▮▮▮▮▯ B2</option>
-              <option value="C1">▮▮▮▮▯ C1</option>
-              <option value="C2">▮▮▮▮▮ C2</option>
+              @foreach ($cefrLevels as $level)
+                <option value="{{ $level }}">{{ $levelOptionLabel($level) }}</option>
+              @endforeach
             </select>
             <select id="topicFilter" class="form-select form-select-sm">
               <option value="all">Todas las temáticas</option>
-              <option value="travel">✈ Viajes</option>
-              <option value="food">🍽 Gastronomía</option>
-              <option value="work">💼 Trabajo</option>
-              <option value="business">📈 Negocios</option>
-              <option value="education">🎓 Educación</option>
-              <option value="health">🏥 Salud</option>
-              <option value="science">🔬 Ciencia</option>
-              <option value="technology">💻 Tecnología</option>
-              <option value="culture">🎭 Cultura</option>
-              <option value="social">🤝 Social</option>
-              <option value="home">🏠 Hogar</option>
-              <option value="nature">🌿 Naturaleza</option>
-              <option value="politics">🏛 Política</option>
-              <option value="sport">⚽ Deporte</option>
-              <option value="art">🎨 Arte</option>
-              <option value="media">📺 Medios</option>
-              <option value="law">⚖ Derecho</option>
-              <option value="finance">💰 Finanzas</option>
+              @foreach ($catalogTopics as $topic)
+                <option value="{{ $topic['value'] }}">{{ $topic['label'] }}</option>
+              @endforeach
             </select>
           </div>
         </div>

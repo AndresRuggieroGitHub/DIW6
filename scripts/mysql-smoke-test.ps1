@@ -9,6 +9,14 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+function Assert-LastExitCode {
+    param([string]$CommandName)
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "$CommandName failed with exit code $LASTEXITCODE."
+    }
+}
+
 Set-Location "$PSScriptRoot\.."
 
 $resolvedPassword = if ($EmptyPassword.IsPresent) { '' } else { $DbPassword }
@@ -22,8 +30,11 @@ $env:DB_USERNAME = $DbUser
 $env:DB_PASSWORD = $resolvedPassword
 
 php artisan config:clear
+Assert-LastExitCode 'php artisan config:clear'
 php artisan migrate --force
+Assert-LastExitCode 'php artisan migrate'
 php artisan db:seed --force
+Assert-LastExitCode 'php artisan db:seed'
 php artisan tinker --execute="dump([
     'users' => DB::table('users')->count(),
     'admin_exists' => DB::table('users')->where('email', 'admin@lexi.app')->exists(),
@@ -34,3 +45,4 @@ php artisan tinker --execute="dump([
     'subscriptions' => DB::getSchemaBuilder()->hasTable('subscriptions') ? DB::table('subscriptions')->count() : 0,
     'ai_generations' => DB::getSchemaBuilder()->hasTable('ai_generations') ? DB::table('ai_generations')->count() : 0,
 ]);"
+Assert-LastExitCode 'php artisan tinker'

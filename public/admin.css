@@ -89,7 +89,34 @@ body.admin-body {
   transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 
+.admin-sidebar-footer__form {
+  margin: 0;
+}
+
+.admin-sidebar-footer__button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.72rem;
+  padding: 0.82rem 0.9rem;
+  color: rgba(255,255,255,0.76);
+  background: transparent;
+  border: none;
+  border-radius: 14px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-align: left;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
 .admin-sidebar-footer a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.08);
+  transform: translateX(1px);
+}
+
+.admin-sidebar-footer__button:hover {
   color: #fff;
   background: rgba(255,255,255,0.08);
   transform: translateX(1px);
@@ -434,6 +461,61 @@ body.admin-body {
 
 .admin-inline-link:hover {
   text-decoration: underline;
+}
+
+.admin-sidebar-footer a i {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.admin-sidebar-footer__button i {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.admin-main .pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.admin-main .pagination .page-item {
+  display: inline-flex;
+}
+
+.admin-main .pagination .page-link {
+  min-width: 2.2rem;
+  height: 2.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid #e4e8f0;
+  color: var(--text);
+  background: #fff;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.88rem;
+  line-height: 1;
+  box-shadow: none;
+}
+
+.admin-main .pagination .page-item.active .page-link {
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  border-color: #6d28d9;
+}
+
+.admin-main .pagination .page-item.disabled .page-link {
+  color: #94a3b8;
+  background: #f8fafc;
+}
+
+.admin-main .pagination .page-link svg,
+.admin-main .pagination .page-link i {
+  width: 0.95rem;
+  height: 0.95rem;
+  font-size: 0.95rem;
 }
 
 .admin-summary-list {

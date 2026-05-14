@@ -853,6 +853,23 @@
   const createUtilityDrawer = () => {
     if (document.getElementById("utilityDrawer")) return;
 
+    const getCsrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || "";
+    const submitLogoutForm = () => {
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = "/logout";
+      form.style.display = "none";
+
+      const token = document.createElement("input");
+      token.type = "hidden";
+      token.name = "_token";
+      token.value = getCsrfToken();
+      form.appendChild(token);
+
+      document.body.appendChild(form);
+      form.submit();
+    };
+
     const currentPage = window.location.pathname.split("/").pop() || "app.html";
     const activeClass = (href) => currentPage === href ? " utility-link--active" : "";
     const adminLink = isCurrentUserAdmin()
@@ -898,7 +915,7 @@
     drawer.querySelector("#closeUtilityDrawer").addEventListener("click", () => toggleUtilityDrawer(false));
     drawer.querySelector("#logoutAction").addEventListener("click", () => {
       toggleUtilityDrawer(false);
-      window.location.href = "/logout";
+      submitLogoutForm();
     });
   };
 

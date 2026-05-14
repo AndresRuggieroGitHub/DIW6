@@ -12,6 +12,14 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+function Assert-LastExitCode {
+    param([string]$CommandName)
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "$CommandName failed with exit code $LASTEXITCODE."
+    }
+}
+
 Set-Location "$PSScriptRoot\.."
 
 $resolvedPassword = if ($EmptyPassword.IsPresent) { '' } else { $DbPassword }
@@ -36,6 +44,7 @@ if ($Bootstrap.IsPresent) {
     }
 
     powershell @bootstrapArgs
+    Assert-LastExitCode 'bootstrap-mysql-local.ps1'
 }
 
 $env:APP_ENV = 'local'
@@ -48,3 +57,4 @@ $env:DB_USERNAME = $DbUser
 $env:DB_PASSWORD = $resolvedPassword
 
 php artisan serve --host=127.0.0.1 --port=$Port
+Assert-LastExitCode 'php artisan serve'

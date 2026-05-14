@@ -33,6 +33,141 @@ class CoreBackendFlowsTest extends TestCase
         $response->assertForbidden();
     }
 
+    public function test_logout_invalidates_session_and_redirects_home(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('/logout');
+
+        $response->assertRedirect('/');
+        $this->assertGuest();
+    }
+
+    public function test_get_logout_does_not_invalidate_session_and_redirects_profile(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/logout');
+
+        $response->assertRedirect('/perfil.html');
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_legal_public_pages_render_successfully(): void
+    {
+        $this->get('/privacidad.html')
+            ->assertOk()
+            ->assertSee('Política de privacidad');
+
+        $this->get('/terminos.html')
+            ->assertOk()
+            ->assertSee('Términos de uso');
+    }
+
+    public function test_main_public_pages_render_successfully(): void
+    {
+        foreach (['/', '/contacto.html', '/info.html', '/producto.html'] as $route) {
+            $this->get($route)->assertOk();
+        }
+    }
+
+    public function test_public_static_pages_use_blade_views_when_available(): void
+    {
+        foreach ([
+            '/' => 'pages.index',
+            '/contacto.html' => 'pages.contacto',
+            '/info.html' => 'pages.info',
+            '/privacidad.html' => 'pages.privacidad',
+            '/producto.html' => 'pages.producto',
+            '/terminos.html' => 'pages.terminos',
+        ] as $route => $view) {
+            $response = $this->get($route);
+
+            $response->assertOk();
+            $response->assertViewIs($view);
+            $this->assertNotInstanceOf(
+                \Symfony\Component\HttpFoundation\BinaryFileResponse::class,
+                $response->baseResponse
+            );
+        }
+    }
+
+    public function test_main_authenticated_pages_render_successfully(): void
+    {
+        $user = User::factory()->create();
+
+        foreach (['/app.html', '/biblioteca.html', '/ejercicios.html', '/progreso.html', '/carrito.html'] as $route) {
+            $this->actingAs($user)->get($route)->assertOk();
+        }
+    }
+
+    public function test_authenticated_static_pages_use_blade_views_when_available(): void
+    {
+        $user = User::factory()->create();
+
+        foreach ([
+            '/app.html' => 'pages.app',
+            '/biblioteca.html' => 'pages.biblioteca',
+            '/carrito.html' => 'pages.carrito',
+            '/ejercicios.html' => 'pages.ejercicios',
+            '/progreso.html' => 'pages.progreso',
+        ] as $route => $view) {
+            $response = $this->actingAs($user)->get($route);
+
+            $response->assertOk();
+            $response->assertViewIs($view);
+            $this->assertNotInstanceOf(
+                \Symfony\Component\HttpFoundation\BinaryFileResponse::class,
+                $response->baseResponse
+            );
+        }
+    }
+
+    public function test_auth_profile_and_admin_routes_render_expected_blade_views(): void
+    {
+        $this->seedLanguages();
+
+        $this->get('/login.html')
+            ->assertOk()
+            ->assertViewIs('auth.login');
+
+        $this->get('/registro.html')
+            ->assertOk()
+            ->assertViewIs('auth.register');
+
+        $this->get('/forgot-password.html')
+            ->assertOk()
+            ->assertViewIs('auth.forgot-password');
+
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->get('/perfil.html')
+            ->assertOk()
+            ->assertViewIs('profile.show');
+
+        $this->attachAdminRole($user);
+
+        foreach ([
+            '/admin.html' => 'pages.admin',
+            '/admin-words.html' => 'pages.admin-words',
+            '/admin-translations.html' => 'pages.admin-translations',
+            '/admin-categories.html' => 'pages.admin-categories',
+            '/admin-collections.html' => 'pages.admin-collections',
+            '/admin-users.html' => 'pages.admin-users',
+            '/admin-languages.html' => 'pages.admin-languages',
+            '/admin-roles.html' => 'pages.admin-roles',
+            '/admin-exercises.html' => 'pages.admin-exercises',
+            '/admin-billing.html' => 'pages.admin-billing',
+            '/admin-ai.html' => 'pages.admin-ai',
+            '/admin-analytics.html' => 'pages.admin-analytics',
+        ] as $route => $view) {
+            $response = $this->actingAs($user)->get($route);
+
+            $response->assertOk();
+            $response->assertViewIs($view);
+        }
+    }
+
     public function test_admin_can_access_admin_dashboard(): void
     {
         $user = User::factory()->create();
@@ -115,6 +250,26 @@ class CoreBackendFlowsTest extends TestCase
         $response->assertSee('gpt-5.4-mini');
     }
 
+    public function test_admin_data_pages_render_successfully_for_admin(): void
+    {
+        $user = User::factory()->create();
+        $this->attachAdminRole($user);
+
+        foreach ([
+            '/admin-words.html',
+            '/admin-translations.html',
+            '/admin-categories.html',
+            '/admin-collections.html',
+            '/admin-users.html',
+            '/admin-languages.html',
+            '/admin-roles.html',
+            '/admin-exercises.html',
+            '/admin-analytics.html',
+        ] as $route) {
+            $this->actingAs($user)->get($route)->assertOk();
+        }
+    }
+
     public function test_exercise_attempt_endpoint_creates_attempt_and_reuses_mode_record(): void
     {
         $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
@@ -156,6 +311,41 @@ class CoreBackendFlowsTest extends TestCase
 
         $this->assertSame(1, DB::table('exercises')->count());
         $this->assertSame(2, DB::table('exercise_attempts')->count());
+    }
+
+    public function test_collection_names_must_be_unique_per_user_and_language(): void
+    {
+        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
+        $this->seedLanguages();
+
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->postJson('/api/library/collections', [
+            'name' => 'Viajes',
+            'language' => 'pt',
+        ])->assertOk();
+
+        $this->actingAs($user)->postJson('/api/library/collections', [
+            'name' => '  Viajes  ',
+            'language' => 'pt',
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['name']);
+
+        $secondCollectionId = DB::table('collections')->insertGetId([
+            'user_id' => $user->id,
+            'language_code' => 'pt',
+            'name' => 'Comida',
+            'is_default' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->actingAs($user)->patchJson('/api/library/collections/' . $secondCollectionId, [
+            'name' => 'viajes',
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['name']);
+
+        $this->assertSame(2, DB::table('collections')->count());
     }
 
     public function test_progress_state_returns_real_summary_for_active_language(): void

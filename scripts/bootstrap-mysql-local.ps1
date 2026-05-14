@@ -10,6 +10,28 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+function Assert-LastExitCode {
+    param([string]$CommandName)
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "$CommandName failed with exit code $LASTEXITCODE."
+    }
+}
+
+function Assert-MySqlServerReachable {
+    param(
+        [string]$TargetHost,
+        [string]$TargetPort,
+        [string]$Hint
+    )
+
+    $reachable = Test-NetConnection -ComputerName $TargetHost -Port ([int]$TargetPort) -InformationLevel Quiet -WarningAction SilentlyContinue
+
+    if (-not $reachable) {
+        throw "No hay ningun servidor MySQL/MariaDB escuchando en ${TargetHost}:${TargetPort}. $Hint"
+    }
+}
+
 function Find-MySqlCli {
     $candidates = @(
         'C:\Program Files\MySQL\MySQL Server 8.4\bin\mysql.exe',
@@ -36,6 +58,8 @@ Set-Location "$PSScriptRoot\.."
 $resolvedPassword = if ($EmptyPassword.IsPresent) { '' } else { $DbPassword }
 $mysqlCli = Find-MySqlCli
 
+Assert-MySqlServerReachable -TargetHost $DbHost -TargetPort $DbPort -Hint 'Arranca XAMPP/MySQL local o levanta Docker antes de ejecutar este script.'
+
 if ($mysqlCli) {
     $mysqlArgs = @('-h', $DbHost, '-P', $DbPort, '-u', $DbUser)
     $mysqlArgs += @('-e', "CREATE DATABASE IF NOT EXISTS ``$DbName`` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
@@ -48,6 +72,7 @@ if ($mysqlCli) {
 
     try {
         & $mysqlCli @mysqlArgs
+        Assert-LastExitCode 'mysql.exe create database'
     } finally {
         if ($null -ne $previousMysqlPwd) {
             $env:MYSQL_PWD = $previousMysqlPwd
@@ -66,10 +91,13 @@ $env:DB_USERNAME = $DbUser
 $env:DB_PASSWORD = $resolvedPassword
 
 php artisan config:clear
+Assert-LastExitCode 'php artisan config:clear'
 php artisan migrate --force
+Assert-LastExitCode 'php artisan migrate'
 
 if (-not $SkipSeed.IsPresent) {
     php artisan db:seed --force
+    Assert-LastExitCode 'php artisan db:seed'
 }
 
 php artisan tinker --execute="dump([
@@ -79,3 +107,4 @@ php artisan tinker --execute="dump([
     'subscriptions' => DB::getSchemaBuilder()->hasTable('subscriptions') ? DB::table('subscriptions')->count() : 0,
     'ai_generations' => DB::getSchemaBuilder()->hasTable('ai_generations') ? DB::table('ai_generations')->count() : 0,
 ]);"
+Assert-LastExitCode 'php artisan tinker'

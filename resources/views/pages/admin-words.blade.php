@@ -48,7 +48,7 @@
 		<div class="admin-card__head">
 			<div>
 				<h2>Database snapshot</h2>
-				<p>Conexión activa y acceso rápido a filas reales para revisar el estado actual del catálogo.</p>
+				<p>Conexión activa y estado real del entorno de datos con el que está corriendo Lexi ahora mismo.</p>
 			</div>
 		</div>
 
@@ -64,8 +64,18 @@
 					<tr>
 						<th>Base de datos</th>
 						<td>{{ $databaseInfo['database'] ?: 'N/D' }}</td>
-						<th>Ruta útil</th>
-						<td><a href="admin-words.html">admin-words.html</a></td>
+						<th>Objetivo</th>
+						<td>{{ strtoupper($databaseInfo['target']) }}</td>
+					</tr>
+					<tr>
+						<th>Estado</th>
+						<td colspan="3">
+							@if ($databaseInfo['is_mysql_like'])
+								<span class="admin-status admin-status--active">MySQL activo</span>
+							@else
+								<span class="admin-status admin-status--review">SQLite local activa</span>
+							@endif
+						</td>
 					</tr>
 				</tbody>
 			</table>

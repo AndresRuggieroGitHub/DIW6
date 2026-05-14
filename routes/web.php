@@ -21,51 +21,39 @@ use App\Http\Controllers\ProgressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 $publicStaticPages = [
-    'index' => 'index.html',
-    'contacto' => 'contacto.html',
-    'info' => 'info.html',
-    'privacidad' => 'privacidad.html',
-    'producto' => 'producto.html',
-    'terminos' => 'terminos.html',
+    'index' => ['path' => 'index.html', 'view' => 'pages.index'],
+    'contacto' => ['path' => 'contacto.html', 'view' => 'pages.contacto'],
+    'info' => ['path' => 'info.html', 'view' => 'pages.info'],
+    'privacidad' => ['path' => 'privacidad.html', 'view' => 'pages.privacidad'],
+    'producto' => ['path' => 'producto.html', 'view' => 'pages.producto'],
+    'terminos' => ['path' => 'terminos.html', 'view' => 'pages.terminos'],
 ];
 
 $protectedStaticPages = [
-    'app' => 'app.html',
-    'biblioteca' => 'biblioteca.html',
-    'carrito' => 'carrito.html',
-    'ejercicios' => 'ejercicios.html',
-    'progreso' => 'progreso.html',
+    'app' => ['path' => 'app.html', 'view' => 'pages.app'],
+    'biblioteca' => ['path' => 'biblioteca.html', 'view' => 'pages.biblioteca'],
+    'carrito' => ['path' => 'carrito.html', 'view' => 'pages.carrito'],
+    'ejercicios' => ['path' => 'ejercicios.html', 'view' => 'pages.ejercicios'],
+    'progreso' => ['path' => 'progreso.html', 'view' => 'pages.progreso'],
 ];
 
-$adminStaticPages = [
-];
-
-$renderStaticPage = function (string $file, ?string $view = null) {
-    $viewName = $view ?? 'pages.' . str_replace(['/', '.html'], ['.', ''], $file);
-
-    if (view()->exists($viewName)) {
-        return response()->view($viewName);
-    }
-
-    return response()->file(base_path($file));
-};
-
-Route::get('/', function (Request $request) use ($renderStaticPage) {
+Route::get('/', function (Request $request) use ($publicStaticPages) {
     if ($request->user()) {
         return redirect('/app.html');
     }
 
-    return $renderStaticPage('index.html');
+    return response()->view($publicStaticPages['index']['view']);
 });
 
 foreach ($publicStaticPages as $slug => $file) {
-    Route::get("/{$file}", function (Request $request) use ($file, $renderStaticPage) {
-        if ($file === 'index.html' && $request->user()) {
+    Route::get('/' . $file['path'], function (Request $request) use ($file) {
+        if ($file['path'] === 'index.html' && $request->user()) {
             return redirect('/app.html');
         }
 
-        return $renderStaticPage($file);
+        return response()->view($file['view']);
     })->name($slug);
 }
 
@@ -78,10 +66,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/forgot-password.html', [PasswordResetLinkController::class, 'store'])->name('password.email');
 });
 
-Route::middleware('auth')->group(function () use ($protectedStaticPages, $renderStaticPage) {
+Route::middleware('auth')->group(function () use ($protectedStaticPages) {
     foreach ($protectedStaticPages as $slug => $file) {
-        Route::get("/{$file}", function () use ($file, $renderStaticPage) {
-            return $renderStaticPage($file);
+        Route::get('/' . $file['path'], function () use ($file) {
+            return response()->view($file['view']);
         })->name($slug);
     }
 
@@ -89,7 +77,7 @@ Route::middleware('auth')->group(function () use ($protectedStaticPages, $render
     Route::post('/perfil.html', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/api/session/state', [ProfileController::class, 'sessionState'])->name('session.state');
     Route::put('/api/session/active-language', [ProfileController::class, 'updateActiveLanguage'])->name('session.active-language');
-    Route::get('/logout', [AuthController::class, 'logout']);
+    Route::get('/logout', fn () => redirect('/perfil.html'));
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::delete('/perfil.html', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/api/library/state', [\App\Http\Controllers\LibraryController::class, 'state'])->name('library.state');
@@ -106,7 +94,7 @@ Route::middleware('auth')->group(function () use ($protectedStaticPages, $render
     Route::post('/api/library/collections/{collection}/toggle-word', [\App\Http\Controllers\LibraryController::class, 'toggleCollectionWord'])->name('library.collections.toggle-word');
 });
 
-Route::middleware('auth')->group(function () use ($adminStaticPages, $renderStaticPage) {
+Route::middleware('auth')->group(function () {
     Route::get('/admin-analytics', function (Request $request) {
         abort_unless($request->user()?->isAdmin(), 403);
 
@@ -251,17 +239,4 @@ Route::middleware('auth')->group(function () use ($adminStaticPages, $renderStat
         return app(AdminAiController::class)->index($request);
     })->name('admin-ai');
 
-    foreach ($adminStaticPages as $slug => $file) {
-        Route::get("/{$slug}", function (Request $request) use ($file, $renderStaticPage) {
-            abort_unless($request->user()?->isAdmin(), 403);
-
-            return $renderStaticPage($file);
-        });
-
-        Route::get("/{$file}", function (Request $request) use ($file, $renderStaticPage) {
-            abort_unless($request->user()?->isAdmin(), 403);
-
-            return $renderStaticPage($file);
-        })->name($slug);
-    }
 });

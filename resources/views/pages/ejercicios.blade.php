@@ -12,6 +12,10 @@
         <button class="exercise-source-toggle__btn" type="button" data-source-tab="saved" aria-pressed="false"><i class="bi bi-bookmarks-fill"></i><span>Tus listas</span></button>
       </div>
       <div class="exercise-list-picker">
+        <div class="exercise-list-picker__loading" id="exerciseSourceLoading" hidden aria-live="polite">
+          <span class="exercise-list-picker__spinner" aria-hidden="true"></span>
+          <span id="exerciseSourceLoadingText">Cargando opciones...</span>
+        </div>
         <div class="exercise-source-panel" data-source-panel="catalog">
           <div class="exercise-list-picker__grid">
             <select id="exerciseCatalogLevelSelect" class="exercise-list-picker__select"></select>
@@ -99,8 +103,16 @@
 @endsection
 
 @section('inlineScripts')
+<script type="application/json" id="lexiExerciseSharedConfig">{!! json_encode([
+  'cefr_levels' => config('lexi.cefr_levels', ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']),
+  'topic_options' => config('lexi.catalog_topics', []),
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 <script>
 (function () {
+  const sharedConfigNode = document.getElementById('lexiExerciseSharedConfig');
+  const sharedConfig = sharedConfigNode ? JSON.parse(sharedConfigNode.textContent || '{}') : {};
+  const SHARED_CEFR_LEVELS = Array.isArray(sharedConfig.cefr_levels) ? sharedConfig.cefr_levels : [];
+  const SHARED_TOPIC_OPTIONS = Array.isArray(sharedConfig.topic_options) ? sharedConfig.topic_options : [];
   const SKILL_LABELS = {
     en: ['Reading',     'Listening', 'Speaking',   'Writing',    'Mix'],
     fr: ['Lecture',     'Écoute',    'Expression',  'Écriture',   'Mix'],
@@ -121,39 +133,38 @@
   const EXERCISE_COLLECTION_KEY = 'lexiExerciseCollection';
   const EXERCISE_CATALOG_LEVEL_KEY = 'lexiExerciseCatalogLevel';
   const EXERCISE_CATALOG_TOPIC_KEY = 'lexiExerciseCatalogTopic';
+  const CEFR_LEVELS = Array.isArray(SHARED_CEFR_LEVELS) && SHARED_CEFR_LEVELS.length ? SHARED_CEFR_LEVELS : ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
   let serverVocabularyState = { library: { id: 'library', name: 'Guardado', items: [] }, collections: [], catalog: [] };
+  let exerciseSourceSwitchInFlight = false;
 
-  function setExerciseCollectionsLoading(isLoading) {
+  function setExerciseCollectionsLoading(isLoading, message = 'Cargando opciones...') {
     const select = document.getElementById('exerciseCollectionSelect');
+    const levelSelect = document.getElementById('exerciseCatalogLevelSelect');
+    const topicSelect = document.getElementById('exerciseCatalogTopicSelect');
+    const loading = document.getElementById('exerciseSourceLoading');
+    const loadingText = document.getElementById('exerciseSourceLoadingText');
     if (!select) return;
+
+    if (loading) loading.hidden = !isLoading;
+    if (loadingText) loadingText.textContent = message;
 
     if (isLoading) {
       select.innerHTML = '<option selected disabled>Cargando listas...</option>';
       select.disabled = true;
+      if (levelSelect) levelSelect.disabled = true;
+      if (topicSelect) topicSelect.disabled = true;
       return;
     }
 
     select.disabled = false;
+    if (levelSelect) levelSelect.disabled = false;
+    if (topicSelect) topicSelect.disabled = false;
   }
-  const CATALOG_TOPIC_ORDER = ['travel', 'food', 'work', 'business', 'education', 'health', 'science', 'technology', 'culture', 'social', 'home', 'nature', 'politics', 'sport', 'art'];
-  const TOPIC_OPTION_LABELS = {
-    travel: '✈ Viajes',
-    food: '🍽 Gastronomía',
-    work: '💼 Trabajo',
-    business: '📈 Negocios',
-    education: '🎓 Educación',
-    health: '🏥 Salud',
-    science: '🔬 Ciencia',
-    technology: '💻 Tecnología',
-    culture: '🎭 Cultura',
-    cultura: '🎭 Cultura',
-    social: '🤝 Social',
-    home: '🏠 Hogar',
-    nature: '🌿 Naturaleza',
-    politics: '🏛 Política',
-    sport: '⚽ Deporte',
-    art: '🎨 Arte'
-  };
+  const CATALOG_TOPIC_ORDER = SHARED_TOPIC_OPTIONS.map(topic => topic.value);
+  const TOPIC_OPTION_LABELS = SHARED_TOPIC_OPTIONS.reduce((labels, topic) => {
+    labels[topic.value] = topic.label;
+    return labels;
+  }, { cultura: '🎭 Cultura' });
   const CATALOG_VOCABULARY = [
     { id: 'w-heritage', lang: 'en', cefr: 'B2', topic: 'culture', text: 'to preserve heritage', translation: 'preservar el patrimonio' },
     { id: 'w-growth', lang: 'en', cefr: 'B1', topic: 'business', text: 'sustainable growth', translation: 'crecimiento sostenible' },
@@ -226,8 +237,17 @@
     });
   };
 
-  async function loadVocabularySources() {
-    setExerciseCollectionsLoading(true);
+  function normalizeTopicKey(topic) {
+    const normalized = String(topic || '').trim().toLowerCase();
+    return normalized === 'cultura' ? 'culture' : normalized;
+  }
+
+  function getTopicOptions() {
+    return SHARED_TOPIC_OPTIONS;
+  }
+
+  async function loadVocabularySources(message = 'Cargando opciones...') {
+    setExerciseCollectionsLoading(true, message);
 
     try {
       const response = await exerciseApiFetch('/api/library/state');
@@ -279,7 +299,7 @@
       id: item.id,
       lang: item.language,
       cefr: item.cefr,
-      topic: item.topic === 'cultura' ? 'culture' : item.topic,
+      topic: normalizeTopicKey(item.topic),
       text: item.label,
       translation: item.translation,
     }));
@@ -290,15 +310,14 @@
   }
 
   function getCatalogLevels(items) {
-    return [...new Set(items.map(item => item.cefr).filter(Boolean))]
-      .sort((left, right) => ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].indexOf(left) - ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].indexOf(right));
+    const presentLevels = new Set(items.map(item => String(item.cefr || '').toUpperCase()).filter(level => CEFR_LEVELS.includes(level)));
+    return CEFR_LEVELS.filter(level => presentLevels.has(level) || true);
   }
 
   function getCatalogTopics(items) {
-    const presentTopics = new Set(items.map(item => item.topic === 'cultura' ? 'culture' : item.topic));
+    const presentTopics = new Set(items.map(item => normalizeTopicKey(item.topic)).filter(Boolean));
     const orderedTopics = CATALOG_TOPIC_ORDER.filter(topic => presentTopics.has(topic));
-    const extraTopics = [...presentTopics].filter(topic => topic && !CATALOG_TOPIC_ORDER.includes(topic)).sort();
-    return [...orderedTopics, ...extraTopics];
+    return orderedTopics.length ? orderedTopics : CATALOG_TOPIC_ORDER;
   }
 
   function getSelectedSourceType() {
@@ -356,14 +375,20 @@
   function setupExerciseSourceTabs() {
     document.querySelectorAll('[data-source-tab]').forEach(button => {
       button.addEventListener('click', async () => {
+        if (exerciseSourceSwitchInFlight) return;
+        exerciseSourceSwitchInFlight = true;
         localStorage.setItem(EXERCISE_SOURCE_KEY, button.dataset.sourceTab);
         localStorage.setItem(EXERCISE_CATALOG_LEVEL_KEY, '');
         localStorage.setItem(EXERCISE_CATALOG_TOPIC_KEY, '');
         localStorage.setItem(EXERCISE_COLLECTION_KEY, '');
-        await loadVocabularySources();
-        syncSourcePanels();
-        setupExerciseCatalogSelects();
-        setupExerciseCollectionSelect();
+        try {
+          await loadVocabularySources(button.dataset.sourceTab === 'saved' ? 'Cargando listas guardadas...' : 'Cargando catálogo...');
+          syncSourcePanels();
+          setupExerciseCatalogSelects();
+          setupExerciseCollectionSelect();
+        } finally {
+          exerciseSourceSwitchInFlight = false;
+        }
       });
     });
 
@@ -384,17 +409,17 @@
       return '▮▮▮▮▮ ' + level;
     };
     levelSelect.innerHTML = '<option value="">Selecciona el nivel</option>' + catalogSource.levels.map(level => '<option value="' + level + '">' + levelOptionLabel(level) + '</option>').join('');
-    topicSelect.innerHTML = '<option value="">Selecciona la categoría</option>' + catalogSource.topics.map(topic => '<option value="' + topic + '">' + (TOPIC_OPTION_LABELS[topic] || topic) + '</option>').join('');
+    topicSelect.innerHTML = '<option value="">Selecciona la categoría</option>' + getTopicOptions().map(topic => '<option value="' + topic.value + '">' + topic.label + '</option>').join('');
 
     levelSelect.value = catalogSource.selectedLevel;
     topicSelect.value = catalogSource.selectedTopic;
 
-    levelSelect.addEventListener('change', () => {
+    levelSelect.onchange = () => {
       localStorage.setItem(EXERCISE_CATALOG_LEVEL_KEY, levelSelect.value);
-    });
-    topicSelect.addEventListener('change', () => {
+    };
+    topicSelect.onchange = () => {
       localStorage.setItem(EXERCISE_CATALOG_TOPIC_KEY, topicSelect.value);
-    });
+    };
   }
 
   function setupExerciseCollectionSelect() {
@@ -415,9 +440,9 @@
     select.value = hasSelected ? selectedId : '';
     localStorage.setItem(EXERCISE_COLLECTION_KEY, select.value);
 
-    select.addEventListener('change', () => {
+    select.onchange = () => {
       localStorage.setItem(EXERCISE_COLLECTION_KEY, select.value);
-    });
+    };
   }
 
   function resetExerciseSelectionState() {

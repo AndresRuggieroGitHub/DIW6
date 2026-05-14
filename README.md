@@ -7,10 +7,21 @@ Aplicación web de aprendizaje de idiomas basada en Laravel, manteniendo el aspe
 Lexi ya funciona como aplicación web real:
 
 - Laravel 12 gestiona rutas, autenticación, sesión, permisos y APIs.
+- El `.env` actual del repositorio sigue apuntando a `sqlite` como estado operativo por defecto.
 - SQLite sigue disponible como base de desarrollo simple.
 - MySQL/MariaDB local ya tiene flujo completo de bootstrap, smoke test y arranque sin tocar `.env`.
 - El frontend conserva el prototipo original, pero ya reutiliza layouts Blade y endpoints reales.
+- Las páginas principales públicas, privadas y admin del prototipo ya resuelven Blade directamente desde Laravel; los `.html` raíz quedan como compatibilidad heredada en disco, no como render activo de esas rutas.
 - Auth, perfil, biblioteca y panel admin ya están migrados a Blade.
+
+## Estado operativo de base de datos
+
+Ahora mismo no está "todo pasado a MySQL" por defecto.
+
+- Si no haces ningún cambio manual, Lexi arranca con `sqlite` usando `database/database.sqlite`.
+- MySQL/MariaDB ya está soportado y es el camino objetivo para producción y validación local más realista.
+- El cambio a MySQL local puede hacerse con `scripts/switch-env-to-mysql-local.ps1`.
+- Para comprobar qué conexión está activa en este momento, puedes ejecutar `scripts/show-current-db-config.ps1`.
 
 ## Funcionalidades ya implementadas
 
@@ -115,18 +126,38 @@ Scripts útiles ya preparados:
 - `scripts/bootstrap-mysql-local.ps1` para crear la base si hace falta, migrar y sembrar el proyecto completo sobre MySQL local.
 - `scripts/mysql-smoke-test.ps1` para migrar, sembrar y comprobar conteos sobre MySQL local.
 - `scripts/serve-mysql-local.ps1` para arrancar Lexi en otro puerto usando MySQL sin tocar `.env`.
+- `scripts/show-current-db-config.ps1` para ver en consola la conexión efectiva que Laravel está usando ahora mismo.
+- `scripts/switch-env-to-mysql-local.ps1` para convertir `.env` al flujo MySQL local con backup automático del estado SQLite.
+- `scripts/switch-env-to-sqlite.ps1` para restaurar `.env` al flujo SQLite local.
 - Ambos scripts aceptan parámetros `-DbUser`, `-DbPassword`, `-DbHost`, `-DbPort` y `-DbName`, útiles para XAMPP o MySQL local existente.
 - `bootstrap-mysql-local.ps1` y `mysql-smoke-test.ps1` también soportan `-EmptyPassword` para XAMPP con `root` sin password.
 
 ## ¿Hay que pasar todo a Blade?
 
+Para la superficie principal, ya está prácticamente hecho.
+
 No de golpe.
 
 La estrategia correcta aquí es progresiva:
 
-- mantener HTML estático donde solo hay presentación y JS
+- mantener como archivos separados solo los assets y compatibilidades que no deciden lógica de servidor
 - pasar a Blade las superficies que dependen de sesión, permisos o datos del servidor
 - extraer después layouts compartidos para header, drawer y footer
+
+Estado real ahora mismo:
+
+- `index`, `contacto`, `info`, `privacidad`, `producto` y `terminos` ya salen por Blade.
+- `app`, `biblioteca`, `carrito`, `ejercicios` y `progreso` ya salen por Blade.
+- `login`, `registro`, `forgot-password` y `perfil` ya salen por Blade.
+- Todo el panel `admin*` ya sale por Blade.
+- Lo pendiente no es una migración grande a Blade, sino seguir reduciendo compatibilidad heredada y deuda de JS/layout.
+
+Regla práctica para Lexi:
+
+- páginas y formularios con auth, sesión, permisos o datos: Blade
+- APIs: controladores + JSON
+- estilos y comportamiento cliente: `public/style.css` y `public/js/script.js`
+- los `.html` raíz no tienen por qué desaparecer ya, pero tampoco deben seguir siendo la fuente real de render cuando la ruta ya está migrada
 
 La prioridad técnica no es “todo a Blade” por sí solo, sino:
 

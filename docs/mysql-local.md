@@ -77,11 +77,42 @@ Con XAMPP y `root` sin password:
 powershell -ExecutionPolicy Bypass -File .\scripts\serve-mysql-local.ps1 -DbUser root -EmptyPassword
 ```
 
+## Error frecuente: `10061` o sin escucha en `3306`
+
+Si `bootstrap-mysql-local.ps1` o `switch-env-to-mysql-local.ps1` fallan diciendo que no hay ningun servidor MySQL/MariaDB escuchando en `127.0.0.1:3306`, el problema no es Laravel: el daemon de MySQL no esta arrancado.
+
+Opciones tipicas:
+
+- iniciar MySQL desde XAMPP
+- levantar `docker compose -f docker-compose.mysql.yml up -d`
+- usar otro host o puerto con `-DbHost` y `-DbPort`
+
 Flujo recomendado si quieres trabajar ya proyectando todo a MySQL:
 
 1. `bootstrap-mysql-local.ps1`
 2. `mysql-smoke-test.ps1`
 3. `serve-mysql-local.ps1`
+
+## Pasar `.env` a MySQL local
+
+Si quieres que MySQL deje de ser solo un servidor alternativo y pase a ser el entorno principal del proyecto, puedes conmutar `.env` con backup automático:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\switch-env-to-mysql-local.ps1 -DbUser root -EmptyPassword -Bootstrap
+```
+
+Ese script:
+
+- guarda una copia inicial en `.env.sqlite.backup`
+- cambia `DB_CONNECTION` y `DB_*` en `.env`
+- limpia configuración
+- opcionalmente migra y siembra MySQL si usas `-Bootstrap`
+
+Para volver al flujo SQLite local:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\switch-env-to-sqlite.ps1
+```
 
 ## Acceso visual
 

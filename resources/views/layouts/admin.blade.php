@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="{{ $description }}">
   <meta name="robots" content="{{ $robots ?? 'noindex,follow' }}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>{{ $title }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +30,10 @@
       @endisset
       <div class="admin-sidebar-footer">
         <a href="app.html"><i class="bi bi-house-door"></i> Abrir app</a>
-        <a href="login.html"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
+        <form method="POST" action="{{ route('logout') }}" class="admin-sidebar-footer__form">
+          @csrf
+          <button type="submit" class="admin-sidebar-footer__button"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
+        </form>
       </div>
     </aside>
 

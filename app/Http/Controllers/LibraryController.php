@@ -8,9 +8,11 @@ use App\Models\User;
 use App\Models\UserCollection;
 use App\Models\UserWord;
 use App\Models\Word;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
 class LibraryController extends Controller
@@ -149,17 +151,26 @@ class LibraryController extends Controller
 
     public function storeCollection(Request $request): JsonResponse
     {
+        $name = trim((string) $request->input('name', ''));
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'language' => ['required', Rule::exists('languages', 'code')],
         ]);
 
-        $collection = UserCollection::query()->create([
-            'user_id' => $request->user()->id,
-            'language_code' => $validated['language'],
-            'name' => trim($validated['name']),
-            'is_default' => false,
-        ]);
+        $this->ensureUniqueCollectionName($request->user()->id, $validated['language'], $name);
+
+        try {
+            $collection = UserCollection::query()->create([
+                'user_id' => $request->user()->id,
+                'language_code' => $validated['language'],
+                'name' => $name,
+                'is_default' => false,
+            ]);
+        } catch (QueryException $exception) {
+            $this->throwIfDuplicateCollectionName($exception);
+            throw $exception;
+        }
 
         return response()->json([
             'collection' => [
@@ -176,13 +187,22 @@ class LibraryController extends Controller
     {
         abort_unless($collection->user_id === $request->user()->id, 404);
 
+        $name = trim((string) $request->input('name', ''));
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:120'],
         ]);
 
-        $collection->update([
-            'name' => trim($validated['name']),
-        ]);
+        $this->ensureUniqueCollectionName($request->user()->id, $collection->language_code, $name, $collection->id);
+
+        try {
+            $collection->update([
+                'name' => $name,
+            ]);
+        } catch (QueryException $exception) {
+            $this->throwIfDuplicateCollectionName($exception);
+            throw $exception;
+        }
 
         return response()->json([
             'collections' => $this->collectionItems($request->user(), $collection->language_code),
@@ -380,5 +400,38 @@ class LibraryController extends Controller
             ['source_word_id' => $sourceWord->id, 'target_word_id' => $targetWord->id],
             ['context_note' => null, 'created_at' => now()]
         );
+    }
+
+    private function ensureUniqueCollectionName(int $userId, string $languageCode, string $name, ?int $ignoreId = null): void
+    {
+        $query = UserCollection::query()
+            ->where('user_id', $userId)
+            ->where('language_code', $languageCode)
+            ->whereRaw('LOWER(name) = ?', [mb_strtolower($name)]);
+
+        if ($ignoreId !== null) {
+            $query->whereKeyNot($ignoreId);
+        }
+
+        if ($query->exists()) {
+            throw ValidationException::withMessages([
+                'name' => 'Ya existe una colección con ese nombre para este idioma.',
+            ]);
+        }
+    }
+
+    private function throwIfDuplicateCollectionName(QueryException $exception): void
+    {
+        $message = strtolower($exception->getMessage());
+        $isDuplicate = str_contains($message, 'duplicate')
+            || str_contains($message, 'unique')
+            || str_contains((string) $exception->getCode(), '23000')
+            || str_contains((string) $exception->errorInfo[0] ?? '', '23000');
+
+        if ($isDuplicate) {
+            throw ValidationException::withMessages([
+                'name' => 'Ya existe una colección con ese nombre para este idioma.',
+            ]);
+        }
     }
 }

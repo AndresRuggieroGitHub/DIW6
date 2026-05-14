@@ -53,6 +53,8 @@ class AdminWordsController extends Controller
                 'connection' => config('database.default'),
                 'driver' => $defaultConnection->getDriverName(),
                 'database' => $defaultConnection->getDatabaseName(),
+                'target' => 'mysql',
+                'is_mysql_like' => in_array($defaultConnection->getDriverName(), ['mysql', 'mariadb'], true),
             ],
         ]);
     }
