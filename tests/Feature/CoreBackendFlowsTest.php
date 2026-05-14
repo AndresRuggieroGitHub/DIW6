@@ -271,6 +271,61 @@ class CoreBackendFlowsTest extends TestCase
         }
     }
 
+    public function test_admin_exercises_page_shows_answer_metrics_from_attempt_answers(): void
+    {
+        $user = User::factory()->create();
+        $this->attachAdminRole($user);
+
+        $exerciseId = DB::table('exercises')->insertGetId([
+            'type' => 'reading',
+            'title' => 'Reading',
+            'source' => 'manual',
+            'created_by' => $user->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $attemptId = DB::table('exercise_attempts')->insertGetId([
+            'user_id' => $user->id,
+            'exercise_id' => $exerciseId,
+            'started_at' => now()->subMinute(),
+            'completed_at' => now(),
+            'score' => 50,
+            'result_status' => 'completed',
+            'time_spent_seconds' => 60,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('attempt_answers')->insert([
+            [
+                'attempt_id' => $attemptId,
+                'answer_text' => 'casa',
+                'is_correct' => true,
+                'points_obtained' => 1,
+                'feedback' => 'Correcto',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'attempt_id' => $attemptId,
+                'answer_text' => 'perro',
+                'is_correct' => false,
+                'points_obtained' => 0,
+                'feedback' => 'Incorrecto',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        $response = $this->actingAs($user)->get('/admin-exercises.html');
+
+        $response->assertOk();
+        $response->assertSee('Respuestas detalladas');
+        $response->assertSee('2 <span class="text-muted">/ 1 correctas</span>', false);
+        $response->assertSee('50%');
+    }
+
     public function test_admin_words_pagination_uses_custom_labels_without_default_laravel_copy(): void
     {
         $this->seedLanguages();
