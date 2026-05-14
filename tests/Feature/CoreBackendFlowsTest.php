@@ -270,6 +270,34 @@ class CoreBackendFlowsTest extends TestCase
         }
     }
 
+    public function test_admin_words_pagination_uses_custom_labels_without_default_laravel_copy(): void
+    {
+        $this->seedLanguages();
+
+        $user = User::factory()->create();
+        $this->attachAdminRole($user);
+
+        for ($index = 1; $index <= 25; $index++) {
+            DB::table('words')->insert([
+                'client_key' => 'word-' . $index,
+                'text' => 'palabra-' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
+                'language_code' => 'es',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        $response = $this->actingAs($user)->get('/admin-words.html');
+
+        $response->assertOk();
+        $response->assertDontSee('pagination.previous');
+        $response->assertDontSee('pagination.next');
+        $response->assertDontSee('Showing 1 to 20 of 25 results');
+        $response->assertSee('Mostrando 1-20 de 25 filas.');
+        $response->assertSee('&lsaquo;', false);
+        $response->assertSee('&rsaquo;', false);
+    }
+
     public function test_exercise_attempt_endpoint_creates_attempt_and_reuses_mode_record(): void
     {
         $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
