@@ -1086,7 +1086,6 @@
   };
 
   const setupLibraryList = () => {
-    const cards = Array.from(document.querySelectorAll("[data-word-card]"));
     const listEl = document.getElementById("librarySavedList");
     const countEl = document.getElementById("libraryCount");
     const clearBtn = document.getElementById("clearLibrary");
@@ -1264,7 +1263,7 @@
 
     if (listBackBtn) listBackBtn.addEventListener("click", closeDetail);
 
-    if (!cards.length || !listEl || !countEl) return;
+    if (!listEl || !countEl) return;
 
     const PAGE_SIZE = 10;
     let currentPage = 0;
@@ -1392,25 +1391,32 @@
       });
     }
 
-    cards.forEach((card) => {
-      // Botón principal: guarda en Guardado si hace falta y abre opciones
-      const mainBtn = card.querySelector("[data-save-word]");
-      if (mainBtn) {
-        mainBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const id = card.dataset.wordId;
-          const label = card.dataset.wordLabel || card.querySelector("h2")?.textContent?.trim() || "Palabra";
-          ensureWordInMainLibrary(id, label, card.dataset.language || getActiveLang(), {
-            translation: card.dataset.translation,
-            cefr: card.dataset.cefr,
-            topic: card.dataset.topic,
-          });
-          updateAllBookmarkStates();
-          window.dispatchEvent(new Event("lexi-library-updated"));
-          if (window._openSaveDropdown) window._openSaveDropdown(card, mainBtn);
-        });
+    document.addEventListener("click", (e) => {
+      const mainBtn = e.target.closest("[data-save-word]");
+      if (!mainBtn) return;
+
+      const card = mainBtn.closest("[data-word-card]");
+      if (!card) return;
+
+      e.stopPropagation();
+
+      const id = card.dataset.wordId;
+      const label = card.dataset.wordLabel || card.querySelector("h2")?.textContent?.trim() || "Palabra";
+
+      ensureWordInMainLibrary(id, label, card.dataset.language || getActiveLang(), {
+        translation: card.dataset.translation,
+        cefr: card.dataset.cefr,
+        topic: card.dataset.topic,
+      });
+
+      updateAllBookmarkStates();
+      window.dispatchEvent(new Event("lexi-library-updated"));
+
+      if (window._openSaveDropdown) {
+        window._openSaveDropdown(card, mainBtn);
       }
     });
+
     updateAllBookmarkStates();
 
     if (clearBtn) {
@@ -1820,15 +1826,17 @@
     const searchInput = document.getElementById("searchInput");
     const cefrFilter = document.getElementById("cefrFilter");
     const topicFilter = document.getElementById("topicFilter");
-    const cards = Array.from(document.querySelectorAll("[data-word-card]"));
     const noResults = document.getElementById("noResults");
     const paginationEl = document.getElementById("libraryPagination");
 
-    if (!searchInput || !cards.length) return;
+    if (!searchInput) return;
 
     const CARDS_PER_PAGE = 16;
     let currentPage = 1;
     let filteredCards = [];
+    let isBound = false;
+
+    const getCards = () => Array.from(document.querySelectorAll("[data-word-card]"));
 
     const normalize = (value) =>
       String(value || "")
@@ -1859,6 +1867,18 @@
     };
 
     const renderPage = () => {
+      const cards = getCards();
+      if (!cards.length) {
+        filteredCards = [];
+        renderPagination(0);
+        if (noResults) noResults.hidden = false;
+        return;
+      }
+
+      const totalPages = Math.max(1, Math.ceil(filteredCards.length / CARDS_PER_PAGE));
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
       const start = (currentPage - 1) * CARDS_PER_PAGE;
       const end = start + CARDS_PER_PAGE;
 
@@ -1867,11 +1887,18 @@
         card.hidden = idx === -1 || idx < start || idx >= end;
       });
 
-      const totalPages = Math.ceil(filteredCards.length / CARDS_PER_PAGE);
       renderPagination(totalPages);
     };
 
-    const applyFilters = () => {
+    const applyFilters = ({ preservePage = false } = {}) => {
+      const cards = getCards();
+      if (!cards.length) {
+        filteredCards = [];
+        renderPagination(0);
+        if (noResults) noResults.hidden = false;
+        return;
+      }
+
       const query = normalize(searchInput.value.trim());
       const activeLang = getActiveLang();
       const cefrValue = cefrFilter ? cefrFilter.value : "all";
@@ -1892,15 +1919,22 @@
         return matchesQuery && matchesLanguage && matchesCefr && matchesTopic;
       });
 
-      currentPage = 1;
+      if (!preservePage) {
+        currentPage = 1;
+      }
+
       renderPage();
 
       if (noResults) noResults.hidden = filteredCards.length > 0;
     };
 
-    searchInput.addEventListener("input", applyFilters);
-    if (cefrFilter) cefrFilter.addEventListener("change", applyFilters);
-    if (topicFilter) topicFilter.addEventListener("change", applyFilters);
+    if (!isBound) {
+      searchInput.addEventListener("input", applyFilters);
+      if (cefrFilter) cefrFilter.addEventListener("change", applyFilters);
+      if (topicFilter) topicFilter.addEventListener("change", applyFilters);
+      window.addEventListener("lexi-library-updated", () => applyFilters({ preservePage: true }));
+      isBound = true;
+    }
 
     applyFilters();
   };
@@ -2330,6 +2364,7 @@
     if (canUseServerSession) {
       setPageLoading(true);
       await window.lexiSessionReady;
+      setPageLoading(false);
     } else {
       syncActiveLangFlag();
     }
@@ -2362,7 +2397,9 @@
     setupProgressPage();
     updateCartBadges();
     setupProfileLangChips();
-    setPageLoading(false);
+    if (canUseServerSession) {
+      setPageLoading(false);
+    }
   };
 
   initializeApp();

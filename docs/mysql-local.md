@@ -10,21 +10,37 @@ Este proyecto sigue funcionando en desarrollo con `SQLite`, pero ya queda prepar
 
 ## Arranque mínimo
 
-1. Levantar contenedores:
+1. Tener un MySQL/MariaDB local disponible.
+
+Con Docker:
 
 ```powershell
 docker compose -f docker-compose.mysql.yml up -d
 ```
 
-2. Copiar valores de `.env.mysql.local.example` a tu `.env` cuando quieras probar MySQL.
+Con XAMPP/MariaDB ya arrancado no hace falta Docker.
 
-3. Limpiar caché de configuración:
+2. Bootstrap completo de la base MySQL sin tocar `.env`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-mysql-local.ps1
+```
+
+Con XAMPP y `root` sin password:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-mysql-local.ps1 -DbUser root -EmptyPassword
+```
+
+3. Copiar valores de `.env.mysql.local.example` a tu `.env` solo si quieres que MySQL pase a ser tu entorno por defecto.
+
+4. Limpiar caché de configuración:
 
 ```powershell
 php artisan config:clear
 ```
 
-4. Ejecutar migraciones y seeders:
+5. Ejecutar migraciones y seeders manualmente solo si no usas el script de bootstrap:
 
 ```powershell
 php artisan migrate
@@ -36,6 +52,8 @@ Atajo ya preparado:
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\mysql-smoke-test.ps1
 ```
+
+Ese smoke test ahora también comprueba el admin inicial y los módulos de `billing` y `ai`.
 
 Si usas XAMPP con `root` y sin password:
 
@@ -58,6 +76,12 @@ Con XAMPP y `root` sin password:
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\serve-mysql-local.ps1 -DbUser root -EmptyPassword
 ```
+
+Flujo recomendado si quieres trabajar ya proyectando todo a MySQL:
+
+1. `bootstrap-mysql-local.ps1`
+2. `mysql-smoke-test.ps1`
+3. `serve-mysql-local.ps1`
 
 ## Acceso visual
 

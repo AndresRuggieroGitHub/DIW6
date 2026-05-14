@@ -553,12 +553,22 @@
   async function registerExerciseAttempt() {
     try {
       const source = getSelectedVocabularySource();
+      const items = getModeData(currentMode).items || [];
+      const itemCount = items.length;
+      const timeSpentSeconds = sessionStartedAt ? Math.max(0, Math.round((Date.now() - sessionStartedAt) / 1000)) : null;
+      const score = itemCount > 0 ? Math.round((sessionCorrectItems / itemCount) * 100) : null;
+
       await exerciseApiFetch('/api/exercise-attempts', {
         method: 'POST',
         body: JSON.stringify({
           mode: currentMode,
           source_type: getSelectedSourceType(),
           source_name: source?.name || null,
+          result_status: score !== null && score >= 60 ? 'passed' : 'completed',
+          score,
+          time_spent_seconds: timeSpentSeconds,
+          item_count: itemCount,
+          correct_count: sessionCorrectItems,
         }),
       });
     } catch {
@@ -715,6 +725,25 @@
 
   let currentMode = null;
   let currentIndex = 0;
+  let sessionStartedAt = null;
+  let sessionAnsweredItems = 0;
+  let sessionCorrectItems = 0;
+
+  function resetExerciseSessionMetrics() {
+    sessionStartedAt = Date.now();
+    sessionAnsweredItems = 0;
+    sessionCorrectItems = 0;
+  }
+
+  function markExerciseItemResult(container, isCorrect) {
+    if (!container || container.dataset.evaluated === '1') return;
+
+    container.dataset.evaluated = '1';
+    sessionAnsweredItems += 1;
+    if (isCorrect) {
+      sessionCorrectItems += 1;
+    }
+  }
 
   document.querySelectorAll('.exercise-card[data-mode]').forEach(card => {
     card.addEventListener('click', () => openMode(card.dataset.mode));
@@ -741,6 +770,7 @@
   function openMode(mode) {
     currentMode = mode;
     currentIndex = 0;
+    resetExerciseSessionMetrics();
     const modeData = getModeData(mode);
     document.getElementById('exerciseMenu').hidden = true;
     document.getElementById('exercisePanel').hidden = false;
@@ -821,11 +851,13 @@
           this.classList.add('ex-option--correct');
           feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Correcto!';
           feedback.className = 'ex-feedback ex-feedback--ok';
+          markExerciseItemResult(container, true);
         } else {
           this.classList.add('ex-option--wrong');
           container.querySelectorAll('.ex-option')[item.correct].classList.add('ex-option--correct');
           feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> Incorrecto. La respuesta es: <strong>' + item.options[item.correct] + '</strong>';
           feedback.className = 'ex-feedback ex-feedback--err';
+          markExerciseItemResult(container, false);
         }
         feedback.hidden = false;
       });
@@ -860,9 +892,11 @@
       if (val === item.answer.toLowerCase()) {
         feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Correcto!';
         feedback.className = 'ex-feedback ex-feedback--ok';
+        markExerciseItemResult(container, true);
       } else {
         feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> La respuesta es: <strong>"' + item.answer + '"</strong>';
         feedback.className = 'ex-feedback ex-feedback--err';
+        markExerciseItemResult(container, false);
       }
       feedback.hidden = false;
     });
@@ -906,6 +940,7 @@
     });
 
     container.querySelector('.ex-self-yes').addEventListener('click', () => {
+      markExerciseItemResult(container, true);
       selfCheck.innerHTML = '<p class="ex-feedback ex-feedback--ok" style="display:block"><i class="bi bi-check-circle-fill"></i> Genial! Sigue practicando.</p>';
     });
     container.querySelector('.ex-self-no').addEventListener('click', () => {
@@ -933,12 +968,14 @@
       if (val.length > 0 && matches >= Math.ceil(keywords.length * 0.65)) {
         feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Muy bien! Respuesta de referencia: <em>"' + item.answer + '"</em>';
         feedback.className = 'ex-feedback ex-feedback--ok';
+        markExerciseItemResult(container, true);
       } else if (val.length === 0) {
         feedback.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Escribe tu respuesta primero.';
         feedback.className = 'ex-feedback ex-feedback--warn';
       } else {
         feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> Respuesta de referencia: <em>"' + item.answer + '"</em>';
         feedback.className = 'ex-feedback ex-feedback--err';
+        markExerciseItemResult(container, false);
       }
       feedback.hidden = false;
     });

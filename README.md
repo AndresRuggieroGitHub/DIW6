@@ -7,7 +7,8 @@ Aplicación web de aprendizaje de idiomas basada en Laravel, manteniendo el aspe
 Lexi ya funciona como aplicación web real:
 
 - Laravel 12 gestiona rutas, autenticación, sesión, permisos y APIs.
-- SQLite se usa como base de datos de desarrollo.
+- SQLite sigue disponible como base de desarrollo simple.
+- MySQL/MariaDB local ya tiene flujo completo de bootstrap, smoke test y arranque sin tocar `.env`.
 - El frontend conserva el prototipo original, pero ya reutiliza layouts Blade y endpoints reales.
 - Auth, perfil, biblioteca y panel admin ya están migrados a Blade.
 
@@ -39,10 +40,10 @@ Lexi ya funciona como aplicación web real:
 
 ### Base de datos
 
-- Driver actual en desarrollo: `sqlite`.
-- Fichero actual: `database/database.sqlite`.
+- Fallback local simple: `sqlite` en `database/database.sqlite`.
+- Camino recomendado para acercarse a producción: `mysql` o `mariadb` local con los scripts de `scripts/`.
 - Las migraciones están aplicadas.
-- `php artisan db:seed` crea el usuario admin inicial y un catálogo base de vocabulario para la biblioteca.
+- `php artisan db:seed` crea el usuario admin inicial, catálogo base, datos base de billing y registros iniciales de AI.
 - `admin-words.html` ya permite ver visualmente filas reales de `words`, `translations`, `categories` y la conexión activa.
 - La configuración vive en `.env` y [config/database.php](config/database.php).
 
@@ -111,9 +112,11 @@ Referencia rápida: `docs/mysql-local.md`.
 
 Scripts útiles ya preparados:
 
+- `scripts/bootstrap-mysql-local.ps1` para crear la base si hace falta, migrar y sembrar el proyecto completo sobre MySQL local.
 - `scripts/mysql-smoke-test.ps1` para migrar, sembrar y comprobar conteos sobre MySQL local.
 - `scripts/serve-mysql-local.ps1` para arrancar Lexi en otro puerto usando MySQL sin tocar `.env`.
 - Ambos scripts aceptan parámetros `-DbUser`, `-DbPassword`, `-DbHost`, `-DbPort` y `-DbName`, útiles para XAMPP o MySQL local existente.
+- `bootstrap-mysql-local.ps1` y `mysql-smoke-test.ps1` también soportan `-EmptyPassword` para XAMPP con `root` sin password.
 
 ## ¿Hay que pasar todo a Blade?
 
@@ -134,12 +137,12 @@ La prioridad técnica no es “todo a Blade” por sí solo, sino:
 
 ## Trabajo técnico recomendado a continuación
 
-1. Sustituir el bloque masivo de cards estáticas de biblioteca por render 100% desde base de datos.
-2. Seguir conectando `app`, `ejercicios` y `progreso` a datos reales donde aún dependan de mockups del DOM.
-3. Reducir más deuda de JavaScript heredado en `public/js/script.js`, separando mejor catálogo, progreso y carrito.
-4. Preparar seeders/editorial workflow más amplio para catálogo real y administración de palabras.
-5. Planificar paso a MySQL/MariaDB o PostgreSQL para producción.
-6. Probar al menos una vez el proyecto sobre MySQL local antes del despliegue a RDS.
+1. Seguir usando MySQL local como camino principal antes del despliegue a `RDS MySQL`.
+2. Sustituir el bloque masivo de cards estáticas de biblioteca por render 100% desde base de datos.
+3. Seguir conectando `app`, `ejercicios` y `progreso` a datos reales donde aún dependan de mockups del DOM.
+4. Reducir más deuda de JavaScript heredado en `public/js/script.js`, separando mejor catálogo, progreso y carrito.
+5. Preparar seeders/editorial workflow más amplio para catálogo real y administración de palabras.
+6. Endurecer métricas y reporting de ejercicios, billing y AI sobre datos reales.
 
 ## Ejecución local
 

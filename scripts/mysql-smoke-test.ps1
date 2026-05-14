@@ -26,7 +26,11 @@ php artisan migrate --force
 php artisan db:seed --force
 php artisan tinker --execute="dump([
     'users' => DB::table('users')->count(),
+    'admin_exists' => DB::table('users')->where('email', 'admin@lexi.app')->exists(),
     'words' => DB::table('words')->count(),
     'translations' => DB::table('translations')->count(),
     'categories' => DB::table('categories')->count(),
+    'plans' => DB::getSchemaBuilder()->hasTable('plans') ? DB::table('plans')->count() : 0,
+    'subscriptions' => DB::getSchemaBuilder()->hasTable('subscriptions') ? DB::table('subscriptions')->count() : 0,
+    'ai_generations' => DB::getSchemaBuilder()->hasTable('ai_generations') ? DB::table('ai_generations')->count() : 0,
 ]);"

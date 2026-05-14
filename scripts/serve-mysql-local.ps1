@@ -5,7 +5,9 @@ param(
     [string]$DbName = 'lexi',
     [string]$DbUser = 'lexi',
     [string]$DbPassword = 'lexi',
-    [switch]$EmptyPassword
+    [switch]$EmptyPassword,
+    [switch]$Bootstrap,
+    [switch]$SkipSeed
 )
 
 $ErrorActionPreference = 'Stop'
@@ -13,6 +15,28 @@ $ErrorActionPreference = 'Stop'
 Set-Location "$PSScriptRoot\.."
 
 $resolvedPassword = if ($EmptyPassword.IsPresent) { '' } else { $DbPassword }
+
+if ($Bootstrap.IsPresent) {
+    $bootstrapArgs = @(
+        '-ExecutionPolicy', 'Bypass',
+        '-File', (Join-Path $PSScriptRoot 'bootstrap-mysql-local.ps1'),
+        '-DbHost', $DbHost,
+        '-DbPort', $DbPort,
+        '-DbName', $DbName,
+        '-DbUser', $DbUser,
+        '-DbPassword', $DbPassword
+    )
+
+    if ($EmptyPassword.IsPresent) {
+        $bootstrapArgs += '-EmptyPassword'
+    }
+
+    if ($SkipSeed.IsPresent) {
+        $bootstrapArgs += '-SkipSeed'
+    }
+
+    powershell @bootstrapArgs
+}
 
 $env:APP_ENV = 'local'
 $env:APP_URL = "http://127.0.0.1:$Port"

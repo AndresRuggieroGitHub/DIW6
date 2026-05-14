@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AdminCategoriesController;
+use App\Http\Controllers\AdminAiController;
 use App\Http\Controllers\AdminAnalyticsController;
+use App\Http\Controllers\AdminBillingController;
 use App\Http\Controllers\AdminCollectionsController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminExercisesController;
@@ -37,8 +39,6 @@ $protectedStaticPages = [
 ];
 
 $adminStaticPages = [
-    'admin-billing' => 'admin-billing.html',
-    'admin-ai' => 'admin-ai.html',
 ];
 
 $renderStaticPage = function (string $file, ?string $view = null) {
@@ -226,6 +226,30 @@ Route::middleware('auth')->group(function () use ($adminStaticPages, $renderStat
 
         return app(AdminExercisesController::class)->index($request);
     })->name('admin-exercises');
+
+    Route::get('/admin-billing', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminBillingController::class)->index($request);
+    });
+
+    Route::get('/admin-billing.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminBillingController::class)->index($request);
+    })->name('admin-billing');
+
+    Route::get('/admin-ai', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminAiController::class)->index($request);
+    });
+
+    Route::get('/admin-ai.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminAiController::class)->index($request);
+    })->name('admin-ai');
 
     foreach ($adminStaticPages as $slug => $file) {
         Route::get("/{$slug}", function (Request $request) use ($file, $renderStaticPage) {

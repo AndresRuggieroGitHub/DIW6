@@ -59,6 +59,10 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        $this->call(LexiCatalogSeeder::class);
+        $this->call([
+            LexiCatalogSeeder::class,
+            BillingSeeder::class,
+            AiGenerationSeeder::class,
+        ]);
     }
 }
