@@ -31,9 +31,12 @@ if ($Bootstrap.IsPresent) {
         '-DbHost', $DbHost,
         '-DbPort', $DbPort,
         '-DbName', $DbName,
-        '-DbUser', $DbUser,
-        '-DbPassword', $DbPassword
+        '-DbUser', $DbUser
     )
+
+    if (-not $EmptyPassword.IsPresent) {
+        $bootstrapArgs += @('-DbPassword', $DbPassword)
+    }
 
     if ($EmptyPassword.IsPresent) {
         $bootstrapArgs += '-EmptyPassword'

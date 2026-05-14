@@ -126,11 +126,13 @@ Scripts útiles ya preparados:
 - `scripts/bootstrap-mysql-local.ps1` para crear la base si hace falta, migrar y sembrar el proyecto completo sobre MySQL local.
 - `scripts/mysql-smoke-test.ps1` para migrar, sembrar y comprobar conteos sobre MySQL local.
 - `scripts/serve-mysql-local.ps1` para arrancar Lexi en otro puerto usando MySQL sin tocar `.env`.
+- `scripts/start-xampp-local.ps1` para levantar Apache + MariaDB de XAMPP y dejar `phpMyAdmin` operativo en `http://127.0.0.1/phpmyadmin/`.
+- `scripts/stop-xampp-local.ps1` para bajar esos procesos de XAMPP cuando ya no los necesites.
 - `scripts/show-current-db-config.ps1` para ver en consola la conexión efectiva que Laravel está usando ahora mismo.
 - `scripts/switch-env-to-mysql-local.ps1` para convertir `.env` al flujo MySQL local con backup automático del estado SQLite.
 - `scripts/switch-env-to-sqlite.ps1` para restaurar `.env` al flujo SQLite local.
 - Ambos scripts aceptan parámetros `-DbUser`, `-DbPassword`, `-DbHost`, `-DbPort` y `-DbName`, útiles para XAMPP o MySQL local existente.
-- `bootstrap-mysql-local.ps1` y `mysql-smoke-test.ps1` también soportan `-EmptyPassword` para XAMPP con `root` sin password.
+- `bootstrap-mysql-local.ps1`, `mysql-smoke-test.ps1` y `serve-mysql-local.ps1` también soportan `-EmptyPassword` para XAMPP con `root` sin password.
 
 ## ¿Hay que pasar todo a Blade?
 

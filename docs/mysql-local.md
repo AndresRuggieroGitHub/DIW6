@@ -12,6 +12,18 @@ Este proyecto sigue funcionando en desarrollo con `SQLite`, pero ya queda prepar
 
 1. Tener un MySQL/MariaDB local disponible.
 
+Si trabajas con XAMPP en este equipo, también queda un atajo para levantar Apache + MariaDB y dejar `phpMyAdmin` operativo:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\start-xampp-local.ps1
+```
+
+Y para pararlo después:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\stop-xampp-local.ps1
+```
+
 Con Docker:
 
 ```powershell
@@ -124,6 +136,10 @@ powershell -ExecutionPolicy Bypass -File .\scripts\switch-env-to-sqlite.ps1
 - Base de datos: `lexi`
 
 Si en lugar de abrir `Adminer` prefieres no depender de una herramienta externa, el propio panel admin de Lexi ya muestra muchas tablas reales desde la aplicación.
+
+Con XAMPP local, la URL útil es:
+
+- `http://127.0.0.1/phpmyadmin/`
 
 ## Notas
 
