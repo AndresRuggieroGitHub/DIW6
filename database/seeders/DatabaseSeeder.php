@@ -63,6 +63,7 @@ class DatabaseSeeder extends Seeder
             LexiCatalogSeeder::class,
             BillingSeeder::class,
             AiGenerationSeeder::class,
+            ExtendedDomainSeeder::class,
         ]);
     }
 }

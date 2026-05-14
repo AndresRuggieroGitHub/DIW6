@@ -9,7 +9,10 @@ Lexi ya cubre bien el nucleo del producto actual:
 - progreso del usuario sobre palabras
 - colecciones por idioma
 - ejercicios e intentos
+- estructura normalizada base para plantillas, items, opciones, instancias y respuestas
+- relacion futura profesor-alumno
 - suscripciones y planes basicos
+- capas representativas para features de plan, pagos y uso por periodo
 - log editorial de generaciones IA
 
 Tablas reales ya presentes:
@@ -27,164 +30,91 @@ Tablas reales ya presentes:
 - `collection_words`
 - `exercises`
 - `exercise_attempts`
+- `exercise_templates`
+- `exercise_items`
+- `exercise_options`
+- `exercise_instances`
+- `attempt_answers`
+- `teacher_student`
 - `plans`
+- `plan_features`
 - `subscriptions`
+- `payments`
+- `user_usage`
 - `ai_generations`
 - tablas internas de Laravel: `migrations`, `sessions`, `jobs`, `cache`, etc.
 
-## Diferencias frente al diseño ampliado
+## Nota de producto
 
-El modelo guardado por el proyecto es mas ambicioso que el esquema actual en tres zonas:
+En Lexi, el bloque `free`/`premium` no debe leerse como una regla funcional ya conectada a IA ni como una politica cerrada del producto real.
+
+Ahora mismo esas tablas sirven sobre todo para:
+
+- representar modelo de negocio de forma coherente en el proyecto
+- dejar preparado el dominio comercial
+- evitar rediseñar la base cuando entre cobro real o reglas de plan mas concretas
+
+## Estado de la ampliacion
+
+Ya se ha implementado una ampliacion coherente del esquema en estas zonas:
 
 1. Ejercicios
 
-Ahora mismo `exercises` + `exercise_attempts` resuelven el MVP, pero siguen siendo un modelo compacto.
+Se añadieron:
 
-Faltaria normalizar si Lexi va a tener:
+- `exercise_templates`
+- `exercise_items`
+- `exercise_options`
+- `exercise_instances`
+- `attempt_answers`
 
-- plantillas reutilizables
-- preguntas multiples por ejercicio
-- opciones por pregunta
-- instancias personalizadas por usuario
-- respuestas detalladas por intento
+Esto no sustituye todavia al flujo compacto actual de `exercises` + `exercise_attempts`, pero deja preparada la normalizacion para crecer sin rehacer la base.
 
-2. Billing freemium
+2. Relacion docente
 
-Ahora mismo `plans` y `subscriptions` cubren el estado comercial minimo.
+Se añadió:
 
-Faltaria separar si se quiere monetizacion real:
+- `teacher_student`
+
+La tabla existe, aunque el producto todavia no expone un modo profesor real.
+
+3. Capa comercial y uso
+
+Se añadieron:
 
 - `plan_features`
 - `payments`
 - `user_usage`
 
-3. Roles de profesor
+Estas tablas representan bien el dominio comercial y de uso, pero no implican que la app ya funcione con restricciones premium reales.
 
-El esquema contempla `teacher`, pero aun no existe una funcionalidad real de profesor/alumno.
+## Semilla representativa
 
-Faltaria:
+`DatabaseSeeder` ya deja datos minimos en las tablas ampliadas para que no queden vacias del todo:
 
-- `teacher_student`
+- features de planes
+- un pago de ejemplo
+- un registro de uso por periodo
+- una plantilla de ejercicio con items, opciones, instancia y respuestas
 
-## Extensiones recomendadas por orden
+## Lo que sigue siendo futuro funcional
 
-### 1. `user_usage`
+Aunque el esquema se ha ampliado, estas capacidades siguen sin estar conectadas como flujo de producto completo:
 
-Es la extension con mejor relacion valor/riesgo para el estado actual.
+- editor completo de plantillas y items en admin
+- asignacion real teacher-student
+- cobro con pasarela real
+- enforcement real de limites por plan
+- analitica avanzada apoyada en `attempt_answers` y `user_usage`
 
-Tiene sentido porque Lexi ya tiene:
+## Recomendacion practica
 
-- IA (`ai_generations`)
-- planes (`plans`)
-- suscripciones (`subscriptions`)
+La ampliacion correcta ya no es seguir creando tablas por inercia. Ahora el orden razonable seria conectar funcionalidad real sobre lo que ya existe:
 
-Y permite controlar bien:
-
-- limites de generaciones IA por periodo
-- limites de ejercicios generados
-- futura logica free vs premium sin inferir todo desde logs pesados
-
-Campos recomendados:
-
-- `id`
-- `user_id`
-- `period_start`
-- `period_end`
-- `ai_generations_count`
-- `exercises_generated_count`
-- `created_at`
-- `updated_at`
-- indice unico por `user_id`, `period_start`, `period_end`
-
-### 2. `plan_features`
-
-Tiene sentido cuando el plan deje de depender de un JSON en `plans.features` y se quiera gobernar el producto por capacidades concretas.
-
-Ejemplos de `feature_key`:
-
-- `ai.daily_limit`
-- `ai.models.advanced`
-- `stats.advanced`
-- `collections.max`
-
-Recomendacion:
-
-- no mantener a la vez `plans.features` y `plan_features` mucho tiempo
-- cuando se migre, dejar `plan_features` como fuente de verdad
-
-### 3. `attempt_answers`
-
-Es la mejor extension si el foco del producto pasa a calidad pedagogica y analitica.
-
-Aporta:
-
-- correccion por item
-- feedback detallado
-- errores frecuentes
-- analitica real por tipo de pregunta
-- base para revision espaciada mas inteligente
-
-Tiene sentido incluso antes de separar por completo `exercise_templates`, si cada intento necesita guardar respuestas granulares.
-
-## Extensiones recomendadas solo cuando exista la funcion
-
-### `exercise_templates`, `exercise_items`, `exercise_options`, `exercise_instances`
-
-Muy coherente si Lexi va hacia:
-
-- authoring editorial serio
-- ejercicios IA personalizados por usuario
-- tipos complejos como matching, fill blank, choice, speaking, writing
-
-No merece la pena meterlas aun si el producto sigue en un flujo compacto de ejercicio + intento.
-
-La señal para introducirlas es clara:
-
-- cuando un ejercicio deje de ser un bloque JSON simple
-- cuando haya que versionar plantillas
-- cuando admin o teacher creen ejercicios reutilizables
-
-### `payments`
-
-Tiene sentido solo cuando entre una pasarela real.
-
-Mientras `subscriptions` sea manual o semilla de demo, `payments` solo anade ruido.
-
-La señal correcta es:
-
-- Stripe, PayPal o proveedor real
-- reconciliacion de cobros
-- estados `paid`, `failed`, `refunded`
-
-### `teacher_student`
-
-Solo cuando exista de verdad el rol `teacher` en producto.
-
-Antes de eso, seria una tabla huerfana.
-
-La señal correcta es:
-
-- dashboard docente
-- alumnos asignados
-- seguimiento compartido
-- ejercicios asignados por profesor
-
-## Recomendacion practica para Lexi ahora
-
-Si hubiera que ampliar el esquema ya, sin inflarlo, el orden correcto seria:
-
-1. `user_usage`
-2. `attempt_answers`
-3. `plan_features`
-
-Y dejaria para despues:
-
-1. `exercise_templates`
-2. `exercise_items`
-3. `exercise_options`
-4. `exercise_instances`
-5. `payments`
-6. `teacher_student`
+1. usar `attempt_answers` en el guardado real de ejercicios
+2. exponer `exercise_templates` e `exercise_items` en un flujo admin/editorial
+3. usar `user_usage` para reporting o limites si en algun momento hace falta
+4. usar `plan_features` como fuente de verdad cuando quieras dejar atras el JSON de `plans.features`
 
 ## Criterio de diseño
 

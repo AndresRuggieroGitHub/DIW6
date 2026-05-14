@@ -6,6 +6,7 @@ use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class CoreBackendFlowsTest extends TestCase
@@ -607,6 +608,29 @@ class CoreBackendFlowsTest extends TestCase
         $this->assertSame(3, DB::table('plans')->count());
         $this->assertGreaterThanOrEqual(1, DB::table('subscriptions')->count());
         $this->assertGreaterThanOrEqual(2, DB::table('ai_generations')->count());
+        $this->assertGreaterThanOrEqual(3, DB::table('plan_features')->count());
+        $this->assertGreaterThanOrEqual(1, DB::table('payments')->count());
+        $this->assertGreaterThanOrEqual(1, DB::table('user_usage')->count());
+        $this->assertGreaterThanOrEqual(1, DB::table('exercise_templates')->count());
+        $this->assertGreaterThanOrEqual(2, DB::table('exercise_items')->count());
+        $this->assertGreaterThanOrEqual(1, DB::table('attempt_answers')->count());
+    }
+
+    public function test_database_schema_includes_extended_domain_tables(): void
+    {
+        foreach ([
+            'teacher_student',
+            'exercise_templates',
+            'exercise_items',
+            'exercise_options',
+            'exercise_instances',
+            'attempt_answers',
+            'plan_features',
+            'payments',
+            'user_usage',
+        ] as $table) {
+            $this->assertTrue(Schema::hasTable($table), 'Falta la tabla ' . $table);
+        }
     }
 
     private function attachAdminRole(User $user): void
