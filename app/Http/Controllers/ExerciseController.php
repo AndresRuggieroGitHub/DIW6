@@ -21,24 +21,64 @@ class ExerciseController extends Controller
             'time_spent_seconds' => ['nullable', 'integer', 'min:0', 'max:86400'],
             'item_count' => ['nullable', 'integer', 'min:0', 'max:200'],
             'correct_count' => ['nullable', 'integer', 'min:0', 'max:200'],
+            'answers' => ['nullable', 'array', 'max:200'],
+            'answers.*.item_id' => ['nullable', 'integer', 'exists:exercise_items,id'],
+            'answers.*.item_type' => ['nullable', 'string', 'max:40'],
+            'answers.*.prompt' => ['nullable', 'string', 'max:2000'],
+            'answers.*.expected_answer' => ['nullable', 'string', 'max:4000'],
+            'answers.*.answer_text' => ['nullable', 'string', 'max:4000'],
+            'answers.*.answer_payload' => ['nullable', 'array'],
+            'answers.*.is_correct' => ['nullable', 'boolean'],
+            'answers.*.points_obtained' => ['nullable', 'numeric', 'between:0,100'],
+            'answers.*.feedback' => ['nullable', 'string', 'max:4000'],
         ]);
 
-        $exerciseId = $this->resolveExerciseId($request, $validated);
+        DB::transaction(function () use ($request, $validated) {
+            $exerciseId = $this->resolveExerciseId($request, $validated);
 
-        $timeSpent = $validated['time_spent_seconds'] ?? null;
-        $startedAt = $timeSpent !== null ? now()->copy()->subSeconds($timeSpent) : now();
+            $timeSpent = $validated['time_spent_seconds'] ?? null;
+            $startedAt = $timeSpent !== null ? now()->copy()->subSeconds($timeSpent) : now();
+            $now = now();
 
-        DB::table('exercise_attempts')->insert([
-            'user_id' => $request->user()->id,
-            'exercise_id' => $exerciseId,
-            'started_at' => $startedAt,
-            'completed_at' => now(),
-            'score' => $validated['score'] ?? null,
-            'result_status' => $validated['result_status'] ?? 'completed',
-            'time_spent_seconds' => $timeSpent,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            $attemptId = DB::table('exercise_attempts')->insertGetId([
+                'user_id' => $request->user()->id,
+                'exercise_id' => $exerciseId,
+                'started_at' => $startedAt,
+                'completed_at' => $now,
+                'score' => $validated['score'] ?? null,
+                'result_status' => $validated['result_status'] ?? 'completed',
+                'time_spent_seconds' => $timeSpent,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+
+            $answerRows = collect($validated['answers'] ?? [])
+                ->map(function (array $answer) use ($attemptId, $now) {
+                    $payload = array_filter([
+                        'item_type' => $answer['item_type'] ?? null,
+                        'prompt' => $answer['prompt'] ?? null,
+                        'expected_answer' => $answer['expected_answer'] ?? null,
+                        'client_payload' => $answer['answer_payload'] ?? null,
+                    ], fn ($value) => $value !== null && $value !== '');
+
+                    return [
+                        'attempt_id' => $attemptId,
+                        'item_id' => $answer['item_id'] ?? null,
+                        'answer_text' => $answer['answer_text'] ?? null,
+                        'answer_payload' => $payload ? json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : null,
+                        'is_correct' => $answer['is_correct'] ?? null,
+                        'points_obtained' => $answer['points_obtained'] ?? null,
+                        'feedback' => $answer['feedback'] ?? null,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                })
+                ->all();
+
+            if ($answerRows) {
+                DB::table('attempt_answers')->insert($answerRows);
+            }
+        });
 
         return response()->json([
             'ok' => true,

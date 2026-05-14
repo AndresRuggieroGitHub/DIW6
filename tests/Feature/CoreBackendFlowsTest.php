@@ -314,6 +314,28 @@ class CoreBackendFlowsTest extends TestCase
             'time_spent_seconds' => 42,
             'item_count' => 4,
             'correct_count' => 3,
+            'answers' => [
+                [
+                    'item_type' => 'mcq',
+                    'prompt' => 'What is the best translation?',
+                    'expected_answer' => 'casa',
+                    'answer_text' => 'casa',
+                    'answer_payload' => ['selected_option' => 'casa'],
+                    'is_correct' => true,
+                    'points_obtained' => 1,
+                    'feedback' => 'Correcto',
+                ],
+                [
+                    'item_type' => 'translate',
+                    'prompt' => 'Traduce al español',
+                    'expected_answer' => 'hola',
+                    'answer_text' => 'ola',
+                    'answer_payload' => ['raw' => 'ola'],
+                    'is_correct' => false,
+                    'points_obtained' => 0,
+                    'feedback' => 'Casi',
+                ],
+            ],
         ];
 
         $this->actingAs($user)->postJson('/api/exercise-attempts', $payload)
@@ -340,6 +362,12 @@ class CoreBackendFlowsTest extends TestCase
 
         $this->assertSame(1, DB::table('exercises')->count());
         $this->assertSame(2, DB::table('exercise_attempts')->count());
+        $this->assertSame(4, DB::table('attempt_answers')->count());
+        $this->assertDatabaseHas('attempt_answers', [
+            'answer_text' => 'casa',
+            'is_correct' => true,
+            'feedback' => 'Correcto',
+        ]);
     }
 
     public function test_collection_names_must_be_unique_per_user_and_language(): void

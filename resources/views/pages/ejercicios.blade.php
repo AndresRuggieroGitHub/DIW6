@@ -594,6 +594,7 @@
           time_spent_seconds: timeSpentSeconds,
           item_count: itemCount,
           correct_count: sessionCorrectItems,
+          answers: sessionAnswerRecords,
         }),
       });
     } catch {
@@ -753,14 +754,16 @@
   let sessionStartedAt = null;
   let sessionAnsweredItems = 0;
   let sessionCorrectItems = 0;
+  let sessionAnswerRecords = [];
 
   function resetExerciseSessionMetrics() {
     sessionStartedAt = Date.now();
     sessionAnsweredItems = 0;
     sessionCorrectItems = 0;
+    sessionAnswerRecords = [];
   }
 
-  function markExerciseItemResult(container, isCorrect) {
+  function markExerciseItemResult(container, isCorrect, details = {}) {
     if (!container || container.dataset.evaluated === '1') return;
 
     container.dataset.evaluated = '1';
@@ -768,6 +771,17 @@
     if (isCorrect) {
       sessionCorrectItems += 1;
     }
+
+    sessionAnswerRecords.push({
+      item_type: details.itemType || null,
+      prompt: details.prompt || null,
+      expected_answer: details.expectedAnswer || null,
+      answer_text: details.answerText || null,
+      answer_payload: details.answerPayload || null,
+      is_correct: isCorrect,
+      points_obtained: typeof details.pointsObtained === 'number' ? details.pointsObtained : (isCorrect ? 1 : 0),
+      feedback: details.feedback || null,
+    });
   }
 
   document.querySelectorAll('.exercise-card[data-mode]').forEach(card => {
@@ -876,13 +890,27 @@
           this.classList.add('ex-option--correct');
           feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Correcto!';
           feedback.className = 'ex-feedback ex-feedback--ok';
-          markExerciseItemResult(container, true);
+          markExerciseItemResult(container, true, {
+            itemType: item.type,
+            prompt: item.question,
+            expectedAnswer: item.options[item.correct],
+            answerText: item.options[idx],
+            answerPayload: { selected_index: idx, selected_option: item.options[idx] },
+            feedback: 'Correcto',
+          });
         } else {
           this.classList.add('ex-option--wrong');
           container.querySelectorAll('.ex-option')[item.correct].classList.add('ex-option--correct');
           feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> Incorrecto. La respuesta es: <strong>' + item.options[item.correct] + '</strong>';
           feedback.className = 'ex-feedback ex-feedback--err';
-          markExerciseItemResult(container, false);
+          markExerciseItemResult(container, false, {
+            itemType: item.type,
+            prompt: item.question,
+            expectedAnswer: item.options[item.correct],
+            answerText: item.options[idx],
+            answerPayload: { selected_index: idx, selected_option: item.options[idx] },
+            feedback: 'Incorrecto',
+          });
         }
         feedback.hidden = false;
       });
@@ -917,11 +945,23 @@
       if (val === item.answer.toLowerCase()) {
         feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Correcto!';
         feedback.className = 'ex-feedback ex-feedback--ok';
-        markExerciseItemResult(container, true);
+        markExerciseItemResult(container, true, {
+          itemType: item.type,
+          prompt: item.question,
+          expectedAnswer: item.answer,
+          answerText: val,
+          feedback: 'Correcto',
+        });
       } else {
         feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> La respuesta es: <strong>"' + item.answer + '"</strong>';
         feedback.className = 'ex-feedback ex-feedback--err';
-        markExerciseItemResult(container, false);
+        markExerciseItemResult(container, false, {
+          itemType: item.type,
+          prompt: item.question,
+          expectedAnswer: item.answer,
+          answerText: val,
+          feedback: 'Incorrecto',
+        });
       }
       feedback.hidden = false;
     });
@@ -965,7 +1005,13 @@
     });
 
     container.querySelector('.ex-self-yes').addEventListener('click', () => {
-      markExerciseItemResult(container, true);
+      markExerciseItemResult(container, true, {
+        itemType: item.type,
+        prompt: item.word,
+        expectedAnswer: item.word,
+        answerText: item.word,
+        feedback: 'Autovalidado como correcto',
+      });
       selfCheck.innerHTML = '<p class="ex-feedback ex-feedback--ok" style="display:block"><i class="bi bi-check-circle-fill"></i> Genial! Sigue practicando.</p>';
     });
     container.querySelector('.ex-self-no').addEventListener('click', () => {
@@ -993,14 +1039,26 @@
       if (val.length > 0 && matches >= Math.ceil(keywords.length * 0.65)) {
         feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Muy bien! Respuesta de referencia: <em>"' + item.answer + '"</em>';
         feedback.className = 'ex-feedback ex-feedback--ok';
-        markExerciseItemResult(container, true);
+        markExerciseItemResult(container, true, {
+          itemType: item.type,
+          prompt: item.sentence,
+          expectedAnswer: item.answer,
+          answerText: val,
+          feedback: 'Respuesta suficientemente cercana',
+        });
       } else if (val.length === 0) {
         feedback.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Escribe tu respuesta primero.';
         feedback.className = 'ex-feedback ex-feedback--warn';
       } else {
         feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> Respuesta de referencia: <em>"' + item.answer + '"</em>';
         feedback.className = 'ex-feedback ex-feedback--err';
-        markExerciseItemResult(container, false);
+        markExerciseItemResult(container, false, {
+          itemType: item.type,
+          prompt: item.sentence,
+          expectedAnswer: item.answer,
+          answerText: val,
+          feedback: 'Respuesta insuficiente',
+        });
       }
       feedback.hidden = false;
     });

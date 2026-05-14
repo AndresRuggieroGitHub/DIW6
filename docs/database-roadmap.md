@@ -97,6 +97,18 @@ Estas tablas representan bien el dominio comercial y de uso, pero no implican qu
 - un registro de uso por periodo
 - una plantilla de ejercicio con items, opciones, instancia y respuestas
 
+## Estado de integracion real
+
+`attempt_answers` ya no es solo una tabla preparada: el flujo real de `ejercicios` envia respuestas detalladas por item al endpoint de intentos cuando el usuario completa una sesion.
+
+Estado actual de esa integracion:
+
+- `exercise_attempts` sigue siendo el registro principal de cada sesion
+- `attempt_answers` guarda detalle por item con `item_id` nulo cuando la sesion viene del flujo compacto actual
+- el payload ya conserva tipo de item, prompt, respuesta esperada, respuesta enviada y feedback
+
+Eso permite mejorar analitica y correccion sin obligar todavia a que todo ejercicio pase por plantillas normalizadas.
+
 ## Lo que sigue siendo futuro funcional
 
 Aunque el esquema se ha ampliado, estas capacidades siguen sin estar conectadas como flujo de producto completo:
