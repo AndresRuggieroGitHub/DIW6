@@ -1,5 +1,15 @@
 <?php
 
+use App\Http\Controllers\AdminCategoriesController;
+use App\Http\Controllers\AdminAnalyticsController;
+use App\Http\Controllers\AdminCollectionsController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminExercisesController;
+use App\Http\Controllers\AdminLanguagesController;
+use App\Http\Controllers\AdminRolesController;
+use App\Http\Controllers\AdminWordsController;
+use App\Http\Controllers\AdminTranslationsController;
+use App\Http\Controllers\AdminUsersController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\ExerciseController;
@@ -27,35 +37,35 @@ $protectedStaticPages = [
 ];
 
 $adminStaticPages = [
-    'admin' => 'admin.html',
-    'admin-users' => 'admin-users.html',
-    'admin-languages' => 'admin-languages.html',
-    'admin-words' => 'admin-words.html',
-    'admin-translations' => 'admin-translations.html',
-    'admin-collections' => 'admin-collections.html',
-    'admin-exercises' => 'admin-exercises.html',
-    'admin-categories' => 'admin-categories.html',
-    'admin-roles' => 'admin-roles.html',
     'admin-billing' => 'admin-billing.html',
-    'admin-analytics' => 'admin-analytics.html',
     'admin-ai' => 'admin-ai.html',
 ];
 
-Route::get('/', function (Request $request) {
+$renderStaticPage = function (string $file, ?string $view = null) {
+    $viewName = $view ?? 'pages.' . str_replace(['/', '.html'], ['.', ''], $file);
+
+    if (view()->exists($viewName)) {
+        return response()->view($viewName);
+    }
+
+    return response()->file(base_path($file));
+};
+
+Route::get('/', function (Request $request) use ($renderStaticPage) {
     if ($request->user()) {
         return redirect('/app.html');
     }
 
-    return response()->file(base_path('index.html'));
+    return $renderStaticPage('index.html');
 });
 
 foreach ($publicStaticPages as $slug => $file) {
-    Route::get("/{$file}", function (Request $request) use ($file) {
+    Route::get("/{$file}", function (Request $request) use ($file, $renderStaticPage) {
         if ($file === 'index.html' && $request->user()) {
             return redirect('/app.html');
         }
 
-        return response()->file(base_path($file));
+        return $renderStaticPage($file);
     })->name($slug);
 }
 
@@ -68,10 +78,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/forgot-password.html', [PasswordResetLinkController::class, 'store'])->name('password.email');
 });
 
-Route::middleware('auth')->group(function () use ($protectedStaticPages) {
+Route::middleware('auth')->group(function () use ($protectedStaticPages, $renderStaticPage) {
     foreach ($protectedStaticPages as $slug => $file) {
-        Route::get("/{$file}", function () use ($file) {
-            return response()->file(base_path($file));
+        Route::get("/{$file}", function () use ($file, $renderStaticPage) {
+            return $renderStaticPage($file);
         })->name($slug);
     }
 
@@ -96,18 +106,138 @@ Route::middleware('auth')->group(function () use ($protectedStaticPages) {
     Route::post('/api/library/collections/{collection}/toggle-word', [\App\Http\Controllers\LibraryController::class, 'toggleCollectionWord'])->name('library.collections.toggle-word');
 });
 
-Route::middleware('auth')->group(function () use ($adminStaticPages) {
+Route::middleware('auth')->group(function () use ($adminStaticPages, $renderStaticPage) {
+    Route::get('/admin-analytics', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminAnalyticsController::class)->index($request);
+    });
+
+    Route::get('/admin-analytics.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminAnalyticsController::class)->index($request);
+    })->name('admin-analytics');
+
+    Route::get('/admin', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminDashboardController::class)->index($request);
+    });
+
+    Route::get('/admin.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminDashboardController::class)->index($request);
+    })->name('admin');
+
+    Route::get('/admin-words', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminWordsController::class)->index($request);
+    });
+
+    Route::get('/admin-words.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminWordsController::class)->index($request);
+    })->name('admin-words');
+
+    Route::get('/admin-translations', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminTranslationsController::class)->index($request);
+    });
+
+    Route::get('/admin-translations.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminTranslationsController::class)->index($request);
+    })->name('admin-translations');
+
+    Route::get('/admin-categories', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminCategoriesController::class)->index($request);
+    });
+
+    Route::get('/admin-categories.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminCategoriesController::class)->index($request);
+    })->name('admin-categories');
+
+    Route::get('/admin-collections', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminCollectionsController::class)->index($request);
+    });
+
+    Route::get('/admin-collections.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminCollectionsController::class)->index($request);
+    })->name('admin-collections');
+
+    Route::get('/admin-users', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminUsersController::class)->index($request);
+    });
+
+    Route::get('/admin-users.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminUsersController::class)->index($request);
+    })->name('admin-users');
+
+    Route::get('/admin-languages', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminLanguagesController::class)->index($request);
+    });
+
+    Route::get('/admin-languages.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminLanguagesController::class)->index($request);
+    })->name('admin-languages');
+
+    Route::get('/admin-roles', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminRolesController::class)->index($request);
+    });
+
+    Route::get('/admin-roles.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminRolesController::class)->index($request);
+    })->name('admin-roles');
+
+    Route::get('/admin-exercises', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminExercisesController::class)->index($request);
+    });
+
+    Route::get('/admin-exercises.html', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminExercisesController::class)->index($request);
+    })->name('admin-exercises');
+
     foreach ($adminStaticPages as $slug => $file) {
-        Route::get("/{$slug}", function (Request $request) use ($file) {
+        Route::get("/{$slug}", function (Request $request) use ($file, $renderStaticPage) {
             abort_unless($request->user()?->isAdmin(), 403);
 
-            return response()->file(base_path($file));
+            return $renderStaticPage($file);
         });
 
-        Route::get("/{$file}", function (Request $request) use ($file) {
+        Route::get("/{$file}", function (Request $request) use ($file, $renderStaticPage) {
             abort_unless($request->user()?->isAdmin(), 403);
 
-            return response()->file(base_path($file));
+            return $renderStaticPage($file);
         })->name($slug);
     }
 });

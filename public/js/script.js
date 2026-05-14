@@ -5,6 +5,7 @@
   const canUseServerSession = canUseServerProgress;
   let serverLibrary = [];
   let serverCollections = [];
+  let serverCatalog = [];
   let serverLibraryLoadPromise = null;
   let serverProgressState = null;
   let serverProgressLoadPromise = null;
@@ -137,6 +138,46 @@
     });
   };
 
+  const escapeHtml = (value) => String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+  const renderLibraryCatalog = (catalog = []) => {
+    const grid = document.querySelector("[data-library-grid]");
+    if (!grid || !Array.isArray(catalog) || !catalog.length) return false;
+
+    grid.innerHTML = catalog.map((item) => {
+      const cefr = String(item.cefr || "").toUpperCase();
+      const topic = String(item.topic || "");
+      const badgeClass = cefr ? `cefr-${cefr.toLowerCase()}` : "";
+      const meta = [
+        cefr ? `<span class="cefr-badge ${badgeClass}">${escapeHtml(cefr)}</span>` : "",
+        topic ? `<span class="topic-tag">${escapeHtml(topic)}</span>` : "",
+      ].filter(Boolean).join("");
+
+      return `
+      <article class="result-card" data-word-card data-language="${escapeHtml(item.language)}" data-cefr="${escapeHtml(cefr)}" data-topic="${escapeHtml(topic)}" data-word-id="${escapeHtml(item.id)}" data-word-label="${escapeHtml(item.label)}" data-translation="${escapeHtml(item.translation || "")}">
+        <div class="card-accent"></div>
+        <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en ${MAIN_LIBRARY_NAME}"><i class="bi bi-bookmark"></i></button></div>
+        <div class="card-body-inner">
+          <div class="card-meta">${meta}</div>
+          <h2 class="card-word">${escapeHtml(item.label)}</h2>
+          <p class="card-translation">${escapeHtml(item.translation || "")}</p>
+        </div>
+      </article>`;
+    }).join("");
+
+    document.getElementById("noResults")?.setAttribute("hidden", "hidden");
+    if (document.getElementById("libraryPagination")) {
+      document.getElementById("libraryPagination").innerHTML = "";
+    }
+
+    return true;
+  };
+
   const applyServerSessionState = (payload) => {
     serverSessionState = payload || null;
 
@@ -202,6 +243,8 @@
   const syncServerLibraryState = (payload = {}) => {
     serverLibrary = Array.isArray(payload.items) ? payload.items : [];
     serverCollections = Array.isArray(payload.collections) ? payload.collections : serverCollections;
+    serverCatalog = Array.isArray(payload.catalog) ? payload.catalog : serverCatalog;
+    renderLibraryCatalog(serverCatalog);
     updateAllBookmarkStates();
     window.dispatchEvent(new Event("lexi-library-updated"));
   };
@@ -210,7 +253,9 @@
     if (!hasServerLibrary) return [];
     if (serverLibraryLoadPromise) return serverLibraryLoadPromise;
 
-    serverLibraryLoadPromise = libraryApiFetch("/api/library/state")
+    const language = encodeURIComponent(getActiveLang());
+
+    serverLibraryLoadPromise = libraryApiFetch(`/api/library/state?language=${language}`)
       .then((response) => response.ok ? response.json() : Promise.reject(response))
       .then((payload) => {
         syncServerLibraryState(payload || {});
@@ -2069,12 +2114,56 @@
       const savedWords = state?.summary?.saved_words_active ?? 0;
       const collections = state?.summary?.collections_active ?? 0;
       const level = state?.level?.label || "A1";
+      const levelDescription = state?.level?.description || "Estás empezando.";
+      const levelProgress = state?.level?.progress_percent || 0;
+      const totalExercises = state?.exercises?.total_completed || 0;
+      const recentWords = state?.summary?.recent_words || [];
+      const activeLanguageNode = document.querySelector("[data-dashboard-active-language]");
+      const savedWordsNode = document.querySelector("[data-dashboard-saved-words]");
+      const collectionsNode = document.querySelector("[data-dashboard-collections]");
+      const exercisesNode = document.querySelector("[data-dashboard-exercises]");
+      const levelNode = document.querySelector("[data-dashboard-level]");
+      const levelDescriptionNode = document.querySelector("[data-dashboard-level-description]");
+      const levelBarNode = document.querySelector("[data-dashboard-level-bar]");
+      const recentWordsList = document.querySelector("[data-dashboard-recent-words]");
 
       if (firstName) {
         title.textContent = `Hola, ${firstName}`;
       }
 
       subtitle.textContent = `${activeLanguage} activo · ${savedWords} palabra${savedWords === 1 ? "" : "s"} guardada${savedWords === 1 ? "" : "s"} · ${collections} coleccion${collections === 1 ? "" : "es"} · Nivel ${level}`;
+
+      if (activeLanguageNode) activeLanguageNode.textContent = activeLanguage;
+      if (savedWordsNode) savedWordsNode.textContent = savedWords;
+      if (collectionsNode) collectionsNode.textContent = collections;
+      if (exercisesNode) exercisesNode.textContent = totalExercises;
+      if (levelNode) levelNode.textContent = level;
+      if (levelDescriptionNode) levelDescriptionNode.textContent = levelDescription;
+      if (levelBarNode) levelBarNode.style.width = `${levelProgress}%`;
+
+      if (recentWordsList) {
+        recentWordsList.innerHTML = "";
+
+        if (!recentWords.length) {
+          recentWordsList.innerHTML = '<li class="home-dashboard-recent-empty">Aún no has guardado palabras.</li>';
+        } else {
+          recentWords.slice(0, 4).forEach((item) => {
+            const li = document.createElement("li");
+            li.className = "home-dashboard-recent-item";
+            const translation = item.translation ? `<span class="home-dashboard-recent-translation">${item.translation}</span>` : "";
+            const meta = [item.language ? item.language.toUpperCase() : "", item.cefr || "", item.topic || ""]
+              .filter(Boolean)
+              .join(" · ");
+
+            li.innerHTML = `
+              <span class="home-dashboard-recent-label">${item.label || "Palabra"}</span>
+              ${translation}
+              ${meta ? `<span class="home-dashboard-recent-meta">${meta}</span>` : ""}
+            `;
+            recentWordsList.appendChild(li);
+          });
+        }
+      }
     });
   };
 
@@ -2202,7 +2291,21 @@
             recentWords.forEach((item) => {
               const li = document.createElement("li");
               li.className = "profile-word-item";
-              li.innerHTML = `<i class="bi bi-bookmark-fill" style="color:var(--brand)"></i> <span>${item.label}</span>`;
+              const translation = item.translation ? `<span class="profile-word-translation">${item.translation}</span>` : "";
+              const meta = [item.language ? item.language.toUpperCase() : "", item.cefr || "", item.topic || ""]
+                .filter(Boolean)
+                .join(" · ");
+
+              li.innerHTML = `
+                <i class="bi bi-bookmark-fill profile-word-icon"></i>
+                <div class="profile-word-copy">
+                  <div class="profile-word-main">
+                    <span class="profile-word-label">${item.label}</span>
+                    ${translation}
+                  </div>
+                  ${meta ? `<div class="profile-word-meta">${meta}</div>` : ""}
+                </div>
+              `;
               recentWordsList.appendChild(li);
             });
           }
@@ -2288,16 +2391,17 @@
     setupAddToCartButtons();
     setupCartPageEvents();
     setupSaveDropdown();
-    setupLibrarySearch();
-    setupLibraryList();
-    setupLibraryImport();
     if (hasServerLibrary) {
       await loadServerLibrary();
       window.addEventListener("lexi-lang-changed", () => {
         serverLibrary = [];
+        serverCatalog = [];
         loadServerLibrary();
       });
     }
+    setupLibrarySearch();
+    setupLibraryList();
+    setupLibraryImport();
     setupDashboardPage();
     setupProgressPage();
     updateCartBadges();

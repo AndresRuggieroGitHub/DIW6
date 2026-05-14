@@ -21,9 +21,12 @@ class LibraryController extends Controller
             'language' => ['nullable', Rule::exists('languages', 'code')],
         ]);
 
+        $language = $validated['language'] ?? null;
+
         return response()->json([
-            'items' => $this->libraryItems($request->user(), $validated['language'] ?? null),
+            'items' => $this->libraryItems($request->user(), $language),
             'collections' => $this->collectionItems($request->user()),
+            'catalog' => $this->catalogItems($request->user(), $language),
         ]);
     }
 
@@ -256,18 +259,9 @@ class LibraryController extends Controller
             });
         }
 
-        return $query->get()->map(function (UserWord $userWord) {
-            $word = $userWord->word;
-
-            return [
-                'id' => $word->client_key,
-                'label' => $word->text,
-                'language' => $word->language_code,
-                'translation' => $word->translations->first()?->targetWord?->text,
-                'cefr' => $word->cefr_level,
-                'topic' => $word->category?->name,
-            ];
-        })->values()->all();
+        return $query->get()->map(fn (UserWord $userWord) => $this->serializeWord($userWord->word, $user))
+            ->values()
+            ->all();
     }
 
     private function collectionItems(User $user, ?string $language = null): array
@@ -282,23 +276,49 @@ class LibraryController extends Controller
             $query->where('language_code', $language);
         }
 
-        return $query->get()->map(function (UserCollection $collection) {
+        return $query->get()->map(function (UserCollection $collection) use ($user) {
             return [
                 'id' => (string) $collection->id,
                 'name' => $collection->name,
                 'lang' => $collection->language_code,
-                'items' => $collection->words->map(function (Word $word) {
-                    return [
-                        'id' => $word->client_key,
-                        'label' => $word->text,
-                        'language' => $word->language_code,
-                        'translation' => $word->translations->first()?->targetWord?->text,
-                        'cefr' => $word->cefr_level,
-                        'topic' => $word->category?->name,
-                    ];
-                })->values()->all(),
+                'items' => $collection->words->map(fn (Word $word) => $this->serializeWord($word, $user))
+                    ->values()
+                    ->all(),
             ];
         })->values()->all();
+    }
+
+    private function catalogItems(User $user, ?string $language = null): array
+    {
+        $query = Word::query()
+            ->with(['category', 'translations.targetWord'])
+            ->orderBy('text');
+
+        if ($language) {
+            $query->where('language_code', $language);
+        }
+
+        return $query->limit(250)
+            ->get()
+            ->map(fn (Word $word) => $this->serializeWord($word, $user))
+            ->values()
+            ->all();
+    }
+
+    private function serializeWord(Word $word, User $user): array
+    {
+        $preferredTranslation = $word->translations->first(function (Translation $translation) use ($user) {
+            return $translation->targetWord?->language_code === ($user->mother_tongue_code ?: 'es');
+        });
+
+        return [
+            'id' => $word->client_key ?: 'word-' . $word->id,
+            'label' => $word->text,
+            'language' => $word->language_code,
+            'translation' => $preferredTranslation?->targetWord?->text ?? $word->translations->first()?->targetWord?->text,
+            'cefr' => $word->cefr_level,
+            'topic' => $word->category?->name,
+        ];
     }
 
     private function upsertWord(
