@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Support\GeneratedUiLocaleCatalog;
 use App\Models\Language;
 use App\Models\Role;
 use App\Models\User;
@@ -11,10 +12,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Throwable;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        private readonly GeneratedUiLocaleCatalog $generatedUiLocaleCatalog,
+    ) {
+    }
+
     public function showLogin()
     {
         return view('auth.login');
@@ -44,6 +52,7 @@ class AuthController extends Controller
         Auth::login($user, $request->boolean('remember'));
 
         $request->session()->regenerate();
+        $this->warmUserUiLocale((string) $user->mother_tongue_code);
 
         return redirect()->intended('/app.html');
     }
@@ -66,6 +75,8 @@ class AuthController extends Controller
             'target_language_code' => ['required', Rule::exists('languages', 'code')],
             'terms' => ['accepted'],
         ]);
+
+        $user = null;
 
         DB::transaction(function () use ($validated, &$user) {
             $user = User::create([
@@ -97,6 +108,10 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
+        if ($user !== null) {
+            $this->warmUserUiLocale((string) $user->mother_tongue_code);
+        }
+
         return redirect('/app.html');
     }
 
@@ -108,5 +123,21 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    private function warmUserUiLocale(string $locale): void
+    {
+        if ($locale === '') {
+            return;
+        }
+
+        try {
+            $this->generatedUiLocaleCatalog->warmLocale($locale);
+        } catch (Throwable $exception) {
+            Log::warning('Lexi UI locale warmup failed during auth flow.', [
+                'locale' => $locale,
+                'message' => $exception->getMessage(),
+            ]);
+        }
     }
 }

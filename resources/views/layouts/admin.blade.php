@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,21 +18,15 @@
 <body class="admin-body">
   <div class="admin-shell">
     <aside class="admin-sidebar">
-      <div class="admin-brand" aria-label="Lexi Admin">
+      <div class="admin-brand" aria-label="{{ __('lexi.admin.layout.brand_aria') }}">
         <span class="admin-brand__name">Lexi Admin</span>
-        <span class="admin-brand__sub">Control panel</span>
+        <span class="admin-brand__sub">{{ __('lexi.admin.layout.brand_sub') }}</span>
       </div>
-      @isset($sidebarNoteTitle)
-        <div class="admin-sidebar-note">
-          <strong>{{ $sidebarNoteTitle }}</strong>
-          <span>{{ $sidebarNoteText }}</span>
-        </div>
-      @endisset
       <div class="admin-sidebar-footer">
-        <a href="app.html"><i class="bi bi-house-door"></i> Abrir app</a>
+        <a href="{{ route('app') }}"><i class="bi bi-house-door"></i> {{ __('lexi.admin.layout.open_app') }}</a>
         <form method="POST" action="{{ route('logout') }}" class="admin-sidebar-footer__form">
           @csrf
-          <button type="submit" class="admin-sidebar-footer__button"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
+          <button type="submit" class="admin-sidebar-footer__button"><i class="bi bi-box-arrow-right"></i> {{ __('lexi.admin.layout.logout') }}</button>
         </form>
       </div>
     </aside>

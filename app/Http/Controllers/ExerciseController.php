@@ -2,16 +2,111 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 
 class ExerciseController extends Controller
 {
+    public function showPage(): View
+    {
+        if (! $this->exerciseRuntimeSchemaExists()) {
+            return view('pages.ejercicios', [
+                'normalizedTemplates' => [],
+            ]);
+        }
+
+        $templates = DB::table('exercise_templates')
+            ->leftJoin('exercise_items', 'exercise_items.template_id', '=', 'exercise_templates.id')
+            ->leftJoin('exercise_options', 'exercise_options.item_id', '=', 'exercise_items.id')
+            ->select(
+                'exercise_templates.id as template_id',
+                'exercise_templates.title as template_title',
+                'exercise_templates.type as template_type',
+                'exercise_templates.source as template_source',
+                'exercise_templates.schema_version',
+                'exercise_templates.payload as template_payload',
+                'exercise_items.id as item_id',
+                'exercise_items.item_order',
+                'exercise_items.item_type',
+                'exercise_items.question_text',
+                'exercise_items.correct_answer',
+                'exercise_items.payload as item_payload',
+                'exercise_options.id as option_id',
+                'exercise_options.option_text',
+                'exercise_options.is_correct',
+                'exercise_options.option_order'
+            )
+            ->whereIn('exercise_templates.type', ['reading', 'listening', 'speaking', 'writing', 'mix'])
+            ->orderBy('exercise_templates.updated_at', 'desc')
+            ->orderBy('exercise_templates.id', 'desc')
+            ->orderBy('exercise_items.item_order')
+            ->orderBy('exercise_options.option_order')
+            ->get()
+            ->groupBy('template_id')
+            ->map(function ($rows) {
+                $first = $rows->first();
+                $items = $rows
+                    ->filter(fn ($row) => $row->item_id !== null)
+                    ->groupBy('item_id')
+                    ->map(function ($itemRows) {
+                        $firstItemRow = $itemRows->first();
+                        $options = $itemRows
+                            ->filter(fn ($row) => $row->option_id !== null)
+                            ->map(fn ($row) => [
+                                'text' => $row->option_text,
+                                'is_correct' => (bool) $row->is_correct,
+                                'order' => $row->option_order,
+                            ])
+                            ->values()
+                            ->all();
+
+                        return [
+                            'id' => $firstItemRow->item_id,
+                            'order' => $firstItemRow->item_order,
+                            'item_type' => $firstItemRow->item_type,
+                            'question_text' => $firstItemRow->question_text,
+                            'correct_answer' => $firstItemRow->correct_answer,
+                            'payload' => json_decode((string) ($firstItemRow->item_payload ?? ''), true),
+                            'options' => $options,
+                        ];
+                    })
+                    ->sortBy('order')
+                    ->values()
+                    ->all();
+
+                return [
+                    'id' => $first->template_id,
+                    'title' => $first->template_title,
+                    'type' => $first->template_type,
+                    'source' => $first->template_source,
+                    'schema_version' => $first->schema_version,
+                    'payload' => json_decode((string) ($first->template_payload ?? ''), true),
+                    'items' => $items,
+                ];
+            })
+            ->groupBy('type')
+            ->map(fn ($rows) => $rows->values()->all())
+            ->all();
+
+        return view('pages.ejercicios', [
+            'normalizedTemplates' => $templates,
+        ]);
+    }
+
     public function storeAttempt(Request $request): JsonResponse
     {
+        if (! $this->exerciseRuntimeSchemaExists()) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Exercise runtime schema is not available yet.',
+            ], 503);
+        }
+
         $validated = $request->validate([
             'mode' => ['required', Rule::in(['reading', 'listening', 'speaking', 'writing', 'mix'])],
             'source_type' => ['nullable', Rule::in(['catalog', 'saved'])],
@@ -137,5 +232,13 @@ class ExerciseController extends Controller
                 ->where('title', $title)
                 ->value('id');
         }
+    }
+
+    private function exerciseRuntimeSchemaExists(): bool
+    {
+        return Schema::hasTable('exercise_templates')
+            && Schema::hasTable('exercise_items')
+            && Schema::hasTable('exercise_options')
+            && Schema::hasTable('attempt_answers');
     }
 }

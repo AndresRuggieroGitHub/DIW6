@@ -1,4 +1,14 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
+  const JS_I18N = window.lexiTranslations || {};
+  const getNestedValue = (source, key) => key.split(".").reduce((value, segment) => value && value[segment], source);
+  const t = (key, replacements = {}) => {
+    const template = getNestedValue(JS_I18N, key);
+    if (typeof template !== "string") return key;
+
+    return template.replace(/:([a-zA-Z_]+)/g, (_, token) => replacements[token] ?? `:${token}`);
+  };
+  const countWordLabel = (count, singularKey, pluralKey) => `${count} ${t(count === 1 ? singularKey : pluralKey)}`;
+  const getWordLabel = (value) => value || t("js.word_fallback");
   const isServerRenderedProfile = document.body.hasAttribute("data-server-profile");
   const hasServerLibrary = window.location.pathname.endsWith("/biblioteca.html");
   const canUseServerProgress = ["/app.html", "/biblioteca.html", "/carrito.html", "/ejercicios.html", "/progreso.html", "/perfil.html"].includes(window.location.pathname);
@@ -20,43 +30,43 @@
 
   const LANG_CONFIG = {
     // Europa Occidental (lenguas más estudiadas)
-    en: { flag: "icons/flags/united_kingdom_flag.svg", label: "Inglés" },
-    es: { flag: "icons/flags/spain_flag.svg", label: "Español" },
-    fr: { flag: "icons/flags/france_flag.svg", label: "Francés" },
-    de: { flag: "icons/flags/germany_flag.svg", label: "Alemán" },
-    it: { flag: "icons/flags/italy_flag.svg", label: "Italiano" },
-    pt: { flag: "icons/flags/brazil_flag.svg", label: "Portugués" },
+    en: { flag: "icons/flags/united_kingdom_flag.svg", label: t("languages.en") },
+    es: { flag: "icons/flags/spain_flag.svg", label: t("languages.es") },
+    fr: { flag: "icons/flags/france_flag.svg", label: t("languages.fr") },
+    de: { flag: "icons/flags/germany_flag.svg", label: t("languages.de") },
+    it: { flag: "icons/flags/italy_flag.svg", label: t("languages.it") },
+    pt: { flag: "icons/flags/brazil_flag.svg", label: t("languages.pt") },
     // Germánico continental
-    nl: { flag: "icons/flags/netherlands_flag.svg", label: "Neerlandés" },
+    nl: { flag: "icons/flags/netherlands_flag.svg", label: t("languages.nl") },
     // Países Nórdicos
-    no: { flag: "icons/flags/norway_flag.svg", label: "Noruego" },
-    sv: { flag: "icons/flags/sweden_flag.svg", label: "Sueco" },
-    dk: { flag: "icons/flags/denmark_flag.svg", label: "Danés" },
-    fi: { flag: "icons/flags/finland_flag.svg", label: "Finés" },
+    no: { flag: "icons/flags/norway_flag.svg", label: t("languages.no") },
+    sv: { flag: "icons/flags/sweden_flag.svg", label: t("languages.sv") },
+    dk: { flag: "icons/flags/denmark_flag.svg", label: t("languages.dk") },
+    fi: { flag: "icons/flags/finland_flag.svg", label: t("languages.fi") },
     // Europa del Este (eslavos)
-    ru: { flag: "icons/flags/russia_flag.svg", label: "Ruso" },
-    ua: { flag: "icons/flags/ukraine_flag.svg", label: "Ucraniano" },
-    pl: { flag: "icons/flags/poland_flag.svg", label: "Polaco" },
-    cs: { flag: "icons/flags/czech_republic_flag.svg", label: "Checo" },
-    sk: { flag: "icons/flags/slovakia_flag.svg", label: "Eslovaco" },
+    ru: { flag: "icons/flags/russia_flag.svg", label: t("languages.ru") },
+    ua: { flag: "icons/flags/ukraine_flag.svg", label: t("languages.ua") },
+    pl: { flag: "icons/flags/poland_flag.svg", label: t("languages.pl") },
+    cs: { flag: "icons/flags/czech_republic_flag.svg", label: t("languages.cs") },
+    sk: { flag: "icons/flags/slovakia_flag.svg", label: t("languages.sk") },
     // Europa Central y Balcánica
-    hu: { flag: "icons/flags/hungary_flag.svg", label: "Húngaro" },
-    ro: { flag: "icons/flags/romania_flag.svg", label: "Rumano" },
-    bg: { flag: "icons/flags/bulgaria_flag.svg", label: "Búlgaro" },
-    gr: { flag: "icons/flags/greece_flag.svg", label: "Griego" },
+    hu: { flag: "icons/flags/hungary_flag.svg", label: t("languages.hu") },
+    ro: { flag: "icons/flags/romania_flag.svg", label: t("languages.ro") },
+    bg: { flag: "icons/flags/bulgaria_flag.svg", label: t("languages.bg") },
+    gr: { flag: "icons/flags/greece_flag.svg", label: t("languages.gr") },
     // Oriente Medio
-    tr: { flag: "icons/flags/turkey_flag.svg", label: "Turco" },
-    ar: { flag: "icons/flags/saudi_arabia_flag.svg", label: "Árabe" },
-    he: { flag: "icons/flags/israel_flag.svg", label: "Hebreo" },
+    tr: { flag: "icons/flags/turkey_flag.svg", label: t("languages.tr") },
+    ar: { flag: "icons/flags/saudi_arabia_flag.svg", label: t("languages.ar") },
+    he: { flag: "icons/flags/israel_flag.svg", label: t("languages.he") },
     // Asia Oriental
-    zh: { flag: "icons/flags/china_flag.svg", label: "Chino" },
-    ja: { flag: "icons/flags/japan_flag.svg", label: "Japonés" },
-    ko: { flag: "icons/flags/south_korea_flag.svg", label: "Coreano" },
+    zh: { flag: "icons/flags/china_flag.svg", label: t("languages.zh") },
+    ja: { flag: "icons/flags/japan_flag.svg", label: t("languages.ja") },
+    ko: { flag: "icons/flags/south_korea_flag.svg", label: t("languages.ko") },
     // Asia del Sur y Sudeste
-    hi: { flag: "icons/flags/india_flag.svg", label: "Hindi" },
-    th: { flag: "icons/flags/thailand_flag.svg", label: "Tailandés" },
-    vi: { flag: "icons/flags/vietnam_flag.svg", label: "Vietnamita" },
-    id: { flag: "icons/flags/indonesia_flag.svg", label: "Indonesio" },
+    hi: { flag: "icons/flags/india_flag.svg", label: t("languages.hi") },
+    th: { flag: "icons/flags/thailand_flag.svg", label: t("languages.th") },
+    vi: { flag: "icons/flags/vietnam_flag.svg", label: t("languages.vi") },
+    id: { flag: "icons/flags/indonesia_flag.svg", label: t("languages.id") },
   };
 
   const LANG_HISTORY_KEY = "lexiLangHistory";
@@ -94,14 +104,14 @@
     loader.innerHTML = `
       <div class="page-loader__panel" role="status" aria-live="polite">
         <span class="page-loader__spinner" aria-hidden="true"></span>
-        <span class="page-loader__label">Cargando...</span>
+        <span class="page-loader__label">${t("js.loading")}</span>
       </div>
     `;
     document.body.appendChild(loader);
     return loader;
   };
 
-  const setPageLoading = (isLoading, label = "Cargando...") => {
+  const setPageLoading = (isLoading, label = t("js.loading")) => {
     if (!canUseServerSession) return;
     const loader = createPageLoader();
     const labelEl = loader.querySelector(".page-loader__label");
@@ -161,7 +171,7 @@
       return `
       <article class="result-card" data-word-card data-language="${escapeHtml(item.language)}" data-cefr="${escapeHtml(cefr)}" data-topic="${escapeHtml(topic)}" data-word-id="${escapeHtml(item.id)}" data-word-label="${escapeHtml(item.label)}" data-translation="${escapeHtml(item.translation || "")}">
         <div class="card-accent"></div>
-        <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en ${MAIN_LIBRARY_NAME}"><i class="bi bi-bookmark"></i></button></div>
+        <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="${t("js.save.save_to_main", { list: MAIN_LIBRARY_NAME })}"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
           <div class="card-meta">${meta}</div>
           <h2 class="card-word">${escapeHtml(item.label)}</h2>
@@ -421,7 +431,7 @@
     localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(c));
   };
 
-  const MAIN_LIBRARY_NAME = "Guardado";
+  const MAIN_LIBRARY_NAME = t("js.main_library_name");
 
   const isWordInMainLibrary = (wordId, library = getLibrary()) =>
     library.some(item => item.id === wordId);
@@ -523,7 +533,7 @@
       const inMain = isWordInMainLibrary(wordId, library);
       const inAny = inMain || isWordInAnyCollection(wordId, collections);
       mainBtn.classList.toggle("is-saved", inAny);
-      mainBtn.setAttribute("aria-label", inAny ? "Ver opciones de guardado" : `Guardar en ${MAIN_LIBRARY_NAME} y ver opciones`);
+      mainBtn.setAttribute("aria-label", inAny ? t("js.save.view_options") : t("js.save.save_and_view_options", { list: MAIN_LIBRARY_NAME }));
       mainBtn.innerHTML = `<i class="bi bi-bookmark${inAny ? "-fill" : ""}"></i>`;
     });
   };
@@ -545,7 +555,7 @@
       if (!activeCard) return;
       const wordId = activeCard.dataset.wordId;
       const wordLabel = activeCard.dataset.wordLabel ||
-        activeCard.querySelector("h2")?.textContent?.trim() || "Palabra";
+        getWordLabel(activeCard.querySelector("h2")?.textContent?.trim());
       const wordLanguage = activeCard.dataset.language || getActiveLang();
       const library = getLibrary();
       const collections = getCollections();
@@ -561,7 +571,7 @@
       mainSection.innerHTML = `
         <div class="save-dropdown-main-row">
           <span class="save-dropdown-main-label">${MAIN_LIBRARY_NAME}</span>
-          <button class="save-dropdown-main-toggle${inMain ? " is-saved" : ""}" id="saveDropdownMainToggle" type="button" aria-label="${inMain ? `Quitar de ${MAIN_LIBRARY_NAME}` : `Guardar en ${MAIN_LIBRARY_NAME}`}">
+          <button class="save-dropdown-main-toggle${inMain ? " is-saved" : ""}" id="saveDropdownMainToggle" type="button" aria-label="${inMain ? t("js.save.remove_from_main", { list: MAIN_LIBRARY_NAME }) : t("js.save.save_to_main", { list: MAIN_LIBRARY_NAME })}">
             <i class="bi bi-bookmark${inMain ? "-fill" : ""}"></i>
           </button>
         </div>`;
@@ -659,7 +669,7 @@
       const currentCard = activeCard;
       const wordId = currentCard?.dataset.wordId;
       const wordLabel = currentCard?.dataset.wordLabel ||
-        currentCard?.querySelector("h2")?.textContent?.trim() || "Palabra";
+        getWordLabel(currentCard?.querySelector("h2")?.textContent?.trim());
       const wordLanguage = currentCard?.dataset.language || getActiveLang();
       close();
       openCreateCollectionModal((createdCollection) => {
@@ -775,20 +785,20 @@
     const drawer = document.createElement("aside");
     drawer.className = "cart-drawer";
     drawer.id = "cartDrawer";
-    drawer.setAttribute("aria-label", "Resumen del carrito");
+    drawer.setAttribute("aria-label", t("js.cart.summary"));
 
     drawer.innerHTML = `
       <div class="cart-drawer-header">
-        <strong>Carrito</strong>
-        <button class="btn btn-sm btn-outline-secondary" type="button" id="closeCartDrawer">Cerrar</button>
+        <strong>${t("js.cart.title")}</strong>
+        <button class="btn btn-sm btn-outline-secondary" type="button" id="closeCartDrawer">${t("js.utility.close")}</button>
       </div>
       <div class="cart-drawer-body" id="cartDrawerBody"></div>
       <div class="cart-drawer-footer">
         <div class="cart-total-line">
-          <span>Total</span>
+          <span>${t("js.cart.total")}</span>
           <span id="cartDrawerTotal">0.00 EUR</span>
         </div>
-        <a class="btn btn-primary w-100" href="carrito.html">Ir al carrito</a>
+        <a class="btn btn-primary w-100" href="carrito.html">${t("js.cart.go_to_cart")}</a>
       </div>
     `;
 
@@ -816,7 +826,7 @@
     const cart = getCart();
 
     if (!cart.length) {
-      body.innerHTML = '<p class="cart-empty">Tu carrito esta vacio.</p>';
+      body.innerHTML = '<p class="cart-empty">' + t("js.cart.empty") + '</p>';
       total.textContent = formatEur(0);
       return;
     }
@@ -827,7 +837,7 @@
           <div class="cart-drawer-item">
             <div>
               <strong>${item.name}</strong><br>
-              <small>Cantidad: ${item.qty}</small>
+              <small>${t("js.cart.quantity", { count: item.qty })}</small>
             </div>
             <div>${formatEur(item.price * item.qty)}</div>
           </div>
@@ -873,7 +883,7 @@
     const currentPage = window.location.pathname.split("/").pop() || "app.html";
     const activeClass = (href) => currentPage === href ? " utility-link--active" : "";
     const adminLink = isCurrentUserAdmin()
-      ? `<a class="utility-link utility-link--admin${activeClass("admin.html")}" href="admin.html"><i class="bi bi-shield-lock"></i><span>Administrador</span></a>`
+      ? `<a class="utility-link utility-link--admin${activeClass("admin.html")}" href="admin.html"><i class="bi bi-shield-lock"></i><span>${t("js.utility.admin")}</span></a>`
       : "";
 
     const backdrop = document.createElement("div");
@@ -883,27 +893,27 @@
     const drawer = document.createElement("aside");
     drawer.className = "utility-drawer";
     drawer.id = "utilityDrawer";
-    drawer.setAttribute("aria-label", "Menu secundario");
+    drawer.setAttribute("aria-label", t("js.utility.secondary_menu"));
 
     drawer.innerHTML = `
       <div class="utility-drawer-header">
-        <strong>Menu</strong>
-        <button class="btn btn-sm btn-outline-secondary" type="button" id="closeUtilityDrawer">Cerrar</button>
+        <strong>${t("js.utility.menu")}</strong>
+        <button class="btn btn-sm btn-outline-secondary" type="button" id="closeUtilityDrawer">${t("js.utility.close")}</button>
       </div>
       <div class="utility-drawer-body">
         <div class="utility-drawer-section utility-drawer-section--mobile-nav">
-          <a class="utility-link${activeClass("app.html")}" href="app.html"><i class="bi bi-house"></i><span>Inicio</span></a>
-          <a class="utility-link${activeClass("biblioteca.html")}" href="biblioteca.html"><i class="bi bi-journals"></i><span>Biblioteca</span></a>
-          <a class="utility-link${activeClass("ejercicios.html")}" href="ejercicios.html"><i class="bi bi-lightning-charge"></i><span>Ejercicios</span></a>
+          <a class="utility-link${activeClass("app.html")}" href="app.html"><i class="bi bi-house"></i><span>${t("js.utility.home")}</span></a>
+          <a class="utility-link${activeClass("biblioteca.html")}" href="biblioteca.html"><i class="bi bi-journals"></i><span>${t("js.utility.library")}</span></a>
+          <a class="utility-link${activeClass("ejercicios.html")}" href="ejercicios.html"><i class="bi bi-lightning-charge"></i><span>${t("js.utility.exercises")}</span></a>
         </div>
         <div class="utility-drawer-divider" aria-hidden="true"></div>
         <div class="utility-drawer-section">
-          <a class="utility-link utility-link--premium${activeClass("producto.html")}" href="producto.html"><i class="bi bi-gem"></i><span>Premium</span></a>
-          <a class="utility-link utility-link--cart${activeClass("carrito.html")}" href="carrito.html"><i class="bi bi-bag"></i><span>Carrito</span><span class="cart-count-badge cart-count-badge--drawer" data-cart-count="0">0</span></a>
-          <a class="utility-link${activeClass("contacto.html")}" href="contacto.html"><i class="bi bi-envelope"></i><span>Contacto</span></a>
-          <a class="utility-link${activeClass("info.html")}" href="info.html"><i class="bi bi-info-circle"></i><span>Información</span></a>
+          <a class="utility-link utility-link--premium${activeClass("producto.html")}" href="producto.html"><i class="bi bi-gem"></i><span>${t("js.utility.premium")}</span></a>
+          <a class="utility-link utility-link--cart${activeClass("carrito.html")}" href="carrito.html"><i class="bi bi-bag"></i><span>${t("js.utility.cart")}</span><span class="cart-count-badge cart-count-badge--drawer" data-cart-count="0">0</span></a>
+          <a class="utility-link${activeClass("contacto.html")}" href="contacto.html"><i class="bi bi-envelope"></i><span>${t("js.utility.contact")}</span></a>
+          <a class="utility-link${activeClass("info.html")}" href="info.html"><i class="bi bi-info-circle"></i><span>${t("js.utility.info")}</span></a>
           ${adminLink}
-          <button class="btn btn-outline-danger utility-logout-btn" type="button" id="logoutAction"><i class="bi bi-box-arrow-right"></i><span>Cerrar sesión</span></button>
+          <button class="btn btn-outline-danger utility-logout-btn" type="button" id="logoutAction"><i class="bi bi-box-arrow-right"></i><span>${t("js.utility.logout")}</span></button>
         </div>
       </div>
     `;
@@ -951,7 +961,7 @@
           name: btn.dataset.name,
           price: Number(btn.dataset.price)
         });
-        showAlert("Producto anadido al carrito");
+        showAlert(t("js.alerts.product_added"));
       });
     });
   };
@@ -966,7 +976,7 @@
     const cart = getCart();
 
     if (!cart.length) {
-      tbody.innerHTML = '<tr><td colspan="5">No hay productos en el carrito.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5">' + t("js.cart.no_products") + '</td></tr>';
       total.textContent = formatEur(0);
       return;
     }
@@ -978,15 +988,15 @@
             <td>${item.name}</td>
             <td>
               <div class="cart-qty-controls">
-                <button class="qty-btn" type="button" data-qty-minus="${item.id}" aria-label="Restar cantidad">-</button>
+                <button class="qty-btn" type="button" data-qty-minus="${item.id}" aria-label="${t("js.cart.decrease_quantity")}">-</button>
                 <span>${item.qty}</span>
-                <button class="qty-btn" type="button" data-qty-plus="${item.id}" aria-label="Sumar cantidad">+</button>
+                <button class="qty-btn" type="button" data-qty-plus="${item.id}" aria-label="${t("js.cart.increase_quantity")}">+</button>
               </div>
             </td>
             <td>${formatEur(item.price)}</td>
             <td>${formatEur(item.price * item.qty)}</td>
             <td>
-              <button class="btn btn-sm btn-outline-danger" type="button" data-remove-id="${item.id}">Eliminar</button>
+              <button class="btn btn-sm btn-outline-danger" type="button" data-remove-id="${item.id}">${t("js.cart.remove")}</button>
             </td>
           </tr>
         `
@@ -1097,7 +1107,7 @@
   const setupActionButtons = () => {
     document.querySelectorAll(".accion").forEach((btn) => {
       btn.addEventListener("click", () => {
-        showAlert("Ejercicio iniciado");
+        showAlert(t("js.alerts.exercise_started"));
       });
     });
   };
@@ -1131,12 +1141,12 @@
 
       // Tarjeta principal de Guardado siempre primera
       let html = `
-        <div class="list-card" id="mainListCard" role="button" tabindex="0" aria-label="Abrir ${MAIN_LIBRARY_NAME}">
+        <div class="list-card" id="mainListCard" role="button" tabindex="0" aria-label="${t("js.library.open_collection", { name: MAIN_LIBRARY_NAME })}">
           <div class="list-card-top">
             <div class="list-card-icon"><i class="bi bi-journal-bookmark-fill"></i></div>
             <div>
               <p class="list-card-name">${MAIN_LIBRARY_NAME}</p>
-              <span class="list-card-count">${count} ${count === 1 ? "palabra" : "palabras"}</span>
+              <span class="list-card-count">${countWordLabel(count, "js.library.word_one", "js.library.word_other")}</span>
             </div>
           </div>
         </div>`;
@@ -1145,21 +1155,21 @@
       collections.forEach(c => {
         const cCount = (c.items || []).length;
         html += `
-        <div class="list-card" data-coll-card="${c.id}" role="button" tabindex="0" aria-label="Abrir ${c.name}">
+        <div class="list-card" data-coll-card="${c.id}" role="button" tabindex="0" aria-label="${t("js.library.open_collection", { name: c.name })}">
           <div class="list-card-top">
             <div class="list-card-icon" style="background:#f0eeff;color:#7c3aed"><i class="bi bi-collection"></i></div>
             <div>
               <p class="list-card-name">${c.name}</p>
-              <span class="list-card-count">${cCount} ${cCount === 1 ? "palabra" : "palabras"}</span>
+              <span class="list-card-count">${countWordLabel(cCount, "js.library.word_one", "js.library.word_other")}</span>
             </div>
           </div>
           <div class="coll-kebab-wrap">
-            <button class="coll-kebab-btn" type="button" data-kebab-coll="${c.id}" aria-label="Opciones de ${c.name}"><i class="bi bi-three-dots-vertical"></i></button>
+            <button class="coll-kebab-btn" type="button" data-kebab-coll="${c.id}" aria-label="${t("js.library.options_for", { name: c.name })}"><i class="bi bi-three-dots-vertical"></i></button>
             <div class="coll-kebab-menu" data-kebab-menu="${c.id}" hidden>
-              <button type="button" data-rename-coll="${c.id}"><i class="bi bi-pencil"></i> Renombrar</button>
+              <button type="button" data-rename-coll="${c.id}"><i class="bi bi-pencil"></i> ${t("js.library.rename")}</button>
               <div class="coll-kebab-divider"></div>
-              <button type="button" data-clear-coll="${c.id}" class="coll-kebab-clear"><i class="bi bi-eraser"></i> Vaciar lista</button>
-              <button type="button" data-delete-coll="${c.id}" class="coll-kebab-delete"><i class="bi bi-trash"></i> Eliminar</button>
+              <button type="button" data-clear-coll="${c.id}" class="coll-kebab-clear"><i class="bi bi-eraser"></i> ${t("js.library.clear_list")}</button>
+              <button type="button" data-delete-coll="${c.id}" class="coll-kebab-delete"><i class="bi bi-trash"></i> ${t("js.library.delete")}</button>
             </div>
           </div>
         </div>`;
@@ -1317,10 +1327,10 @@
       if (!filtered.length) {
         const hasAny = source.length > 0;
         listEl.innerHTML = query
-          ? `<li class="library-empty-state"><i class="bi bi-search"></i><span>Ninguna palabra coincide con "<strong>${query}</strong>".</span></li>`
+          ? `<li class="library-empty-state"><i class="bi bi-search"></i><span>${t("js.library.no_word_matches", { query: `"<strong>${escapeHtml(query)}</strong>"` })}</span></li>`
           : hasAny
-          ? `<li class="library-empty-state"><i class="bi bi-globe"></i><span>No hay palabras guardadas en este idioma.</span></li>`
-          : `<li class="library-empty-state"><i class="bi bi-journal-plus"></i><span>Esta lista está vacía.<br><small>Guarda palabras desde el catálogo.</small></span></li>`;
+          ? `<li class="library-empty-state"><i class="bi bi-globe"></i><span>${t("js.library.no_saved_words_for_language")}</span></li>`
+          : `<li class="library-empty-state"><i class="bi bi-journal-plus"></i><span>${t("js.library.empty_list")}<br><small>${t("js.library.save_from_catalog")}</small></span></li>`;
         if (paginationEl) paginationEl.hidden = true;
       } else {
         const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
@@ -1347,7 +1357,7 @@
                   ${topic ? `<span class="topic-tag">${topic}</span>` : ""}
                 </div>
               </div>
-              <button class="remove-saved-btn" type="button" data-remove-saved="${item.id}" data-remove-label="${item.label}" data-remove-language="${item.language || getActiveLang()}" data-remove-translation="${translation}" data-remove-cefr="${cefr}" data-remove-topic="${topic}" aria-label="Eliminar ${item.label}"><i class="bi bi-x"></i></button>
+              <button class="remove-saved-btn" type="button" data-remove-saved="${item.id}" data-remove-label="${item.label}" data-remove-language="${item.language || getActiveLang()}" data-remove-translation="${translation}" data-remove-cefr="${cefr}" data-remove-topic="${topic}" aria-label="${t("js.library.remove_word", { word: item.label })}"><i class="bi bi-x"></i></button>
             </li>`;
           })
           .join("");
@@ -1360,7 +1370,7 @@
         }
       }
 
-      countEl.textContent = `${filtered.length} ${filtered.length === 1 ? "palabra" : "palabras"}`;
+      countEl.textContent = countWordLabel(filtered.length, "js.library.word_one", "js.library.word_other");
 
       updateAllBookmarkStates();
     };
@@ -1376,7 +1386,7 @@
         if (hasServerLibrary) {
           saveWordIntoCollection(activeCollId, {
             id,
-            label: btn.dataset.removeLabel || "Palabra",
+            label: getWordLabel(btn.dataset.removeLabel),
             language: btn.dataset.removeLanguage || getActiveLang(),
             translation: btn.dataset.removeTranslation || "",
             cefr: btn.dataset.removeCefr || "",
@@ -1386,7 +1396,7 @@
       } else {
         saveLibrary(getLibrary().filter((item) => item.id !== id));
       }
-      showAlert("Palabra eliminada", "warning");
+      showAlert(t("js.alerts.word_removed"), "warning");
       renderList();
     });
 
@@ -1418,7 +1428,7 @@
       e.stopPropagation();
 
       const id = card.dataset.wordId;
-      const label = card.dataset.wordLabel || card.querySelector("h2")?.textContent?.trim() || "Palabra";
+      const label = getWordLabel(card.dataset.wordLabel || card.querySelector("h2")?.textContent?.trim());
 
       ensureWordInMainLibrary(id, label, card.dataset.language || getActiveLang(), {
         translation: card.dataset.translation,
@@ -1461,7 +1471,7 @@
             if (filterInput) filterInput.value = "";
             renderList();
             renderListsIndex();
-            showAlert("Lista vaciada", "warning");
+            showAlert(t("js.alerts.list_cleared"), "warning");
           });
           return;
         }
@@ -1524,7 +1534,7 @@
             syncServerLibraryState({ items: serverLibrary, collections: payload.collections || [] });
             close();
             if (onCreated) onCreated(payload.collection || null);
-            showAlert("Colección creada");
+            showAlert(t("js.alerts.collection_created"));
           })
           .catch(() => loadServerLibrary());
         return;
@@ -1534,7 +1544,7 @@
       if (!createdCollection) return;
       close();
       if (onCreated) onCreated(createdCollection);
-      showAlert("Colección creada");
+      showAlert(t("js.alerts.collection_created"));
     };
     const onKey = (e) => {
       if (e.key === "Enter") onConfirm();
@@ -1587,7 +1597,7 @@
       }
       close();
       if (onSaved) onSaved();
-      showAlert("Lista renombrada");
+      showAlert(t("js.alerts.list_renamed"));
     };
     const onKey = (e) => {
       if (e.key === "Enter") onConfirm();
@@ -1608,7 +1618,7 @@
     const cancelBtn  = document.getElementById("deleteCollCancel");
     if (!modal) return;
 
-    if (bodyEl) bodyEl.textContent = "Esta acción no se puede deshacer.";
+    if (bodyEl) bodyEl.textContent = t("js.library.irreversible_action");
 
     modal.hidden = false;
 
@@ -1631,7 +1641,7 @@
       }
       close();
       if (onConfirmed) onConfirmed();
-      showAlert("Colección eliminada", "warning");
+      showAlert(t("js.alerts.collection_deleted"), "warning");
     };
     const onKey = (e) => { if (e.key === "Escape") close(); };
     const onBackdrop = (e) => { if (e.target === modal) close(); };
@@ -1650,14 +1660,14 @@
     const cancelBtn  = document.getElementById("clearCollCancel");
     if (!modal || !confirmBtn || !cancelBtn) return;
 
-    if (titleEl) titleEl.textContent = `Vaciar ${MAIN_LIBRARY_NAME}`;
-    if (bodyEl) bodyEl.textContent = "¿Vaciar tu lista principal? Se eliminarán todas las palabras guardadas en este idioma.";
+    if (titleEl) titleEl.textContent = t("js.library.clear_main_title", { list: MAIN_LIBRARY_NAME });
+    if (bodyEl) bodyEl.textContent = t("js.library.clear_main_body");
 
     modal.hidden = false;
 
     const close = () => {
       modal.hidden = true;
-      if (titleEl) titleEl.textContent = "Vaciar lista";
+      if (titleEl) titleEl.textContent = t("js.library.clear_list");
       confirmBtn.removeEventListener("click", onConfirm);
       cancelBtn.removeEventListener("click", close);
       modal.removeEventListener("click", onBackdrop);
@@ -1686,7 +1696,7 @@
     const colls = getCollections();
     const idx   = colls.findIndex(c => c.id === collId);
     if (idx === -1) return;
-    if (bodyEl) bodyEl.textContent = "Se eliminarán todas las palabras de esta colección.";
+    if (bodyEl) bodyEl.textContent = t("js.library.clear_collection_body");
 
     modal.hidden = false;
 
@@ -1711,7 +1721,7 @@
       }
       close();
       if (onConfirmed) onConfirmed();
-      showAlert("Lista vaciada", "warning");
+      showAlert(t("js.alerts.list_cleared"), "warning");
     };
     const onKey = (e) => { if (e.key === "Escape") close(); };
     const onBackdrop = (e) => { if (e.target === modal) close(); };
@@ -1964,13 +1974,13 @@
       const cfg = LANG_CONFIG[lang];
       if (!cfg) return;
       if (saveToStorage) {
-        setPageLoading(true, "Cambiando idioma...");
+        setPageLoading(true, t("js.change_language_loading"));
         try {
           await persistActiveLanguage(lang);
           location.href = location.pathname + location.search;
         } catch {
           setPageLoading(false);
-          showAlert("No se pudo cambiar el idioma activo.", "danger");
+          showAlert(t("js.change_language_error"), "danger");
         }
         return;
       }
@@ -1991,7 +2001,7 @@
             ${isNative ? "disabled aria-disabled='true'" : ""}>
             <img src="${cfg.flag}" alt="${cfg.label}">
             <span>${cfg.label}</span>
-            ${isNative ? "<span class='lang-native-badge'>nativa</span>" : ""}
+            ${isNative ? `<span class='lang-native-badge'>${t("js.native_badge")}</span>` : ""}
           </button>`;
         })
         .join("");
@@ -2051,16 +2061,16 @@
     const drawer = document.createElement("aside");
     drawer.className = "progress-drawer";
     drawer.id = "progressDrawer";
-    drawer.setAttribute("aria-label", "Tu progreso");
+    drawer.setAttribute("aria-label", t("js.tooltips.progress"));
 
     drawer.innerHTML = `
       <div class="progress-drawer-header">
-        <p class="progress-drawer-title">Tu progreso</p>
-        <button class="progress-drawer-close" type="button" id="closeProgressDrawer" aria-label="Cerrar">&#x2715;</button>
+        <p class="progress-drawer-title">${t("js.tooltips.progress")}</p>
+        <button class="progress-drawer-close" type="button" id="closeProgressDrawer" aria-label="${t("js.utility.close")}">&#x2715;</button>
       </div>
       <div class="progress-drawer-body" id="progressDrawerBody"></div>
       <div class="progress-drawer-footer">
-        <a class="btn btn-warning w-100" href="progreso.html">Ver progreso completo</a>
+        <a class="btn btn-warning w-100" href="progreso.html">${t("js.progress.view_full_progress")}</a>
       </div>
     `;
 
@@ -2082,14 +2092,14 @@
   const renderProgressDrawer = () => {
     const body = document.getElementById("progressDrawerBody");
     if (!body) return;
-    body.innerHTML = `<p style="margin:0;color:var(--muted)">Cargando progreso...</p>`;
+    body.innerHTML = `<p style="margin:0;color:var(--muted)">${t("js.progress.drawer_loading")}</p>`;
 
     const modeData = [
-      { key: "reading",   label: "Lectura",   icon: "bi-book-half",         color: "#4f8ef7" },
-      { key: "listening", label: "Escucha",   icon: "bi-headphones",        color: "#f76b4f" },
-      { key: "speaking",  label: "Habla",     icon: "bi-mic-fill",          color: "#2dc98b" },
-      { key: "writing",   label: "Escritura", icon: "bi-pencil-fill",       color: "#a855f7" },
-      { key: "mix",       label: "Combinado", icon: "bi-shuffle",           color: "#f9b233" },
+      { key: "reading",   label: t("js.progress.reading"),   icon: "bi-book-half",   color: "#4f8ef7" },
+      { key: "listening", label: t("js.progress.listening"), icon: "bi-headphones",  color: "#f76b4f" },
+      { key: "speaking",  label: t("js.progress.speaking"),  icon: "bi-mic-fill",    color: "#2dc98b" },
+      { key: "writing",   label: t("js.progress.writing"),   icon: "bi-pencil-fill", color: "#a855f7" },
+      { key: "mix",       label: t("js.progress.mix"),       icon: "bi-shuffle",     color: "#f9b233" },
     ];
 
     loadServerProgressState().then((state) => {
@@ -2099,7 +2109,7 @@
       const level = state?.level || {
         key: "a1",
         label: "A1",
-        description: "Principiante",
+        description: t("js.progress.level_starting"),
         progress_percent: 0,
         next_target: 10,
         next_label: "A2",
@@ -2110,36 +2120,36 @@
       body.innerHTML = `
       <!-- Racha -->
       <div>
-        <p class="pd-section-title">Racha diaria</p>
+        <p class="pd-section-title">${t("js.progress.daily_streak")}</p>
         <div class="pd-streak">
           <span class="pd-streak-fire">${streak > 0 ? "🔥" : "💤"}</span>
           <div>
             <div class="pd-streak-num">${streak}</div>
-            <div class="pd-streak-label">${streak === 1 ? "día seguido" : "días seguidos"}</div>
+            <div class="pd-streak-label">${t(streak === 1 ? "js.progress.streak_day_one" : "js.progress.streak_day_other")}</div>
           </div>
           <div style="margin-left:auto;text-align:right;">
             <div style="font-size:1.1rem;font-weight:700;color:var(--text)">${wordCount}</div>
-            <div style="font-size:0.78rem;color:var(--muted)">${wordCount === 1 ? "palabra" : "palabras"}</div>
+            <div style="font-size:0.78rem;color:var(--muted)">${t(wordCount === 1 ? "js.progress.saved_word_one" : "js.progress.saved_word_other")}</div>
           </div>
         </div>
       </div>
 
       <!-- Nivel -->
       <div>
-        <p class="pd-section-title">Nivel estimado</p>
+        <p class="pd-section-title">${t("js.progress.estimated_level")}</p>
         <div class="pd-level-row">
           <div class="pd-level-badge cefr-${level.key}">${level.label}</div>
           <div class="pd-level-info">
             <div class="pd-level-desc">${level.description}</div>
             <div class="pd-bar-wrap"><div class="pd-bar" style="width:${level.progress_percent || 0}%"></div></div>
-            <p class="pd-bar-next">${level.next_target ? `${toNext} palabra${toNext !== 1 ? "s" : ""} para ${level.next_label || ""}` : "Nivel máximo alcanzado 🎉"}</p>
+            <p class="pd-bar-next">${level.next_target ? t("js.progress.words_to_next_level", { count: toNext, plural: toNext !== 1 ? "s" : "", level: level.next_label || "" }) : t("js.progress.max_level_reached_celebration")}</p>
           </div>
         </div>
       </div>
 
       <!-- Modos -->
       <div>
-        <p class="pd-section-title">Ejercicios completados · ${totalEx} en total</p>
+        <p class="pd-section-title">${t("js.progress.completed_exercises_total", { total: totalEx })}</p>
         <div class="pd-modes">
           ${modeData.map(m => `
             <div class="pd-mode">
@@ -2161,7 +2171,7 @@
 
     loadServerProgressState().then((state) => {
       const firstName = state?.user?.first_name || "";
-      const activeLanguage = state?.active_language?.label || "tu idioma";
+      const activeLanguage = LANG_CONFIG[state?.active_language?.code]?.label || state?.active_language?.label || t("js.progress.your_language");
       const savedWords = state?.summary?.saved_words_active ?? 0;
       const collections = state?.summary?.collections_active ?? 0;
       const level = state?.level?.label || "A1";
@@ -2170,7 +2180,15 @@
         title.textContent = `Hola, ${firstName}`;
       }
 
-      subtitle.textContent = `${activeLanguage} activo · ${savedWords} palabra${savedWords === 1 ? "" : "s"} guardada${savedWords === 1 ? "" : "s"} · ${collections} coleccion${collections === 1 ? "" : "es"} · Nivel ${level}`;
+      subtitle.textContent = t("js.progress.active_summary", {
+        language: activeLanguage,
+        words: savedWords,
+        words_plural: savedWords === 1 ? "" : "s",
+        words_saved_plural: savedWords === 1 ? "" : "s",
+        collections,
+        collections_plural: collections === 1 ? "" : "es",
+        level,
+      });
     });
   };
 
@@ -2216,7 +2234,7 @@
             responsive: true,
             plugins: {
               legend: { position: "bottom", labels: { font: { family: "Inter", size: 12 }, padding: 12, color: "#374151" } },
-              tooltip: { callbacks: { label: (ctx) => ` ${ctx.label}: ${ctx.parsed} ${ctx.parsed === 1 ? "palabra" : "palabras"}` } },
+              tooltip: { callbacks: { label: (ctx) => ` ${ctx.label}: ${countWordLabel(ctx.parsed, "js.library.word_one", "js.library.word_other")}` } },
             },
             cutout: "62%",
           },
@@ -2232,7 +2250,7 @@
         barChart = new Chart(barCanvas, {
           type: "bar",
           data: {
-            labels: ["Lectura", "Escucha", "Habla", "Escritura", "Combinado"],
+            labels: [t("js.progress.reading"), t("js.progress.listening"), t("js.progress.speaking"), t("js.progress.writing"), t("js.progress.mix")],
             datasets: [{
               data: modeCounts,
               backgroundColor: ["#4f8ef7", "#f76b4f", "#2dc98b", "#a855f7", "#f9b233"],
@@ -2245,7 +2263,7 @@
             indexAxis: "y",
             plugins: {
               legend: { display: false },
-              tooltip: { callbacks: { label: (ctx) => ` ${ctx.parsed.x} ${ctx.parsed.x === 1 ? "sesión" : "sesiones"}` } },
+              tooltip: { callbacks: { label: (ctx) => ` ${ctx.parsed.x} ${t(ctx.parsed.x === 1 ? "js.progress.session_one" : "js.progress.session_other")}` } },
             },
             scales: {
               x: { grid: { color: "#f3f4f6" }, ticks: { font: { family: "Inter", size: 11 }, color: "#6b7280", stepSize: 1 } },
@@ -2262,27 +2280,27 @@
         const totalWords = state?.summary?.saved_words_total || 0;
         const level = state?.level || {};
         const recentWords = state?.summary?.recent_words || [];
-        const activeLanguage = state?.active_language?.label || "?";
+        const activeLanguage = LANG_CONFIG[state?.active_language?.code]?.label || state?.active_language?.label || "?";
         const recentWordsList = document.getElementById("recentWordsList");
 
         document.getElementById("streakNum").textContent = streak;
         document.getElementById("streakFire").textContent = streak > 0 ? "🔥" : "🌱";
         document.getElementById("streakMsg").textContent = streak > 1
-          ? `¡Llevas ${streak} días seguidos! Sigue así.`
+          ? t("js.progress.streak_message_many", { count: streak })
           : streak === 1
-          ? "¡Buen comienzo! Vuelve mañana para mantener la racha."
-          : "Completa un ejercicio hoy para empezar tu racha.";
+          ? t("js.progress.streak_message_one")
+          : t("js.progress.streak_message_zero");
 
         document.getElementById("statWords").textContent = totalWords;
         document.getElementById("statExDone").textContent = state?.exercises?.total_completed || 0;
         document.getElementById("statLang").textContent = activeLanguage;
         document.getElementById("levelBadge").textContent = level.label || "A1";
         document.getElementById("levelBadge").className = `profile-level-badge cefr-${level.key || "a1"}`;
-        document.getElementById("levelDesc").textContent = level.description || "Estás empezando. ¡Cada palabra cuenta!";
+        document.getElementById("levelDesc").textContent = level.description || t("js.progress.level_starting");
         document.getElementById("levelBar").style.width = `${level.progress_percent || 0}%`;
         document.getElementById("levelNext").textContent = level.next_target
-          ? `${level.current_words || 0} / ${level.next_target} palabras para ${level.next_label || ""}`
-          : "¡Nivel máximo alcanzado!";
+          ? `${level.current_words || 0} / ${level.next_target} ${t("js.progress.saved_word_other")} ${level.next_label || "" ? `para ${level.next_label || ""}` : ""}`
+          : t("js.progress.max_level_reached");
 
         document.getElementById("modeReading").textContent = state?.exercises?.modes?.reading || 0;
         document.getElementById("modeListening").textContent = state?.exercises?.modes?.listening || 0;
@@ -2293,7 +2311,7 @@
         if (recentWordsList) {
           recentWordsList.innerHTML = "";
           if (!recentWords.length) {
-            recentWordsList.innerHTML = '<li class="profile-words-empty">Aún no has guardado ninguna palabra. <a href="biblioteca.html">Explorar biblioteca</a></li>';
+            recentWordsList.innerHTML = `<li class="profile-words-empty">${t("js.progress.no_saved_words_long")} <a href="biblioteca.html">${t("js.progress.explore_library")}</a></li>`;
           } else {
             recentWords.forEach((item) => {
               const li = document.createElement("li");
@@ -2346,7 +2364,7 @@
     const activeLang = getActiveLang();
     const hist = getLangHistory().sort((a, b) => a.firstAt - b.firstAt);
     if (!hist.length) {
-      container.innerHTML = `<span style="font-size:0.85rem;color:var(--muted)">Aún no has estudiado ningún idioma.</span>`;
+      container.innerHTML = `<span style="font-size:0.85rem;color:var(--muted)">${t("js.profile.no_studied_languages")}</span>`;
       return;
     }
     container.innerHTML = hist.map(({ lang }) => {
@@ -2355,7 +2373,7 @@
       const isActive = lang === activeLang;
       return `<span class="profile-lang-chip${isActive ? " is-active" : ""}">
         <img src="${cfg.flag}" alt="${cfg.label}">
-        ${cfg.label}${isActive ? " <span style=\"font-size:0.7rem;opacity:0.65\">· activo</span>" : ""}
+        ${cfg.label}${isActive ? ` <span style="font-size:0.7rem;opacity:0.65">· ${t("js.profile.active_badge")}</span>` : ""}
       </span>`;
     }).join("");
   };
@@ -2364,11 +2382,11 @@
 
   const applyHeaderTooltips = () => {
     const headerTooltips = [
-      { selector: '[data-progress-trigger]', label: 'Tu progreso' },
-      { selector: '[data-lang-trigger]',     label: 'Cambiar idioma' },
-      { selector: 'a.icon-btn[href="perfil.html"]', label: 'Perfil' },
-      { selector: '[data-cart-trigger]',     label: 'Mi lista de repaso' },
-      { selector: '[data-utility-trigger]',  label: 'Más opciones' },
+      { selector: '[data-progress-trigger]', label: t("js.tooltips.progress") },
+      { selector: '[data-lang-trigger]',     label: t("js.tooltips.change_language") },
+      { selector: 'a.icon-btn[href="perfil.html"]', label: t("js.tooltips.profile") },
+      { selector: '[data-cart-trigger]',     label: t("js.tooltips.review_list") },
+      { selector: '[data-utility-trigger]',  label: t("js.tooltips.more_options") },
     ];
     headerTooltips.forEach(({ selector, label }) => {
       const el = document.querySelector(selector);

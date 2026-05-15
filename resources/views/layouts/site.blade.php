@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 @include('partials.site-head', [
   'title' => $title,
   'description' => $description,
@@ -7,7 +7,7 @@
   'extraHead' => $extraHead ?? null,
 ])
 <body @if (!empty($bodyAttributes)) {!! $bodyAttributes !!} @endif>
-<a href="#mainContent" class="skip-link">Saltar al contenido</a>
+<a href="#mainContent" class="skip-link">{{ __('lexi.common.skip_to_content') }}</a>
 
 @include('partials.site-header', ['activeNav' => $activeNav ?? null])
 

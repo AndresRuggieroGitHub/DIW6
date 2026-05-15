@@ -183,7 +183,7 @@
         </section>
       </div>
       <div class="legal-actions-bar">
-        <a class="legal-link" href="{{ url('/terminos.html') }}"><i class="bi bi-arrow-right"></i> Ver términos de uso</a>
+        <a class="legal-link" href="{{ route('terminos') }}"><i class="bi bi-arrow-right"></i> Ver términos de uso</a>
         <a class="legal-link" href="{{ route('login') }}"><i class="bi bi-arrow-left"></i> Volver al acceso</a>
       </div>
     </article>

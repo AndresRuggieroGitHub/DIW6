@@ -13,6 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo('/login.html');
         $middleware->redirectUsersTo('/app.html');
+        $middleware->web(append: [
+            \App\Http\Middleware\SetUiLocale::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Accede a tu cuenta Lexi.">
+  <meta name="description" content="{{ __('lexi.meta.login.description') }}">
   <meta name="robots" content="noindex">
-  <title>Lexi | Iniciar sesión</title>
+  <title>{{ __('lexi.meta.login.title') }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -47,11 +47,11 @@
 </head>
 <body>
 <main class="login-page">
-  <section class="login-card" aria-label="Inicio de sesión en Lexi">
-    <aside class="login-brand-panel"><div class="login-brand-content"><h1 class="login-brand-headline">Accede a tu cuenta <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i></h1><p class="login-brand-desc">Continúa donde lo dejaste.</p></div></aside>
+  <section class="login-card" aria-label="{{ __('lexi.auth.login_aria') }}">
+    <aside class="login-brand-panel"><div class="login-brand-content"><h1 class="login-brand-headline">{{ __('lexi.auth.login_brand_title') }} <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i></h1><p class="login-brand-desc">{{ __('lexi.auth.login_brand_text') }}</p></div></aside>
     <div class="login-form-panel"><div class="login-form-wrap">
-      <h2 class="login-form-title">Inicia sesión</h2>
-      <p class="login-form-sub">¡Nos alegra verte de nuevo!</p>
+      <h2 class="login-form-title">{{ __('lexi.auth.login_title') }}</h2>
+      <p class="login-form-sub">{{ __('lexi.auth.login_subtitle') }}</p>
       @if ($errors->any() && ! $errors->has('email') && ! $errors->has('password'))
         <div class="login-alert login-alert--error" role="alert">{{ $errors->first() }}</div>
       @endif
@@ -60,12 +60,12 @@
       @endif
       <form method="POST" action="{{ route('login.attempt') }}" novalidate>
         @csrf
-        <div class="login-field"><label for="loginEmail">Correo electrónico</label><div class="login-input-wrap"><i class="bi bi-envelope"></i><input type="email" id="loginEmail" name="email" class="login-input{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="tú@ejemplo.com" autocomplete="email" value="{{ old('email') }}" required></div>@error('email')<span class="login-field-error">{{ $message }}</span>@enderror</div>
-        <div class="login-field"><label for="loginPassword">Contraseña</label><div class="login-input-wrap"><i class="bi bi-lock"></i><input type="password" id="loginPassword" name="password" class="login-input{{ $errors->has('password') ? ' is-invalid' : '' }}" placeholder="••••••••" autocomplete="current-password" required></div>@error('password')<span class="login-field-error">{{ $message }}</span>@enderror<a href="{{ route('password.request') }}" class="login-forgot">¿Olvidaste tu contraseña?</a></div>
-        <button type="submit" class="login-btn-primary">Entrar</button>
+        <div class="login-field"><label for="loginEmail">{{ __('lexi.auth.email') }}</label><div class="login-input-wrap"><i class="bi bi-envelope"></i><input type="email" id="loginEmail" name="email" class="login-input{{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="{{ __('lexi.auth.email_placeholder') }}" autocomplete="email" value="{{ old('email') }}" required></div>@error('email')<span class="login-field-error">{{ $message }}</span>@enderror</div>
+        <div class="login-field"><label for="loginPassword">{{ __('lexi.auth.password') }}</label><div class="login-input-wrap"><i class="bi bi-lock"></i><input type="password" id="loginPassword" name="password" class="login-input{{ $errors->has('password') ? ' is-invalid' : '' }}" placeholder="{{ __('lexi.auth.password_placeholder') }}" autocomplete="current-password" required></div>@error('password')<span class="login-field-error">{{ $message }}</span>@enderror<a href="{{ route('password.request') }}" class="login-forgot">{{ __('lexi.auth.forgot_password') }}</a></div>
+        <button type="submit" class="login-btn-primary">{{ __('lexi.auth.sign_in') }}</button>
       </form>
-      <p class="login-register-note">¿No tienes cuenta? <a href="{{ route('register') }}">Crear cuenta</a></p>
-      <p class="login-footer-note">Al acceder aceptas los <a href="terminos.html">Términos de uso</a> y la <a href="privacidad.html">Política de privacidad</a>.</p>
+      <p class="login-register-note">{{ __('lexi.auth.no_account') }} <a href="{{ route('register') }}">{{ __('lexi.auth.create_account') }}</a></p>
+      <p class="login-footer-note">{!! str_replace([':terms', ':privacy'], ['<a href="' . route('terminos') . '">' . __('lexi.nav.terms') . '</a>', '<a href="' . route('privacidad') . '">' . __('lexi.nav.privacy') . '</a>'], __('lexi.auth.legal_acceptance')) !!}</p>
     </div></div>
   </section>
 </main>

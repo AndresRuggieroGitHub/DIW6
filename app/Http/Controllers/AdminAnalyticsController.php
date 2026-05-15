@@ -44,24 +44,24 @@ class AdminAnalyticsController extends Controller
 
         $overview = [
             [
-                'metric' => 'Words learned',
+                'metric' => __('lexi.admin.analytics.metric_words_learned'),
                 'value' => number_format($wordsLearned),
-                'window' => 'Acumulado',
-                'status' => $wordsLearned > 0 ? 'En objetivo' : 'Sin señal',
+                'window' => __('lexi.admin.analytics.window_accumulated'),
+                'status' => $wordsLearned > 0 ? __('lexi.admin.analytics.status_on_target') : __('lexi.admin.analytics.status_no_signal'),
                 'statusClass' => $wordsLearned > 0 ? 'admin-status--active' : 'admin-status--review',
             ],
             [
-                'metric' => 'Exercise attempts',
+                'metric' => __('lexi.admin.analytics.metric_exercise_attempts'),
                 'value' => number_format($attemptsCount),
-                'window' => 'Acumulado',
-                'status' => $attemptsCount > 0 ? 'Estable' : 'Sin actividad',
+                'window' => __('lexi.admin.analytics.window_accumulated'),
+                'status' => $attemptsCount > 0 ? __('lexi.admin.analytics.status_stable') : __('lexi.admin.analytics.status_no_activity'),
                 'statusClass' => $attemptsCount > 0 ? 'admin-status--active' : 'admin-status--review',
             ],
             [
-                'metric' => 'Due reviews',
+                'metric' => __('lexi.admin.analytics.metric_due_reviews'),
                 'value' => number_format($reviewDue),
-                'window' => 'Ahora',
-                'status' => $reviewDue > 0 ? 'Pendiente' : 'Al día',
+                'window' => __('lexi.admin.analytics.window_now'),
+                'status' => $reviewDue > 0 ? __('lexi.admin.analytics.status_pending') : __('lexi.admin.analytics.status_up_to_date'),
                 'statusClass' => $reviewDue > 0 ? 'admin-status--review' : 'admin-status--active',
             ],
         ];

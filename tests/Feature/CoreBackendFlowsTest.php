@@ -6,6 +6,7 @@ use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
@@ -124,6 +125,236 @@ class CoreBackendFlowsTest extends TestCase
         }
     }
 
+    public function test_authenticated_ui_uses_user_mother_tongue_locale(): void
+    {
+        $this->seedLanguages();
+
+        $user = User::factory()->create([
+            'mother_tongue_code' => 'ua',
+        ]);
+
+        $response = $this->actingAs($user)->get('/app.html');
+
+        $response->assertOk();
+        $response->assertSee('lang="ua"', false);
+        $response->assertSee('Перейти до вмісту');
+        $response->assertSee('Вивчайте мови у своєму ритмі');
+        $response->assertSee('window.lexiTranslations', false);
+        $response->assertSee('Завантаження...');
+    }
+
+    public function test_authenticated_ui_uses_cached_generated_locale_for_supported_language(): void
+    {
+        $this->seedLanguages();
+
+        $catalogPath = storage_path('app/generated-ui-locales/fr.php');
+
+        File::ensureDirectoryExists(dirname($catalogPath));
+        File::put($catalogPath, <<<'PHP'
+<?php
+
+return [
+    'common' => [
+        'skip_to_content' => 'Aller au contenu',
+    ],
+    'app' => [
+        'hero_title' => 'Apprenez les langues a votre rythme',
+    ],
+    'js' => [
+        'loading' => 'Chargement...',
+    ],
+];
+PHP);
+
+        $user = User::factory()->create([
+            'mother_tongue_code' => 'fr',
+        ]);
+
+        try {
+            $response = $this->actingAs($user)->get('/app.html');
+
+            $response->assertOk();
+            $response->assertSee('lang="fr"', false);
+            $response->assertSee('Aller au contenu');
+            $response->assertSee('Apprenez les langues a votre rythme');
+            $response->assertSee('Chargement...');
+        } finally {
+            File::delete($catalogPath);
+        }
+    }
+
+    public function test_exercises_page_uses_translated_runtime_strings_for_user_locale(): void
+    {
+        $this->seedLanguages();
+
+        $user = User::factory()->create([
+            'mother_tongue_code' => 'ua',
+        ]);
+
+        $response = $this->actingAs($user)->get('/ejercicios.html');
+
+        $response->assertOk();
+        $response->assertSee('Як ви хочете практикуватися?');
+        $response->assertSee('window.lexiTranslations', false);
+        $response->assertSee('Завантаження варіантів...');
+        $response->assertSee('Мої списки');
+    }
+
+    public function test_cart_page_uses_translated_strings_for_user_locale(): void
+    {
+        $this->seedLanguages();
+
+        $user = User::factory()->create([
+            'mother_tongue_code' => 'ua',
+        ]);
+
+        $response = $this->actingAs($user)->get('/carrito.html');
+
+        $response->assertOk();
+        $response->assertSee('Кошик');
+        $response->assertSee('Підтвердити видалення');
+        $response->assertSee('window.lexiTranslations', false);
+        $response->assertSee('Ваш кошик порожній.');
+    }
+
+    public function test_admin_analytics_page_uses_translated_strings_for_admin_locale(): void
+    {
+        $this->seedLanguages();
+
+        $user = User::factory()->create([
+            'mother_tongue_code' => 'ua',
+        ]);
+
+        $this->attachAdminRole($user);
+
+        $response = $this->actingAs($user)->get('/admin-analytics.html');
+
+        $response->assertOk();
+        $response->assertSee('lang="ua"', false);
+        $response->assertSee('Аналітика і прогрес');
+        $response->assertSee('Вивчені слова');
+        $response->assertSee('Робочий простір');
+    }
+
+    public function test_admin_billing_page_uses_translated_strings_for_admin_locale(): void
+    {
+        $this->seedLanguages();
+
+        $user = User::factory()->create([
+            'mother_tongue_code' => 'ua',
+        ]);
+
+        $this->attachAdminRole($user);
+
+        $response = $this->actingAs($user)->get('/admin-billing.html');
+
+        $response->assertOk();
+        $response->assertSee('lang="ua"', false);
+        $response->assertSee('Оплата');
+        $response->assertSee('Функції плану');
+        $response->assertSee('Використання користувача');
+    }
+
+    public function test_admin_ai_page_uses_translated_strings_for_admin_locale(): void
+    {
+        $this->seedLanguages();
+
+        $user = User::factory()->create([
+            'mother_tongue_code' => 'ua',
+        ]);
+
+        $this->attachAdminRole($user);
+
+        $response = $this->actingAs($user)->get('/admin-ai.html');
+
+        $response->assertOk();
+        $response->assertSee('lang="ua"', false);
+        $response->assertSee('Генерації ШІ');
+        $response->assertSee('Схвалені');
+        $response->assertSee('Трасованість');
+    }
+
+    public function test_registration_redirects_to_app_with_new_user_locale(): void
+    {
+        $this->seedLanguages();
+
+        $response = $this->followingRedirects()->post('/registro.html', [
+            'name' => 'Oksana',
+            'email' => 'oksana@test.local',
+            'password' => 'secret123',
+            'password_confirmation' => 'secret123',
+            'birth_date' => '2000-01-01',
+            'mother_tongue_code' => 'ua',
+            'target_language_code' => 'en',
+            'terms' => '1',
+        ]);
+
+        $response->assertOk();
+        $response->assertSee('lang="ua"', false);
+        $response->assertSee('Перейти до вмісту');
+        $response->assertSee('Вивчайте мови у своєму ритмі');
+
+        $this->assertAuthenticated();
+        $this->assertDatabaseHas('users', [
+            'email' => 'oksana@test.local',
+            'mother_tongue_code' => 'ua',
+        ]);
+    }
+
+    public function test_exercises_page_injects_normalized_templates_for_runtime_use(): void
+    {
+        $user = User::factory()->create();
+
+        $templateId = DB::table('exercise_templates')->insertGetId([
+            'title' => 'Airport Runtime Reading',
+            'type' => 'reading',
+            'source' => 'manual',
+            'schema_version' => 1,
+            'payload' => json_encode(['topic' => 'travel']),
+            'created_by' => $user->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $itemId = DB::table('exercise_items')->insertGetId([
+            'template_id' => $templateId,
+            'item_order' => 1,
+            'item_type' => 'choice',
+            'question_text' => 'Selecciona la traducción correcta de airport.',
+            'correct_answer' => 'aeropuerto',
+            'payload' => json_encode(['passage' => 'Travel vocabulary']),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('exercise_options')->insert([
+            [
+                'item_id' => $itemId,
+                'option_text' => 'aeropuerto',
+                'is_correct' => true,
+                'option_order' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'item_id' => $itemId,
+                'option_text' => 'estación',
+                'is_correct' => false,
+                'option_order' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        $response = $this->actingAs($user)->get('/ejercicios.html');
+
+        $response->assertOk();
+        $response->assertViewIs('pages.ejercicios');
+        $response->assertSee('lexiExerciseTemplateCatalog', false);
+        $response->assertSee('Airport Runtime Reading');
+        $response->assertSee('Selecciona la traducción correcta de airport.');
+    }
+
     public function test_auth_profile_and_admin_routes_render_expected_blade_views(): void
     {
         $this->seedLanguages();
@@ -177,8 +408,12 @@ class CoreBackendFlowsTest extends TestCase
         $response = $this->actingAs($user)->get('/admin.html');
 
         $response->assertOk();
-        $response->assertSee('Admin');
-        $response->assertSee('Analytics');
+        $response->assertSee('Lexi Admin');
+        $response->assertSee('Panel de control');
+        $response->assertSee('Abrir app');
+        $response->assertSee('Cerrar sesion');
+        $response->assertSee(route('admin-users'), false);
+        $response->assertSee(route('admin-billing') . '#features', false);
     }
 
     public function test_admin_billing_page_shows_real_plan_and_subscription_data(): void
@@ -201,7 +436,7 @@ class CoreBackendFlowsTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        DB::table('subscriptions')->insert([
+        $subscriptionId = DB::table('subscriptions')->insertGetId([
             'user_id' => $user->id,
             'plan_id' => $planId,
             'status' => 'active',
@@ -213,11 +448,61 @@ class CoreBackendFlowsTest extends TestCase
             'updated_at' => now(),
         ]);
 
+        DB::table('plan_features')->insert([
+            'plan_id' => $planId,
+            'feature_key' => 'analytics.level',
+            'feature_value' => 'advanced',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('payments')->insert([
+            'subscription_id' => $subscriptionId,
+            'provider' => 'manual',
+            'provider_payment_id' => 'payment-admin-billing-test',
+            'amount_cents' => 990,
+            'currency' => 'EUR',
+            'status' => 'paid',
+            'paid_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('user_usage')->insert([
+            'user_id' => $user->id,
+            'period_start' => now()->startOfMonth()->toDateString(),
+            'period_end' => now()->endOfMonth()->toDateString(),
+            'ai_generations_count' => 3,
+            'exercises_generated_count' => 2,
+            'exercise_attempts_count' => 5,
+            'saved_words_count' => 8,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         $response = $this->actingAs($user)->get('/admin-billing.html');
 
         $response->assertOk();
         $response->assertSee('Pro');
         $response->assertSee('admin-billing@test.local');
+        $response->assertSee('Funciones del plan');
+        $response->assertSee('analytics.level');
+        $response->assertSee('Pagos recientes');
+        $response->assertSee('Uso de usuario');
+    }
+
+    public function test_admin_dashboard_cards_are_selectable_navigation_entries(): void
+    {
+        $user = User::factory()->create();
+        $this->attachAdminRole($user);
+
+        $response = $this->actingAs($user)->get('/admin.html');
+
+        $response->assertOk();
+        $response->assertSee('admin-entity-card--selectable', false);
+        $response->assertDontSee('Ver todo');
+        $response->assertSee(route('admin-billing') . '#payments', false);
+        $response->assertSee(route('admin-billing') . '#usage', false);
     }
 
     public function test_admin_ai_page_shows_real_generation_data(): void
@@ -387,10 +672,186 @@ class CoreBackendFlowsTest extends TestCase
         $response = $this->actingAs($user)->get('/admin-exercises.html');
 
         $response->assertOk();
-        $response->assertSee('Template inventory');
+        $response->assertSee('Inventario de plantillas');
+        $response->assertSee('Instancias generadas');
         $response->assertSee('Travel Basics Reading');
+        $response->assertSee('audience: admin-demo');
         $response->assertSee('1');
         $response->assertSee('Admin Templates');
+    }
+
+    public function test_admin_can_create_exercise_template_and_item_from_admin_panel(): void
+    {
+        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
+
+        $user = User::factory()->create();
+        $this->attachAdminRole($user);
+
+        $this->actingAs($user)->post('/admin-exercises/templates', [
+            'title' => 'Airport Writing Drill',
+            'type' => 'writing',
+            'source' => 'manual',
+            'schema_version' => 1,
+            'topic' => 'travel',
+            'difficulty' => 'A2',
+        ])->assertRedirect('/admin-exercises.html');
+
+        $templateId = DB::table('exercise_templates')
+            ->where('title', 'Airport Writing Drill')
+            ->value('id');
+
+        $this->assertNotNull($templateId);
+
+        $this->actingAs($user)->post('/admin-exercises/items', [
+            'template_id' => $templateId,
+            'item_order' => 1,
+            'item_type' => 'choice',
+            'question_text' => 'Traduce "airport".',
+            'correct_answer' => 'aeropuerto',
+            'hint' => 'transporte',
+            'options_text' => "aeropuerto\nestación\nmaleta",
+            'correct_option_order' => 1,
+        ])->assertRedirect('/admin-exercises.html');
+
+        $itemId = DB::table('exercise_items')
+            ->where('template_id', $templateId)
+            ->where('item_order', 1)
+            ->value('id');
+
+        $this->assertNotNull($itemId);
+        $this->assertSame(3, DB::table('exercise_options')->where('item_id', $itemId)->count());
+        $this->assertDatabaseHas('exercise_options', [
+            'item_id' => $itemId,
+            'option_text' => 'aeropuerto',
+            'is_correct' => true,
+        ]);
+    }
+
+    public function test_shared_blade_layouts_use_named_routes_instead_of_hardcoded_html_links(): void
+    {
+        $this->seedLanguages();
+
+        $user = User::factory()->create();
+
+        $appResponse = $this->actingAs($user)->get('/app.html');
+        $appResponse->assertOk();
+        $appResponse->assertSee('href="http://127.0.0.1:8000/biblioteca.html"', false);
+        $appResponse->assertDontSee('href="biblioteca.html"', false);
+        $appResponse->assertDontSee('href="ejercicios.html"', false);
+        $appResponse->assertDontSee('href="perfil.html"', false);
+
+        $this->attachAdminRole($user);
+
+        $adminResponse = $this->actingAs($user)->get('/admin-exercises.html');
+        $adminResponse->assertOk();
+        $adminResponse->assertSee('href="http://127.0.0.1:8000/app.html"', false);
+        $adminResponse->assertDontSee('href="app.html"', false);
+        $adminResponse->assertDontSee('href="admin.html"', false);
+    }
+
+    public function test_admin_can_update_and_delete_exercise_template_and_item_from_admin_panel(): void
+    {
+        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
+
+        $user = User::factory()->create();
+        $this->attachAdminRole($user);
+
+        $templateId = DB::table('exercise_templates')->insertGetId([
+            'title' => 'Starter Template',
+            'type' => 'reading',
+            'source' => 'manual',
+            'schema_version' => 1,
+            'payload' => json_encode(['topic' => 'travel', 'difficulty' => 'A1']),
+            'created_by' => $user->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $itemId = DB::table('exercise_items')->insertGetId([
+            'template_id' => $templateId,
+            'item_order' => 1,
+            'item_type' => 'choice',
+            'question_text' => 'Original question',
+            'correct_answer' => 'uno',
+            'payload' => json_encode(['hint' => 'old hint', 'min_words' => 1]),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('exercise_options')->insert([
+            [
+                'item_id' => $itemId,
+                'option_text' => 'uno',
+                'is_correct' => true,
+                'option_order' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'item_id' => $itemId,
+                'option_text' => 'dos',
+                'is_correct' => false,
+                'option_order' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        $this->actingAs($user)->patch('/admin-exercises/templates/' . $templateId, [
+            'title' => 'Updated Template',
+            'type' => 'writing',
+            'source' => 'ai',
+            'schema_version' => 2,
+            'topic' => 'airport',
+            'difficulty' => 'B1',
+        ])->assertRedirect('/admin-exercises.html');
+
+        $this->assertDatabaseHas('exercise_templates', [
+            'id' => $templateId,
+            'title' => 'Updated Template',
+            'type' => 'writing',
+            'source' => 'ai',
+            'schema_version' => 2,
+        ]);
+
+        $this->actingAs($user)->patch('/admin-exercises/items/' . $itemId, [
+            'template_id' => $templateId,
+            'item_order' => 1,
+            'item_type' => 'translate',
+            'question_text' => 'Updated question',
+            'correct_answer' => 'aeropuerto',
+            'hint' => 'travel',
+            'min_words' => 2,
+            'options_text' => "aeropuerto\npuerta\nhotel",
+            'correct_option_order' => 1,
+        ])->assertRedirect('/admin-exercises.html');
+
+        $this->assertDatabaseHas('exercise_items', [
+            'id' => $itemId,
+            'template_id' => $templateId,
+            'item_type' => 'translate',
+            'question_text' => 'Updated question',
+            'correct_answer' => 'aeropuerto',
+        ]);
+        $this->assertSame(3, DB::table('exercise_options')->where('item_id', $itemId)->count());
+        $this->assertDatabaseHas('exercise_options', [
+            'item_id' => $itemId,
+            'option_text' => 'aeropuerto',
+            'is_correct' => true,
+            'option_order' => 1,
+        ]);
+        $this->assertDatabaseMissing('exercise_options', [
+            'item_id' => $itemId,
+            'option_text' => 'uno',
+        ]);
+
+        $this->actingAs($user)->delete('/admin-exercises/items/' . $itemId)
+            ->assertRedirect('/admin-exercises.html');
+        $this->assertDatabaseMissing('exercise_items', ['id' => $itemId]);
+
+        $this->actingAs($user)->delete('/admin-exercises/templates/' . $templateId)
+            ->assertRedirect('/admin-exercises.html');
+        $this->assertDatabaseMissing('exercise_templates', ['id' => $templateId]);
     }
 
     public function test_admin_words_pagination_uses_custom_labels_without_default_laravel_copy(): void
@@ -427,6 +888,26 @@ class CoreBackendFlowsTest extends TestCase
 
         $user = User::factory()->create();
 
+        $templateId = DB::table('exercise_templates')->insertGetId([
+            'title' => 'Attempt Runtime Template',
+            'type' => 'reading',
+            'source' => 'manual',
+            'schema_version' => 1,
+            'created_by' => $user->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $itemId = DB::table('exercise_items')->insertGetId([
+            'template_id' => $templateId,
+            'item_order' => 1,
+            'item_type' => 'choice',
+            'question_text' => 'What is the best translation?',
+            'correct_answer' => 'casa',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         $payload = [
             'mode' => 'reading',
             'source_type' => 'catalog',
@@ -438,6 +919,7 @@ class CoreBackendFlowsTest extends TestCase
             'correct_count' => 3,
             'answers' => [
                 [
+                    'item_id' => $itemId,
                     'item_type' => 'mcq',
                     'prompt' => 'What is the best translation?',
                     'expected_answer' => 'casa',
@@ -486,6 +968,7 @@ class CoreBackendFlowsTest extends TestCase
         $this->assertSame(2, DB::table('exercise_attempts')->count());
         $this->assertSame(4, DB::table('attempt_answers')->count());
         $this->assertDatabaseHas('attempt_answers', [
+            'item_id' => $itemId,
             'answer_text' => 'casa',
             'is_correct' => true,
             'feedback' => 'Correcto',
@@ -803,9 +1286,36 @@ class CoreBackendFlowsTest extends TestCase
     private function seedLanguages(): void
     {
         DB::table('languages')->insert([
+            ['code' => 'ar', 'name' => 'Árabe', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'bg', 'name' => 'Búlgaro', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'cs', 'name' => 'Checo', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'de', 'name' => 'Alemán', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'dk', 'name' => 'Danés', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'en', 'name' => 'English', 'created_at' => now(), 'updated_at' => now()],
             ['code' => 'es', 'name' => 'Español', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'fi', 'name' => 'Finés', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'fr', 'name' => 'Français', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'gr', 'name' => 'Griego', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'he', 'name' => 'Hebreo', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'hi', 'name' => 'Hindi', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'hu', 'name' => 'Húngaro', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'id', 'name' => 'Indonesio', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'it', 'name' => 'Italiano', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'ja', 'name' => 'Japonés', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'ko', 'name' => 'Coreano', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'nl', 'name' => 'Neerlandés', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'no', 'name' => 'Noruego', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'pl', 'name' => 'Polaco', 'created_at' => now(), 'updated_at' => now()],
             ['code' => 'pt', 'name' => 'Portugués', 'created_at' => now(), 'updated_at' => now()],
-            ['code' => 'en', 'name' => 'Inglés', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'ro', 'name' => 'Rumano', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'ru', 'name' => 'Ruso', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'sk', 'name' => 'Eslovaco', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'sv', 'name' => 'Sueco', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'th', 'name' => 'Tailandés', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'tr', 'name' => 'Turco', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'ua', 'name' => 'Українська', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'vi', 'name' => 'Vietnamita', 'created_at' => now(), 'updated_at' => now()],
+            ['code' => 'zh', 'name' => 'Chino', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

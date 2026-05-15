@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Crea tu cuenta en Lexi.">
+  <meta name="description" content="{{ __('lexi.meta.register.description') }}">
   <meta name="robots" content="noindex">
-  <title>Lexi | Crear cuenta</title>
+  <title>{{ __('lexi.meta.register.title') }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,25 +19,25 @@
 </head>
 <body>
 <main class="auth-shell">
-  <section class="auth-card" aria-label="Registro en Lexi">
-    <aside class="auth-aside"><div class="auth-aside-content"><h2 class="auth-title">Crea tu cuenta <i class="bi bi-person-plus" aria-hidden="true"></i></h2><p class="auth-desc">Empieza desde cero y disfruta de Lexi.</p></div></aside>
+  <section class="auth-card" aria-label="{{ __('lexi.auth.register_aria') }}">
+    <aside class="auth-aside"><div class="auth-aside-content"><h2 class="auth-title">{{ __('lexi.auth.register_brand_title') }} <i class="bi bi-person-plus" aria-hidden="true"></i></h2><p class="auth-desc">{{ __('lexi.auth.register_brand_text') }}</p></div></aside>
     <div class="auth-form">
-      <h1>Regístrate</h1>
-      <p class="auth-sub">¿Ya tienes cuenta? <a href="{{ route('login') }}">Inicia sesión</a></p>
+      <h1>{{ __('lexi.auth.register_title') }}</h1>
+      <p class="auth-sub">{{ __('lexi.auth.already_account') }} <a href="{{ route('login') }}">{{ __('lexi.auth.sign_in_link') }}</a></p>
       @if ($errors->any())
         <div class="auth-alert" role="alert">{{ $errors->first() }}</div>
       @endif
       <form method="POST" action="{{ route('register.store') }}" class="auth-grid" novalidate>
         @csrf
-        <div class="auth-field"><label for="registerName">Nombre</label><div class="auth-input-wrap"><i class="bi bi-person"></i><input class="auth-input" id="registerName" name="name" type="text" placeholder="Tu nombre" maxlength="30" value="{{ old('name') }}" required></div></div>
-        <div class="auth-field"><label for="registerEmail">Correo electrónico</label><div class="auth-input-wrap"><i class="bi bi-envelope"></i><input class="auth-input" id="registerEmail" name="email" type="email" placeholder="tu@ejemplo.com" value="{{ old('email') }}" required></div></div>
-        <div class="auth-field"><label for="registerPassword">Contraseña</label><div class="auth-input-wrap"><i class="bi bi-lock"></i><input class="auth-input" id="registerPassword" name="password" type="password" placeholder="Mínimo 6 caracteres" required></div></div>
-        <div class="auth-field"><label for="registerPasswordConfirm">Repetir contraseña</label><div class="auth-input-wrap"><i class="bi bi-shield-lock"></i><input class="auth-input" id="registerPasswordConfirm" name="password_confirmation" type="password" placeholder="Repite tu contraseña" required></div></div>
-        <div class="auth-field"><label for="registerBirthDate">Fecha de nacimiento</label><div class="auth-input-wrap"><i class="bi bi-calendar-event"></i><input class="auth-input" id="registerBirthDate" name="birth_date" type="date" value="{{ old('birth_date') }}" required></div></div>
-        <div class="auth-field"><label for="registerNativeLanguage">Idioma materno</label><div class="auth-input-wrap auth-input-wrap--select" data-flag-select-wrap><i class="bi bi-translate"></i><img class="auth-flag-icon" data-flag-icon alt="" aria-hidden="true"><select class="auth-input" id="registerNativeLanguage" name="mother_tongue_code" required><option value="">Selecciona tu idioma</option>@foreach ($languages as $language)<option value="{{ $language->code }}" @selected(old('mother_tongue_code') === $language->code)>{{ $language->name }}</option>@endforeach</select></div></div>
-        <div class="auth-field"><label for="registerTargetLanguage">Idioma que deseas aprender</label><div class="auth-input-wrap auth-input-wrap--select" data-flag-select-wrap><i class="bi bi-globe-europe-africa"></i><img class="auth-flag-icon" data-flag-icon alt="" aria-hidden="true"><select class="auth-input" id="registerTargetLanguage" name="target_language_code" required><option value="">Selecciona el idioma</option>@foreach ($languages as $language)<option value="{{ $language->code }}" @selected(old('target_language_code') === $language->code)>{{ $language->name }}</option>@endforeach</select></div></div>
-        <label class="auth-check"><input type="checkbox" id="registerTerms" name="terms" value="1" {{ old('terms') ? 'checked' : '' }} required><span>Acepto los <a href="terminos.html">términos y condiciones</a> y la <a href="privacidad.html">política de privacidad</a>.</span></label>
-        <button class="auth-btn" type="submit">Crear cuenta</button>
+        <div class="auth-field"><label for="registerName">{{ __('lexi.auth.name') }}</label><div class="auth-input-wrap"><i class="bi bi-person"></i><input class="auth-input" id="registerName" name="name" type="text" placeholder="{{ __('lexi.auth.name_placeholder') }}" maxlength="30" value="{{ old('name') }}" required></div></div>
+        <div class="auth-field"><label for="registerEmail">{{ __('lexi.auth.email') }}</label><div class="auth-input-wrap"><i class="bi bi-envelope"></i><input class="auth-input" id="registerEmail" name="email" type="email" placeholder="{{ __('lexi.auth.email_placeholder') }}" value="{{ old('email') }}" required></div></div>
+        <div class="auth-field"><label for="registerPassword">{{ __('lexi.auth.password') }}</label><div class="auth-input-wrap"><i class="bi bi-lock"></i><input class="auth-input" id="registerPassword" name="password" type="password" placeholder="{{ __('lexi.auth.password_minimum') }}" required></div></div>
+        <div class="auth-field"><label for="registerPasswordConfirm">{{ __('lexi.auth.repeat_password') }}</label><div class="auth-input-wrap"><i class="bi bi-shield-lock"></i><input class="auth-input" id="registerPasswordConfirm" name="password_confirmation" type="password" placeholder="{{ __('lexi.auth.repeat_password_placeholder') }}" required></div></div>
+        <div class="auth-field"><label for="registerBirthDate">{{ __('lexi.auth.birth_date') }}</label><div class="auth-input-wrap"><i class="bi bi-calendar-event"></i><input class="auth-input" id="registerBirthDate" name="birth_date" type="date" value="{{ old('birth_date') }}" required></div></div>
+        <div class="auth-field"><label for="registerNativeLanguage">{{ __('lexi.auth.mother_tongue') }}</label><div class="auth-input-wrap auth-input-wrap--select" data-flag-select-wrap><i class="bi bi-translate"></i><img class="auth-flag-icon" data-flag-icon alt="" aria-hidden="true"><select class="auth-input" id="registerNativeLanguage" name="mother_tongue_code" required><option value="">{{ __('lexi.auth.select_your_language') }}</option>@foreach ($languages as $language)<option value="{{ $language->code }}" @selected(old('mother_tongue_code') === $language->code)>{{ $language->name }}</option>@endforeach</select></div></div>
+        <div class="auth-field"><label for="registerTargetLanguage">{{ __('lexi.auth.target_language') }}</label><div class="auth-input-wrap auth-input-wrap--select" data-flag-select-wrap><i class="bi bi-globe-europe-africa"></i><img class="auth-flag-icon" data-flag-icon alt="" aria-hidden="true"><select class="auth-input" id="registerTargetLanguage" name="target_language_code" required><option value="">{{ __('lexi.auth.select_language') }}</option>@foreach ($languages as $language)<option value="{{ $language->code }}" @selected(old('target_language_code') === $language->code)>{{ $language->name }}</option>@endforeach</select></div></div>
+        <label class="auth-check"><input type="checkbox" id="registerTerms" name="terms" value="1" {{ old('terms') ? 'checked' : '' }} required><span>{!! str_replace([':terms', ':privacy'], ['<a href="' . route('terminos') . '">' . __('lexi.auth.terms_and_conditions') . '</a>', '<a href="' . route('privacidad') . '">' . __('lexi.auth.privacy_policy') . '</a>'], __('lexi.auth.terms_acceptance')) !!}</span></label>
+        <button class="auth-btn" type="submit">{{ __('lexi.auth.create_account_button') }}</button>
       </form>
     </div>
   </section>

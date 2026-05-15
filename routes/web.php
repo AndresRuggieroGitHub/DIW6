@@ -68,6 +68,11 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () use ($protectedStaticPages) {
     foreach ($protectedStaticPages as $slug => $file) {
+        if ($slug === 'ejercicios') {
+            Route::get('/' . $file['path'], [ExerciseController::class, 'showPage'])->name($slug);
+            continue;
+        }
+
         Route::get('/' . $file['path'], function () use ($file) {
             return response()->view($file['view']);
         })->name($slug);
@@ -214,6 +219,36 @@ Route::middleware('auth')->group(function () {
 
         return app(AdminExercisesController::class)->index($request);
     })->name('admin-exercises');
+    Route::post('/admin-exercises/templates', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminExercisesController::class)->storeTemplate($request);
+    })->name('admin-exercises.templates.store');
+    Route::post('/admin-exercises/items', function (Request $request) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminExercisesController::class)->storeItem($request);
+    })->name('admin-exercises.items.store');
+    Route::patch('/admin-exercises/templates/{template}', function (Request $request, int $template) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminExercisesController::class)->updateTemplate($request, $template);
+    })->name('admin-exercises.templates.update');
+    Route::delete('/admin-exercises/templates/{template}', function (Request $request, int $template) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminExercisesController::class)->destroyTemplate($template);
+    })->name('admin-exercises.templates.destroy');
+    Route::patch('/admin-exercises/items/{item}', function (Request $request, int $item) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminExercisesController::class)->updateItem($request, $item);
+    })->name('admin-exercises.items.update');
+    Route::delete('/admin-exercises/items/{item}', function (Request $request, int $item) {
+        abort_unless($request->user()?->isAdmin(), 403);
+
+        return app(AdminExercisesController::class)->destroyItem($item);
+    })->name('admin-exercises.items.destroy');
 
     Route::get('/admin-billing', function (Request $request) {
         abort_unless($request->user()?->isAdmin(), 403);

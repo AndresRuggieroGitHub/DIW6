@@ -14,13 +14,13 @@
 @endphp
 
 <main id="mainContent" class="page-main container section-space">
-  <h1 class="library-page-title">Tu vocabulario personal</h1>
+  <h1 class="library-page-title">{{ __('lexi.library.title') }}</h1>
 
   <div id="listsIndex" class="mb-4">
     <div class="lists-index-header mb-3">
-      <span class="lists-index-label">Listas guardadas</span>
+      <span class="lists-index-label">{{ __('lexi.library.saved_lists') }}</span>
       <button class="btn btn-outline-secondary btn-sm" id="newCollectionTopBtn" type="button">
-        <i class="bi bi-plus"></i> Nueva colección
+        <i class="bi bi-plus"></i> {{ __('lexi.library.new_collection') }}
       </button>
     </div>
     <div class="lists-grid" id="listsGrid">
@@ -30,86 +30,86 @@
   <div id="listDetail" class="library-list-panel mb-4" hidden>
     <div class="list-detail-header">
       <button class="ex-back-btn" id="listBackBtn" type="button">
-        <i class="bi bi-arrow-left"></i> Volver
+        <i class="bi bi-arrow-left"></i> {{ __('lexi.library.back') }}
       </button>
       <div class="ex-panel-meta">
-        <h2 class="ex-panel-title" id="listDetailTitle">Guardado</h2>
-        <span class="library-count" id="libraryCount">0 palabras</span>
+        <h2 class="ex-panel-title" id="listDetailTitle">{{ __('lexi.library.saved_default') }}</h2>
+        <span class="library-count" id="libraryCount">{{ __('lexi.library.initial_count') }}</span>
       </div>
     </div>
     <div class="library-list-filter mt-3 mb-2">
       <i class="bi bi-search" aria-hidden="true"></i>
-      <input type="search" id="savedWordFilter" class="form-control form-control-sm" placeholder="Filtrar palabras...">
+      <input type="search" id="savedWordFilter" class="form-control form-control-sm" placeholder="{{ __('lexi.library.filter_placeholder') }}">
     </div>
     <ul class="library-saved-list" id="librarySavedList">
-      <li class="text-muted">Aun no has guardado palabras.</li>
+      <li class="text-muted">{{ __('lexi.library.empty_saved_words') }}</li>
     </ul>
     <div class="d-flex gap-2 mt-2 align-items-center flex-wrap">
       <div id="listPagination" class="list-pagination" hidden>
-        <button class="list-page-btn" id="listPagePrev" type="button"><i class="bi bi-chevron-left"></i> Anterior</button>
+        <button class="list-page-btn" id="listPagePrev" type="button"><i class="bi bi-chevron-left"></i> {{ __('lexi.library.previous') }}</button>
         <span id="listPageInfo" class="list-page-info">1 / 1</span>
-        <button class="list-page-btn" id="listPageNext" type="button">Siguiente <i class="bi bi-chevron-right"></i></button>
+        <button class="list-page-btn" id="listPageNext" type="button">{{ __('lexi.library.next') }} <i class="bi bi-chevron-right"></i></button>
       </div>
-      <button class="btn btn-outline-danger btn-sm ms-auto" id="clearLibrary" type="button">Vaciar lista</button>
+      <button class="btn btn-outline-danger btn-sm ms-auto" id="clearLibrary" type="button">{{ __('lexi.library.clear_list') }}</button>
     </div>
   </div>
 
   <section class="library-add-panel mb-4">
-    <h2 class="h5 mb-0">Añadir vocabulario</h2>
-    <p class="text-muted small mt-1 mb-3">Importa tus propias palabras separadas por líneas, puntos, comas o puntos y comas.</p>
+    <h2 class="h5 mb-0">{{ __('lexi.library.add_vocabulary') }}</h2>
+    <p class="text-muted small mt-1 mb-3">{{ __('lexi.library.add_vocabulary_text') }}</p>
 
-    <p class="add-panel-sublabel">Importar palabras</p>
+    <p class="add-panel-sublabel">{{ __('lexi.library.import_words') }}</p>
     <div class="import-grid mb-3">
       <article class="import-card import-card--file">
         <div class="import-card-icon"><i class="bi bi-file-earmark-arrow-up"></i></div>
         <div class="import-card-content">
-          <h3 class="import-card-title"><span class="method-num">1</span> Subir archivo</h3>
-          <p class="import-card-desc">Sube un .txt o .csv.</p>
+          <h3 class="import-card-title"><span class="method-num">1</span> {{ __('lexi.library.upload_file') }}</h3>
+          <p class="import-card-desc">{{ __('lexi.library.upload_file_text') }}</p>
           <input id="wordFileInput" type="file" accept=".txt,.csv" style="display:none">
           <div id="dropZone" class="file-drop-zone mb-2">
             <i class="bi bi-cloud-arrow-up file-drop-icon"></i>
-            <span class="file-drop-text">Arrastra tu archivo aquí, o...</span>
-            <button id="chooseFileBtn" class="file-drop-btn" type="button">Buscar archivo</button>
+            <span class="file-drop-text">{{ __('lexi.library.drag_file') }}</span>
+            <button id="chooseFileBtn" class="file-drop-btn" type="button">{{ __('lexi.library.browse_file') }}</button>
             <span id="fileNameDisplay" class="file-drop-name"></span>
           </div>
-          <button id="importFileBtn" class="btn btn-primary btn-sm w-100" type="button">Importar archivo</button>
+          <button id="importFileBtn" class="btn btn-primary btn-sm w-100" type="button">{{ __('lexi.library.import_file') }}</button>
         </div>
       </article>
 
       <article class="import-card import-card--paste">
         <div class="import-card-icon"><i class="bi bi-clipboard-plus"></i></div>
         <div class="import-card-content">
-          <h3 class="import-card-title"><span class="method-num">2</span> Pegar texto</h3>
-          <p class="import-card-desc">Una palabra o varias.</p>
+          <h3 class="import-card-title"><span class="method-num">2</span> {{ __('lexi.library.paste_text') }}</h3>
+          <p class="import-card-desc">{{ __('lexi.library.paste_text_desc') }}</p>
           <div class="import-card-grow">
             <textarea id="pasteWordsInput" class="form-control form-control-sm h-100" rows="3" placeholder="heritage&#10;sustainable growth,&#10;check in.&#10;breakthrough;"></textarea>
           </div>
-          <button id="importPasteBtn" class="btn btn-primary btn-sm w-100 mt-2" type="button">Importar texto</button>
+          <button id="importPasteBtn" class="btn btn-primary btn-sm w-100 mt-2" type="button">{{ __('lexi.library.import_text') }}</button>
         </div>
       </article>
     </div>
 
-    <div class="add-panel-divider mt-1"><span>o explora el catálogo</span></div>
+    <div class="add-panel-divider mt-1"><span>{{ __('lexi.library.or_explore_catalog') }}</span></div>
 
     <article class="import-card import-card--catalog">
       <div class="import-card-icon"><i class="bi bi-journals"></i></div>
       <div class="import-card-content catalog-content">
-        <h3 class="import-card-title"><span class="method-num">3</span> Explorar en el catálogo</h3>
-        <p class="import-card-desc">Explora palabras curadas por nivel y tema - guarda las que te interesen.</p>
+        <h3 class="import-card-title"><span class="method-num">3</span> {{ __('lexi.library.explore_catalog') }}</h3>
+        <p class="import-card-desc">{{ __('lexi.library.explore_catalog_text') }}</p>
         <div class="catalog-controls">
           <div class="catalog-search-wrap">
             <i class="bi bi-search catalog-search-icon"></i>
-            <input id="searchInput" class="form-control catalog-search" type="search" placeholder="Buscar palabras o frases..." aria-label="Buscar por palabra, frase o tema">
+            <input id="searchInput" class="form-control catalog-search" type="search" placeholder="{{ __('lexi.library.search_placeholder') }}" aria-label="{{ __('lexi.library.search_aria') }}">
           </div>
           <div class="catalog-filters">
             <select id="cefrFilter" class="form-select form-select-sm">
-              <option value="all">Todos los niveles</option>
+              <option value="all">{{ __('lexi.library.all_levels') }}</option>
               @foreach ($cefrLevels as $level)
                 <option value="{{ $level }}">{{ $levelOptionLabel($level) }}</option>
               @endforeach
             </select>
             <select id="topicFilter" class="form-select form-select-sm">
-              <option value="all">Todas las temáticas</option>
+              <option value="all">{{ __('lexi.library.all_topics') }}</option>
               @foreach ($catalogTopics as $topic)
                 <option value="{{ $topic['value'] }}">{{ $topic['label'] }}</option>
               @endforeach

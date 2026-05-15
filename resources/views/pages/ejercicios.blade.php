@@ -1,20 +1,20 @@
-@extends('layouts.site', ['title' => 'Lexi | Ejercicios', 'description' => 'Ejercicios de inglés en Lexi para reading, listening, speaking y writing.', 'robots' => 'index,follow', 'activeNav' => 'exercises', 'showFooter' => false])
+@extends('layouts.site', ['title' => __('lexi.meta.exercises.title'), 'description' => __('lexi.meta.exercises.description'), 'robots' => 'index,follow', 'activeNav' => 'exercises', 'showFooter' => false])
 
 @section('content')
 <main id="mainContent" class="exercises page-main">
 
   <div id="exerciseMenu">
     <div class="exercises-hero">
-      <h1 class="exercises-title">¿Cómo quieres practicar?</h1>
-      <p class="exercises-subtitle">Elige el origen del vocabulario y después un modo de ejercicio.</p>
-      <div class="exercise-source-toggle" role="tablist" aria-label="Origen del vocabulario">
-        <button class="exercise-source-toggle__btn is-active" type="button" data-source-tab="catalog" aria-pressed="true"><i class="bi bi-grid-1x2-fill"></i><span>Catálogo</span></button>
-        <button class="exercise-source-toggle__btn" type="button" data-source-tab="saved" aria-pressed="false"><i class="bi bi-bookmarks-fill"></i><span>Tus listas</span></button>
+      <h1 class="exercises-title">{{ __('lexi.exercises.title') }}</h1>
+      <p class="exercises-subtitle">{{ __('lexi.exercises.subtitle') }}</p>
+      <div class="exercise-source-toggle" role="tablist" aria-label="{{ __('lexi.exercises.source_label') }}">
+        <button class="exercise-source-toggle__btn is-active" type="button" data-source-tab="catalog" aria-pressed="true"><i class="bi bi-grid-1x2-fill"></i><span>{{ __('lexi.exercises.catalog') }}</span></button>
+        <button class="exercise-source-toggle__btn" type="button" data-source-tab="saved" aria-pressed="false"><i class="bi bi-bookmarks-fill"></i><span>{{ __('lexi.exercises.your_lists') }}</span></button>
       </div>
       <div class="exercise-list-picker">
         <div class="exercise-list-picker__loading" id="exerciseSourceLoading" hidden aria-live="polite">
           <span class="exercise-list-picker__spinner" aria-hidden="true"></span>
-          <span id="exerciseSourceLoadingText">Cargando opciones...</span>
+          <span id="exerciseSourceLoadingText">{{ __('lexi.exercises.loading_options') }}</span>
         </div>
         <div class="exercise-source-panel" data-source-panel="catalog">
           <div class="exercise-list-picker__grid">
@@ -30,35 +30,35 @@
       </div>
     </div>
     <section class="exercise-grid">
-      <article class="exercise-card" data-mode="reading" role="button" tabindex="0" aria-label="Ejercicios de reading" style="--card-color:#4f8ef7">
+      <article class="exercise-card" data-mode="reading" role="button" tabindex="0" aria-label="{{ __('lexi.exercises.card_reading_aria') }}" style="--card-color:#4f8ef7">
         <div class="exercise-card-icon"><i class="bi bi-book-half"></i></div>
-        <img src="images/reading_small.webp" srcset="images/reading_small.webp 300w, images/reading_medium.webp 600w, images/reading_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio de reading">
-        <p class="exercise-card-label">Lectura</p>
-        <span class="exercise-card-badge">Reading</span>
+        <img src="images/reading_small.webp" srcset="images/reading_small.webp 300w, images/reading_medium.webp 600w, images/reading_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="{{ __('lexi.exercises.reading_image_alt') }}">
+        <p class="exercise-card-label">{{ __('lexi.exercises.reading_label') }}</p>
+        <span class="exercise-card-badge">{{ __('lexi.exercises.reading_label') }}</span>
       </article>
-      <article class="exercise-card" data-mode="listening" role="button" tabindex="0" aria-label="Ejercicios de listening" style="--card-color:#f76b4f">
+      <article class="exercise-card" data-mode="listening" role="button" tabindex="0" aria-label="{{ __('lexi.exercises.card_listening_aria') }}" style="--card-color:#f76b4f">
         <div class="exercise-card-icon"><i class="bi bi-headphones"></i></div>
-        <img src="images/listening_small.webp" srcset="images/listening_small.webp 300w, images/listening_medium.webp 600w, images/listening_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio de listening">
-        <p class="exercise-card-label">Escucha</p>
-        <span class="exercise-card-badge">Listening</span>
+        <img src="images/listening_small.webp" srcset="images/listening_small.webp 300w, images/listening_medium.webp 600w, images/listening_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="{{ __('lexi.exercises.listening_image_alt') }}">
+        <p class="exercise-card-label">{{ __('lexi.exercises.listening_label') }}</p>
+        <span class="exercise-card-badge">{{ __('lexi.exercises.listening_label') }}</span>
       </article>
-      <article class="exercise-card" data-mode="speaking" role="button" tabindex="0" aria-label="Ejercicios de speaking" style="--card-color:#2dc98b">
+      <article class="exercise-card" data-mode="speaking" role="button" tabindex="0" aria-label="{{ __('lexi.exercises.card_speaking_aria') }}" style="--card-color:#2dc98b">
         <div class="exercise-card-icon"><i class="bi bi-mic-fill"></i></div>
-        <img src="images/speaking_small.webp" srcset="images/speaking_small.webp 300w, images/speaking_medium.webp 600w, images/speaking_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio de speaking">
-        <p class="exercise-card-label">Habla</p>
-        <span class="exercise-card-badge">Speaking</span>
+        <img src="images/speaking_small.webp" srcset="images/speaking_small.webp 300w, images/speaking_medium.webp 600w, images/speaking_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="{{ __('lexi.exercises.speaking_image_alt') }}">
+        <p class="exercise-card-label">{{ __('lexi.exercises.speaking_label') }}</p>
+        <span class="exercise-card-badge">{{ __('lexi.exercises.speaking_label') }}</span>
       </article>
-      <article class="exercise-card" data-mode="writing" role="button" tabindex="0" aria-label="Ejercicios de writing" style="--card-color:#a855f7">
+      <article class="exercise-card" data-mode="writing" role="button" tabindex="0" aria-label="{{ __('lexi.exercises.card_writing_aria') }}" style="--card-color:#a855f7">
         <div class="exercise-card-icon"><i class="bi bi-pencil-fill"></i></div>
-        <img src="images/writing_small.webp" srcset="images/writing_small.webp 300w, images/writing_medium.webp 600w, images/writing_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio de writing">
-        <p class="exercise-card-label">Escribe</p>
-        <span class="exercise-card-badge">Writing</span>
+        <img src="images/writing_small.webp" srcset="images/writing_small.webp 300w, images/writing_medium.webp 600w, images/writing_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="{{ __('lexi.exercises.writing_image_alt') }}">
+        <p class="exercise-card-label">{{ __('lexi.exercises.writing_label') }}</p>
+        <span class="exercise-card-badge">{{ __('lexi.exercises.writing_label') }}</span>
       </article>
-      <article class="exercise-card" data-mode="mix" role="button" tabindex="0" aria-label="Ejercicios combinados" style="--card-color:#f9b233">
+      <article class="exercise-card" data-mode="mix" role="button" tabindex="0" aria-label="{{ __('lexi.exercises.card_mix_aria') }}" style="--card-color:#f9b233">
         <div class="exercise-card-icon"><i class="bi bi-shuffle"></i></div>
-        <img src="images/mix_small.webp" srcset="images/mix_small.webp 300w, images/mix_medium.webp 600w, images/mix_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="Ejercicio combinado">
-        <p class="exercise-card-label">Combinado</p>
-        <span class="exercise-card-badge">Mix</span>
+        <img src="images/mix_small.webp" srcset="images/mix_small.webp 300w, images/mix_medium.webp 600w, images/mix_large.webp 900w" sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 20vw" loading="lazy" alt="{{ __('lexi.exercises.mix_image_alt') }}">
+        <p class="exercise-card-label">{{ __('lexi.exercises.mix_label') }}</p>
+        <span class="exercise-card-badge">{{ __('lexi.exercises.mix_label') }}</span>
       </article>
     </section>
   </div>
@@ -66,7 +66,7 @@
   <div id="exercisePanel" class="ex-panel" hidden>
     <div class="ex-panel-header">
       <button class="ex-back-btn" id="btnBack">
-        <i class="bi bi-arrow-left"></i> Volver
+        <i class="bi bi-arrow-left"></i> {{ __('lexi.exercises.back') }}
       </button>
       <div class="ex-panel-meta">
         <h2 class="ex-panel-title" id="exPanelTitle"></h2>
@@ -79,10 +79,10 @@
     <div id="exerciseContent" class="ex-content"></div>
     <div class="ex-nav-btns">
       <button class="btn btn-outline-secondary" id="btnPrevEx" disabled>
-        <i class="bi bi-arrow-left"></i> Anterior
+        <i class="bi bi-arrow-left"></i> {{ __('lexi.exercises.previous') }}
       </button>
       <button class="btn btn-primary" id="btnNextEx">
-        Siguiente <i class="bi bi-arrow-right"></i>
+        {{ __('lexi.exercises.next') }} <i class="bi bi-arrow-right"></i>
       </button>
     </div>
   </div>
@@ -90,11 +90,11 @@
   <div id="exCompleteModal" class="ex-complete-modal" hidden>
     <div class="ex-complete-box">
       <div class="ex-complete-icon">🎉</div>
-      <h2>¡Sección completada!</h2>
+      <h2>{{ __('lexi.exercises.completed') }}</h2>
       <p id="exCompleteMsg"></p>
       <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-outline-secondary" id="btnRepeat">Repetir</button>
-        <button class="btn btn-primary" id="btnBackFromComplete">Elegir otro modo</button>
+        <button class="btn btn-outline-secondary" id="btnRepeat">{{ __('lexi.exercises.repeat') }}</button>
+        <button class="btn btn-primary" id="btnBackFromComplete">{{ __('lexi.exercises.choose_other_mode') }}</button>
       </div>
     </div>
   </div>
@@ -107,10 +107,20 @@
   'cefr_levels' => config('lexi.cefr_levels', ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']),
   'topic_options' => config('lexi.catalog_topics', []),
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+<script type="application/json" id="lexiExerciseTemplateCatalog">{!! json_encode($normalizedTemplates ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 <script>
 (function () {
+  const EXERCISE_I18N = (window.lexiTranslations && window.lexiTranslations.js && window.lexiTranslations.js.exercise_runtime) || {};
+  const t = (key, replacements = {}) => {
+    const template = EXERCISE_I18N[key];
+    if (typeof template !== 'string') return key;
+
+    return template.replace(/:([a-zA-Z_]+)/g, (_, token) => replacements[token] ?? `:${token}`);
+  };
   const sharedConfigNode = document.getElementById('lexiExerciseSharedConfig');
   const sharedConfig = sharedConfigNode ? JSON.parse(sharedConfigNode.textContent || '{}') : {};
+  const templateCatalogNode = document.getElementById('lexiExerciseTemplateCatalog');
+  const TEMPLATE_CATALOG = templateCatalogNode ? JSON.parse(templateCatalogNode.textContent || '{}') : {};
   const SHARED_CEFR_LEVELS = Array.isArray(sharedConfig.cefr_levels) ? sharedConfig.cefr_levels : [];
   const SHARED_TOPIC_OPTIONS = Array.isArray(sharedConfig.topic_options) ? sharedConfig.topic_options : [];
   const SKILL_LABELS = {
@@ -134,10 +144,10 @@
   const EXERCISE_CATALOG_LEVEL_KEY = 'lexiExerciseCatalogLevel';
   const EXERCISE_CATALOG_TOPIC_KEY = 'lexiExerciseCatalogTopic';
   const CEFR_LEVELS = Array.isArray(SHARED_CEFR_LEVELS) && SHARED_CEFR_LEVELS.length ? SHARED_CEFR_LEVELS : ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-  let serverVocabularyState = { library: { id: 'library', name: 'Guardado', items: [] }, collections: [], catalog: [] };
+  let serverVocabularyState = { library: { id: 'library', name: t('saved_name'), items: [] }, collections: [], catalog: [] };
   let exerciseSourceSwitchInFlight = false;
 
-  function setExerciseCollectionsLoading(isLoading, message = 'Cargando opciones...') {
+  function setExerciseCollectionsLoading(isLoading, message = t('loading_options')) {
     const select = document.getElementById('exerciseCollectionSelect');
     const levelSelect = document.getElementById('exerciseCatalogLevelSelect');
     const topicSelect = document.getElementById('exerciseCatalogTopicSelect');
@@ -149,7 +159,7 @@
     if (loadingText) loadingText.textContent = message;
 
     if (isLoading) {
-      select.innerHTML = '<option selected disabled>Cargando listas...</option>';
+      select.innerHTML = '<option selected disabled>' + t('loading_lists') + '</option>';
       select.disabled = true;
       if (levelSelect) levelSelect.disabled = true;
       if (topicSelect) topicSelect.disabled = true;
@@ -246,7 +256,7 @@
     return SHARED_TOPIC_OPTIONS;
   }
 
-  async function loadVocabularySources(message = 'Cargando opciones...') {
+  async function loadVocabularySources(message = t('loading_options')) {
     setExerciseCollectionsLoading(true, message);
 
     try {
@@ -256,7 +266,7 @@
       serverVocabularyState = {
         library: {
           id: 'library',
-          name: 'Guardado',
+          name: t('saved_name'),
           items: Array.isArray(payload.items) ? payload.items : [],
         },
         collections: Array.isArray(payload.collections) ? payload.collections : [],
@@ -264,7 +274,7 @@
       };
     } catch {
       serverVocabularyState = {
-        library: { id: 'library', name: 'Guardado', items: [] },
+        library: { id: 'library', name: t('saved_name'), items: [] },
         collections: [],
         catalog: [],
       };
@@ -286,7 +296,7 @@
       activeLang,
       library: {
         id: 'library',
-        name: 'Guardado',
+        name: t('saved_name'),
         items: libraryItems,
       },
       collections,
@@ -338,7 +348,7 @@
 
     return {
       id: 'catalog',
-      name: [selectedLevel, selectedTopic].filter(Boolean).join(' · ') || 'Catálogo',
+      name: [selectedLevel, selectedTopic].filter(Boolean).join(' · ') || t('catalog_name'),
       items: selectedLevel && selectedTopic ? filteredItems : [],
       levels,
       topics,
@@ -355,9 +365,9 @@
     const { library, collections } = getVocabularySources();
     const selectedId = localStorage.getItem(EXERCISE_COLLECTION_KEY) || '';
     if (!selectedId) {
-      return { id: 'saved', name: 'Mis listas', items: [] };
+      return { id: 'saved', name: t('saved_lists_name'), items: [] };
     }
-    return collections.find(collection => String(collection.id) === selectedId) || (selectedId === 'library' ? library : { id: 'saved', name: 'Mis listas', items: [] });
+    return collections.find(collection => String(collection.id) === selectedId) || (selectedId === 'library' ? library : { id: 'saved', name: t('saved_lists_name'), items: [] });
   }
 
   function syncSourcePanels() {
@@ -382,7 +392,7 @@
         localStorage.setItem(EXERCISE_CATALOG_TOPIC_KEY, '');
         localStorage.setItem(EXERCISE_COLLECTION_KEY, '');
         try {
-          await loadVocabularySources(button.dataset.sourceTab === 'saved' ? 'Cargando listas guardadas...' : 'Cargando catálogo...');
+          await loadVocabularySources(button.dataset.sourceTab === 'saved' ? t('loading_saved_lists') : t('loading_catalog'));
           syncSourcePanels();
           setupExerciseCatalogSelects();
           setupExerciseCollectionSelect();
@@ -408,8 +418,8 @@
       if (level === 'B2' || level === 'C1') return '▮▮▮▮▯ ' + level;
       return '▮▮▮▮▮ ' + level;
     };
-    levelSelect.innerHTML = '<option value="">Selecciona el nivel</option>' + catalogSource.levels.map(level => '<option value="' + level + '">' + levelOptionLabel(level) + '</option>').join('');
-    topicSelect.innerHTML = '<option value="">Selecciona la categoría</option>' + getTopicOptions().map(topic => '<option value="' + topic.value + '">' + topic.label + '</option>').join('');
+    levelSelect.innerHTML = '<option value="">' + t('select_level') + '</option>' + catalogSource.levels.map(level => '<option value="' + level + '">' + levelOptionLabel(level) + '</option>').join('');
+    topicSelect.innerHTML = '<option value="">' + t('select_category') + '</option>' + getTopicOptions().map(topic => '<option value="' + topic.value + '">' + topic.label + '</option>').join('');
 
     levelSelect.value = catalogSource.selectedLevel;
     topicSelect.value = catalogSource.selectedTopic;
@@ -430,7 +440,7 @@
     const selectedId = localStorage.getItem(EXERCISE_COLLECTION_KEY) || '';
     const options = [library, ...collections];
 
-    select.innerHTML = '<option value="">Selecciona una colección</option>' + options.map(source => {
+    select.innerHTML = '<option value="">' + t('select_collection') + '</option>' + options.map(source => {
       const count = source.items.length;
       const label = source.name + ' (' + count + ')';
       return '<option value="' + String(source.id) + '">' + label + '</option>';
@@ -505,7 +515,7 @@
       .map(item => ({
         type: 'fillin',
         transcript: `${item.text} means ${item.translation}. Listen carefully and identify the missing word.`,
-        question: 'Completa la frase con la palabra correcta:',
+        question: t('complete_sentence'),
         sentence: `${item.translation} in English is ________.`,
         answer: item.text,
       }));
@@ -529,9 +539,90 @@
     return clone;
   }
 
+  function normalizeTemplateExerciseItem(templateType, item, templateTitle) {
+    const payload = item && item.payload && typeof item.payload === 'object' ? item.payload : {};
+    const optionList = Array.isArray(item.options) ? [...item.options].sort((left, right) => (left.order || 0) - (right.order || 0)) : [];
+    const fallbackType = templateType === 'reading' ? 'mcq'
+      : templateType === 'listening' ? 'fillin'
+      : templateType === 'speaking' ? 'pronounce'
+      : 'translate';
+    const mappedType = item.item_type === 'choice' ? 'mcq'
+      : ['fillin', 'translate', 'pronounce'].includes(item.item_type) ? item.item_type
+      : fallbackType;
+
+    if (mappedType === 'mcq') {
+      const correctIndex = optionList.findIndex(option => option.is_correct) >= 0
+        ? optionList.findIndex(option => option.is_correct)
+        : Math.max(0, optionList.findIndex(option => option.text === item.correct_answer));
+
+      return {
+        itemId: item.id,
+        type: 'mcq',
+        passage: payload.passage || templateTitle || t('custom_template'),
+        question: item.question_text || t('select_correct_answer'),
+        options: optionList.map(option => option.text),
+        correct: correctIndex >= 0 ? correctIndex : 0,
+      };
+    }
+
+    if (mappedType === 'fillin') {
+      return {
+        itemId: item.id,
+        type: 'fillin',
+        transcript: payload.transcript || item.question_text || '',
+        question: payload.prompt || t('complete_sentence'),
+        sentence: payload.sentence || item.question_text || t('complete_blank'),
+        answer: item.correct_answer || '',
+      };
+    }
+
+    if (mappedType === 'pronounce') {
+      return {
+        itemId: item.id,
+        type: 'pronounce',
+        word: item.question_text || item.correct_answer || '',
+        hint: payload.hint || item.correct_answer || t('pronounce_hint'),
+      };
+    }
+
+    return {
+      itemId: item.id,
+      type: 'translate',
+      prompt: payload.prompt || t('translate_to_english'),
+      sentence: item.question_text || '',
+      answer: item.correct_answer || '',
+    };
+  }
+
+  function getTemplateModeData(mode) {
+    const templates = Array.isArray(TEMPLATE_CATALOG[mode]) ? TEMPLATE_CATALOG[mode] : [];
+    const selectedTemplate = templates.find(template => Array.isArray(template.items) && template.items.length > 0);
+    if (!selectedTemplate) return null;
+
+    const items = selectedTemplate.items
+      .map(item => normalizeTemplateExerciseItem(mode, item, selectedTemplate.title || 'Plantilla personalizada'))
+      .filter(item => {
+        if (item.type === 'mcq') return Array.isArray(item.options) && item.options.length >= 2;
+        if (item.type === 'pronounce') return Boolean(item.word);
+        return Boolean(item.answer || item.sentence || item.question);
+      });
+
+    if (!items.length) return null;
+
+    return {
+      title: selectedTemplate.title || EXERCISES[mode].title,
+      items,
+    };
+  }
+
   function getModeData(mode) {
     const base = EXERCISES[mode];
     const source = getSelectedVocabularySource();
+    const templateModeData = getTemplateModeData(mode);
+
+    if (templateModeData) {
+      return templateModeData;
+    }
 
     if (!source.items.length) {
       return { title: base.title, items: base.items };
@@ -668,21 +759,21 @@
         {
           type: "fillin",
           transcript: "Good morning everyone. Today's meeting has been moved from the main conference room to room 204 on the second floor. We will start at half past nine instead of nine o'clock. Please bring your project updates.",
-          question: "Completa la frase con la palabra que escuches:",
+          question: t('complete_sentence'),
           sentence: "Today's meeting has been moved to room 204 on the ________ floor.",
           answer: "second"
         },
         {
           type: "fillin",
           transcript: "Welcome to the Lexi podcast. Today we're going to talk about the importance of vocabulary in language learning. Studies show that knowing the most common two thousand words in a language allows you to understand about eighty percent of everyday conversations.",
-          question: "Completa la frase con la palabra que escuches:",
+          question: t('complete_sentence'),
           sentence: "Knowing the most common two thousand words allows you to understand about ________ percent of everyday conversations.",
           answer: "eighty"
         },
         {
           type: "fillin",
           transcript: "The flight to London has been delayed by approximately forty minutes due to heavy fog at the destination airport. Passengers are advised to remain in the departure lounge and listen for further announcements.",
-          question: "Completa la frase con la palabra que escuches:",
+          question: t('complete_sentence'),
           sentence: "The flight has been delayed due to heavy ________ at the destination airport.",
           answer: "fog"
         }
@@ -703,19 +794,19 @@
       items: [
         {
           type: "translate",
-          prompt: "Traduce al inglés:",
+          prompt: t('translate_to_english'),
           sentence: "No pude cumplir el plazo de entrega.",
           answer: "I couldn't meet the deadline."
         },
         {
           type: "translate",
-          prompt: "Traduce al inglés:",
+          prompt: t('translate_to_english'),
           sentence: "Estamos bajo mucha presión últimamente.",
           answer: "We've been under a lot of pressure lately."
         },
         {
           type: "translate",
-          prompt: "Traduce al inglés:",
+          prompt: t('translate_to_english'),
           sentence: "La reunión ha sido cancelada debido al mal tiempo.",
           answer: "The meeting has been cancelled due to bad weather."
         }
@@ -734,14 +825,14 @@
         {
           type: "fillin",
           transcript: "To apply for the position, please send your CV and a cover letter to the address shown on screen. The application deadline is the thirty-first of May. Late applications will not be considered.",
-          question: "Completa la frase:",
+          question: t('complete_sentence'),
           sentence: "Please send your CV and a ________ letter to the address shown.",
           answer: "cover"
         },
         { type: "pronounce", word: "get the ball rolling", hint: "poner las cosas en marcha" },
         {
           type: "translate",
-          prompt: "Traduce al inglés:",
+          prompt: t('translate_to_english'),
           sentence: "Lleva dos horas esperando una respuesta.",
           answer: "He has been waiting for an answer for two hours."
         }
@@ -773,6 +864,7 @@
     }
 
     sessionAnswerRecords.push({
+      item_id: details.itemId || null,
       item_type: details.itemType || null,
       prompt: details.prompt || null,
       expected_answer: details.expectedAnswer || null,
@@ -836,8 +928,8 @@
     document.getElementById('exProgressBar').style.width = ((currentIndex + 1) / total * 100) + '%';
     document.getElementById('btnPrevEx').disabled = currentIndex === 0;
     document.getElementById('btnNextEx').innerHTML = currentIndex === total - 1
-      ? 'Finalizar <i class="bi bi-check-lg"></i>'
-      : 'Siguiente <i class="bi bi-arrow-right"></i>';
+      ? t('finish') + ' <i class="bi bi-check-lg"></i>'
+      : t('next') + ' <i class="bi bi-arrow-right"></i>';
 
     const content = document.getElementById('exerciseContent');
     content.innerHTML = '';
@@ -869,7 +961,7 @@
 
   function renderMCQ(container, item) {
     container.innerHTML =
-      '<p class="ex-type-label"><i class="bi bi-book"></i> Lectura &amp; comprensión</p>' +
+      '<p class="ex-type-label"><i class="bi bi-book"></i> ' + t('reading_label') + '</p>' +
       '<div class="ex-passage">' + item.passage + '</div>' +
       '<p class="ex-question">' + item.question + '</p>' +
       '<div class="ex-options">' +
@@ -888,28 +980,30 @@
         container.querySelectorAll('.ex-option').forEach(b => b.disabled = true);
         if (idx === item.correct) {
           this.classList.add('ex-option--correct');
-          feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Correcto!';
+          feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> ' + t('correct');
           feedback.className = 'ex-feedback ex-feedback--ok';
           markExerciseItemResult(container, true, {
+            itemId: item.itemId,
             itemType: item.type,
             prompt: item.question,
             expectedAnswer: item.options[item.correct],
             answerText: item.options[idx],
             answerPayload: { selected_index: idx, selected_option: item.options[idx] },
-            feedback: 'Correcto',
+            feedback: t('correct'),
           });
         } else {
           this.classList.add('ex-option--wrong');
           container.querySelectorAll('.ex-option')[item.correct].classList.add('ex-option--correct');
-          feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> Incorrecto. La respuesta es: <strong>' + item.options[item.correct] + '</strong>';
+          feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> ' + t('incorrect_reference', { answer: '<strong>' + item.options[item.correct] + '</strong>' });
           feedback.className = 'ex-feedback ex-feedback--err';
           markExerciseItemResult(container, false, {
+            itemId: item.itemId,
             itemType: item.type,
             prompt: item.question,
             expectedAnswer: item.options[item.correct],
             answerText: item.options[idx],
             answerPayload: { selected_index: idx, selected_option: item.options[idx] },
-            feedback: 'Incorrecto',
+            feedback: t('incorrect'),
           });
         }
         feedback.hidden = false;
@@ -919,48 +1013,50 @@
 
   function renderFillin(container, item) {
     container.innerHTML =
-      '<p class="ex-type-label"><i class="bi bi-headphones"></i> Listening</p>' +
+      '<p class="ex-type-label"><i class="bi bi-headphones"></i> ' + t('listening_label') + '</p>' +
       '<div class="ex-audio-mock">' +
       '<div class="ex-audio-wave"><span></span><span></span><span></span><span></span><span></span></div>' +
-      '<span class="ex-audio-label">Audio simulado</span>' +
+      '<span class="ex-audio-label">' + t('simulated_audio') + '</span>' +
       '</div>' +
-      '<button class="ex-transcript-toggle">Ver transcripción <i class="bi bi-chevron-down"></i></button>' +
+      '<button class="ex-transcript-toggle">' + t('show_transcript') + ' <i class="bi ' + t('close_transcript_icon_down') + '"></i></button>' +
       '<div class="ex-transcript" hidden>' + item.transcript + '</div>' +
       '<p class="ex-question">' + item.question + '</p>' +
       '<div class="ex-fillin-wrap">' + item.sentence.replace('________', '<input class="ex-input" type="text" autocomplete="off" spellcheck="false" placeholder="...">') + '</div>' +
-      '<button class="btn btn-primary ex-check-btn">Comprobar</button>' +
+      '<button class="btn btn-primary ex-check-btn">' + t('check') + '</button>' +
       '<div class="ex-feedback" hidden></div>';
 
     container.querySelector('.ex-transcript-toggle').addEventListener('click', function () {
       const t = container.querySelector('.ex-transcript');
       t.hidden = !t.hidden;
       this.innerHTML = t.hidden
-        ? 'Ver transcripción <i class="bi bi-chevron-down"></i>'
-        : 'Ocultar transcripción <i class="bi bi-chevron-up"></i>';
+        ? t('show_transcript') + ' <i class="bi ' + t('close_transcript_icon_down') + '"></i>'
+        : t('hide_transcript') + ' <i class="bi ' + t('close_transcript_icon_up') + '"></i>';
     });
 
     container.querySelector('.ex-check-btn').addEventListener('click', () => {
       const val = container.querySelector('.ex-input').value.trim().toLowerCase();
       const feedback = container.querySelector('.ex-feedback');
       if (val === item.answer.toLowerCase()) {
-        feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Correcto!';
+        feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> ' + t('correct');
         feedback.className = 'ex-feedback ex-feedback--ok';
         markExerciseItemResult(container, true, {
+          itemId: item.itemId,
           itemType: item.type,
           prompt: item.question,
           expectedAnswer: item.answer,
           answerText: val,
-          feedback: 'Correcto',
+          feedback: t('correct'),
         });
       } else {
-        feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> La respuesta es: <strong>"' + item.answer + '"</strong>';
+        feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> ' + t('answer_is', { answer: '<strong>"' + item.answer + '"</strong>' });
         feedback.className = 'ex-feedback ex-feedback--err';
         markExerciseItemResult(container, false, {
+          itemId: item.itemId,
           itemType: item.type,
           prompt: item.question,
           expectedAnswer: item.answer,
           answerText: val,
-          feedback: 'Incorrecto',
+          feedback: t('incorrect'),
         });
       }
       feedback.hidden = false;
@@ -973,18 +1069,18 @@
 
   function renderPronounce(container, item) {
     container.innerHTML =
-      '<p class="ex-type-label"><i class="bi bi-mic"></i> Speaking</p>' +
-      '<p class="ex-speaking-prompt">Pronuncia en voz alta:</p>' +
+      '<p class="ex-type-label"><i class="bi bi-mic"></i> ' + t('speaking_label') + '</p>' +
+      '<p class="ex-speaking-prompt">' + t('pronounce_out_loud') + '</p>' +
       '<div class="ex-word-big">' + item.word + '</div>' +
       '<p class="ex-hint-text">' + item.hint + '</p>' +
       '<div class="ex-mic-area">' +
-      '<button class="ex-mic-btn" id="micBtn"><i class="bi bi-mic"></i><span>Pulsa para hablar</span></button>' +
+      '<button class="ex-mic-btn" id="micBtn"><i class="bi bi-mic"></i><span>' + t('press_to_speak') + '</span></button>' +
       '</div>' +
       '<div class="ex-self-check" hidden>' +
-      '<p>¿Lo has pronunciado correctamente?</p>' +
+      '<p>' + t('self_check_question') + '</p>' +
       '<div class="ex-self-check-btns">' +
-      '<button class="btn btn-success ex-self-yes"><i class="bi bi-check-lg"></i> Sí</button>' +
-      '<button class="btn btn-outline-danger ex-self-no">Repetir</button>' +
+      '<button class="btn btn-success ex-self-yes"><i class="bi bi-check-lg"></i> ' + t('self_check_yes') + '</button>' +
+      '<button class="btn btn-outline-danger ex-self-no">' + t('self_check_retry') + '</button>' +
       '</div></div>';
 
     const micBtn = container.querySelector('#micBtn');
@@ -996,39 +1092,40 @@
       const label = this.querySelector('span');
       if (this.classList.contains('recording')) {
         icon.className = 'bi bi-stop-fill';
-        label.textContent = 'Grabando... pulsa para parar';
+        label.textContent = t('recording');
       } else {
         icon.className = 'bi bi-mic';
-        label.textContent = 'Pulsa para hablar';
+        label.textContent = t('press_to_speak');
         selfCheck.hidden = false;
       }
     });
 
     container.querySelector('.ex-self-yes').addEventListener('click', () => {
       markExerciseItemResult(container, true, {
+        itemId: item.itemId,
         itemType: item.type,
         prompt: item.word,
         expectedAnswer: item.word,
         answerText: item.word,
-        feedback: 'Autovalidado como correcto',
+        feedback: t('autovalidated_correct'),
       });
-      selfCheck.innerHTML = '<p class="ex-feedback ex-feedback--ok" style="display:block"><i class="bi bi-check-circle-fill"></i> Genial! Sigue practicando.</p>';
+      selfCheck.innerHTML = '<p class="ex-feedback ex-feedback--ok" style="display:block"><i class="bi bi-check-circle-fill"></i> ' + t('self_check_success') + '</p>';
     });
     container.querySelector('.ex-self-no').addEventListener('click', () => {
       selfCheck.hidden = true;
       micBtn.classList.remove('recording');
       micBtn.querySelector('i').className = 'bi bi-mic';
-      micBtn.querySelector('span').textContent = 'Pulsa para hablar';
+      micBtn.querySelector('span').textContent = t('press_to_speak');
     });
   }
 
   function renderTranslate(container, item) {
     container.innerHTML =
-      '<p class="ex-type-label"><i class="bi bi-pencil"></i> Writing</p>' +
+      '<p class="ex-type-label"><i class="bi bi-pencil"></i> ' + t('writing_label') + '</p>' +
       '<p class="ex-prompt">' + item.prompt + '</p>' +
       '<div class="ex-sentence-box">' + item.sentence + '</div>' +
       '<textarea class="ex-textarea" placeholder="Escribe tu traducción aquí..."></textarea>' +
-      '<button class="btn btn-primary ex-check-btn">Comprobar</button>' +
+      '<button class="btn btn-primary ex-check-btn">' + t('check') + '</button>' +
       '<div class="ex-feedback" hidden></div>';
 
     container.querySelector('.ex-check-btn').addEventListener('click', () => {
@@ -1037,27 +1134,29 @@
       const keywords = item.answer.toLowerCase().split(' ').filter(w => w.length > 3);
       const matches = keywords.filter(k => val.includes(k)).length;
       if (val.length > 0 && matches >= Math.ceil(keywords.length * 0.65)) {
-        feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> Muy bien! Respuesta de referencia: <em>"' + item.answer + '"</em>';
+        feedback.innerHTML = '<i class="bi bi-check-circle-fill"></i> ' + t('great_reference', { answer: '<em>"' + item.answer + '"</em>' });
         feedback.className = 'ex-feedback ex-feedback--ok';
         markExerciseItemResult(container, true, {
+          itemId: item.itemId,
           itemType: item.type,
           prompt: item.sentence,
           expectedAnswer: item.answer,
           answerText: val,
-          feedback: 'Respuesta suficientemente cercana',
+          feedback: t('correct'),
         });
       } else if (val.length === 0) {
-        feedback.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Escribe tu respuesta primero.';
+        feedback.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> ' + t('write_answer_first');
         feedback.className = 'ex-feedback ex-feedback--warn';
       } else {
-        feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> Respuesta de referencia: <em>"' + item.answer + '"</em>';
+        feedback.innerHTML = '<i class="bi bi-x-circle-fill"></i> ' + t('reference_answer', { answer: '<em>"' + item.answer + '"</em>' });
         feedback.className = 'ex-feedback ex-feedback--err';
         markExerciseItemResult(container, false, {
+          itemId: item.itemId,
           itemType: item.type,
           prompt: item.sentence,
           expectedAnswer: item.answer,
           answerText: val,
-          feedback: 'Respuesta insuficiente',
+          feedback: t('incorrect'),
         });
       }
       feedback.hidden = false;
@@ -1071,7 +1170,7 @@
     const modal = document.getElementById('exCompleteModal');
     const modeData = getModeData(currentMode);
     document.getElementById('exCompleteMsg').textContent =
-      'Has completado todos los ejercicios de ' + modeData.title + '.';
+      t('completed_all', { title: modeData.title });
     modal.hidden = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Aprende idiomas a tu ritmo con Lexi. Guarda vocabulario, practica y sigue tu progreso.">
+  <meta name="description" content="{{ __('lexi.meta.welcome.description') }}">
   <meta name="robots" content="index,follow">
-  <title>Lexi | Bienvenida</title>
+  <title>{{ __('lexi.meta.welcome.title') }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -246,40 +246,40 @@
 </head>
 <body>
   <main class="welcome-shell">
-    <section class="welcome-card" aria-label="Bienvenida a Lexi">
+    <section class="welcome-card" aria-label="{{ __('lexi.welcome.aria') }}">
       <div class="welcome-hero">
         <div>
-          <h2 class="welcome-title">Aprende idiomas pero, <span>a tu ritmo.</span></h2>
-          <p class="welcome-copy">Un espacio donde el aprendizaje se encuentra en tus manos.</p>
+          <h2 class="welcome-title">{{ __('lexi.welcome.hero_title_prefix') }} <span>{{ __('lexi.welcome.hero_title_highlight') }}</span></h2>
+          <p class="welcome-copy">{{ __('lexi.welcome.hero_copy') }}</p>
           <ul class="welcome-points">
-            <li><i class="bi bi-check2-circle"></i><span>Configura tus idiomas.</span></li>
-            <li><i class="bi bi-check2-circle"></i><span>Guarda tu propio vocabulario.</span></li>
-            <li><i class="bi bi-check2-circle"></i><span>Practica con los ejercicios que deseas.</span></li>            
-            <li><i class="bi bi-check2-circle"></i><span>Sigue tu progreso mediante estadísticas.</span></li>
+            <li><i class="bi bi-check2-circle"></i><span>{{ __('lexi.welcome.point_languages') }}</span></li>
+            <li><i class="bi bi-check2-circle"></i><span>{{ __('lexi.welcome.point_vocabulary') }}</span></li>
+            <li><i class="bi bi-check2-circle"></i><span>{{ __('lexi.welcome.point_exercises') }}</span></li>
+            <li><i class="bi bi-check2-circle"></i><span>{{ __('lexi.welcome.point_progress') }}</span></li>
           </ul>
         </div>
         <div class="welcome-metrics">
-          <div class="welcome-metric"><strong>30</strong><span>Idiomas</span></div>
-          <div class="welcome-metric"><strong>2</strong><span>idiomas funcionales</span></div>
-          <div class="welcome-metric"><strong>5</strong><span>modos de ejercicio</span></div>
+          <div class="welcome-metric"><strong>30</strong><span>{{ __('lexi.welcome.metric_languages') }}</span></div>
+          <div class="welcome-metric"><strong>2</strong><span>{{ __('lexi.welcome.metric_functional_languages') }}</span></div>
+          <div class="welcome-metric"><strong>5</strong><span>{{ __('lexi.welcome.metric_exercise_modes') }}</span></div>
         </div>
       </div>
       <div class="welcome-panel">
-        <h1 class="welcome-panel-title"><span class="welcome-panel-title-main">¡Bienvenido a</span><span class="welcome-panel-title-lockup">Lexi!<i class="bi bi-stars" aria-hidden="true"></i></span></h1>
-        <p>Inicia sesión o crea tu cuenta para continuar.</p>
+        <h1 class="welcome-panel-title"><span class="welcome-panel-title-main">{{ __('lexi.welcome.panel_title_prefix') }}</span><span class="welcome-panel-title-lockup">Lexi!<i class="bi bi-stars" aria-hidden="true"></i></span></h1>
+        <p>{{ __('lexi.welcome.panel_copy') }}</p>
 
         <div class="welcome-actions">
-          <a class="welcome-action welcome-action--primary" href="/login.html">
+          <a class="welcome-action welcome-action--primary" href="{{ route('login') }}">
             <div class="welcome-action__meta">
-              <strong>Iniciar sesión</strong>
-              <span>Continúa tu aprendizaje.</span>
+              <strong>{{ __('lexi.welcome.login_title') }}</strong>
+              <span>{{ __('lexi.welcome.login_copy') }}</span>
             </div>
             <i class="bi bi-arrow-right-circle-fill"></i>
           </a>
-          <a class="welcome-action" href="/registro.html">
+          <a class="welcome-action" href="{{ route('register') }}">
             <div class="welcome-action__meta">
-              <strong>Crear cuenta</strong>
-              <span>Empieza con Lexi.</span>
+              <strong>{{ __('lexi.welcome.register_title') }}</strong>
+              <span>{{ __('lexi.welcome.register_copy') }}</span>
             </div>
             <i class="bi bi-person-plus"></i>
           </a>
@@ -287,7 +287,7 @@
 
         <div class="welcome-note">
           <i class="bi bi-info-circle-fill"></i>
-          <div>El acceso al contenido requiere una sesión iniciada.</div>
+          <div>{{ __('lexi.welcome.note') }}</div>
         </div>
       </div>
     </section>

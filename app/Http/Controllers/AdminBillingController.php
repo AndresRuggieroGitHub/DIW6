@@ -19,9 +19,14 @@ class AdminBillingController extends Controller
                     'paid_subscriptions' => 0,
                     'trialing_subscriptions' => 0,
                     'mrr_cents' => 0,
+                    'payments' => 0,
+                    'usage_rows' => 0,
                 ],
                 'plans' => collect(),
                 'subscriptions' => collect(),
+                'planFeatures' => collect(),
+                'payments' => collect(),
+                'usageRows' => collect(),
             ]);
         }
 
@@ -104,6 +109,59 @@ class AdminBillingController extends Controller
             ->selectRaw("COALESCE(SUM(CASE WHEN plans.billing_interval = 'annual' THEN (plans.price_cents * subscriptions.quantity) / 12.0 ELSE plans.price_cents * subscriptions.quantity END), 0) as total")
             ->value('total');
 
+        $planFeatures = Schema::hasTable('plan_features')
+            ? DB::table('plan_features')
+                ->join('plans', 'plans.id', '=', 'plan_features.plan_id')
+                ->select('plans.name as plan_name', 'plans.code as plan_code', 'plan_features.feature_key', 'plan_features.feature_value')
+                ->orderBy('plans.price_cents')
+                ->orderBy('plan_features.feature_key')
+                ->get()
+            : collect();
+
+        $payments = Schema::hasTable('payments')
+            ? DB::table('payments')
+                ->join('subscriptions', 'subscriptions.id', '=', 'payments.subscription_id')
+                ->join('users', 'users.id', '=', 'subscriptions.user_id')
+                ->join('plans', 'plans.id', '=', 'subscriptions.plan_id')
+                ->select(
+                    'payments.id',
+                    'payments.provider',
+                    'payments.amount_cents',
+                    'payments.currency',
+                    'payments.status',
+                    'payments.paid_at',
+                    'users.email',
+                    'users.name',
+                    'users.surname',
+                    'plans.name as plan_name'
+                )
+                ->orderByDesc('payments.paid_at')
+                ->orderByDesc('payments.id')
+                ->limit(12)
+                ->get()
+            : collect();
+
+        $usageRows = Schema::hasTable('user_usage')
+            ? DB::table('user_usage')
+                ->join('users', 'users.id', '=', 'user_usage.user_id')
+                ->select(
+                    'user_usage.id',
+                    'user_usage.period_start',
+                    'user_usage.period_end',
+                    'user_usage.ai_generations_count',
+                    'user_usage.exercises_generated_count',
+                    'user_usage.exercise_attempts_count',
+                    'user_usage.saved_words_count',
+                    'users.email',
+                    'users.name',
+                    'users.surname'
+                )
+                ->orderByDesc('user_usage.period_end')
+                ->orderByDesc('user_usage.id')
+                ->limit(12)
+                ->get()
+            : collect();
+
         return view('pages.admin-billing', [
             'stats' => [
                 'plans' => DB::table('plans')->where('is_active', true)->count(),
@@ -111,9 +169,14 @@ class AdminBillingController extends Controller
                 'paid_subscriptions' => $paidActiveSubscriptions,
                 'trialing_subscriptions' => $trialingSubscriptions,
                 'mrr_cents' => $mrrCents,
+                'payments' => Schema::hasTable('payments') ? DB::table('payments')->count() : 0,
+                'usage_rows' => Schema::hasTable('user_usage') ? DB::table('user_usage')->count() : 0,
             ],
             'plans' => $plans,
             'subscriptions' => $subscriptions,
+            'planFeatures' => $planFeatures,
+            'payments' => $payments,
+            'usageRows' => $usageRows,
         ]);
     }
 }

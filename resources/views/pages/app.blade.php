@@ -1,58 +1,58 @@
-@extends('layouts.site', ['title' => 'Lexi | Inicio', 'description' => 'Lexi, prototipo de aprendizaje de idiomas centrado en vocabulario, ejercicios y progreso, con MVP priorizado para español e inglés.', 'robots' => 'noindex,follow', 'activeNav' => 'home', 'afterFooter' => '<button id="btnSubir" type="button" aria-label="Subir arriba">&uarr;</button>'])
+@extends('layouts.site', ['title' => __('lexi.meta.app.title'), 'description' => __('lexi.meta.app.description'), 'robots' => 'noindex,follow', 'activeNav' => 'home', 'afterFooter' => '<button id="btnSubir" type="button" aria-label="' . e(__('lexi.common.back_to_top')) . '">&uarr;</button>'])
 
 @section('content')
 <main id="mainContent" class="hero">
   <div class="hero-text scroll-animado">
-    <h1>Aprende idiomas a tu ritmo</h1>
-    <p class="hero-sub">Tu vocabulario, tus ejercicios, tu progreso.</p>
+    <h1>{{ __('lexi.app.hero_title') }}</h1>
+    <p class="hero-sub">{{ __('lexi.app.hero_subtitle') }}</p>
   </div>
 </main>
 
 <div class="hero-divider" aria-hidden="true"></div>
 
 <section class="container section-space home-cards">
-  <h2>¿Qué puedes hacer con Lexi?</h2>
+  <h2>{{ __('lexi.app.what_can_you_do') }}</h2>
   <div class="home-card-grid">
     <article class="home-card">
       <div class="home-card-icon"><i class="bi bi-journals"></i></div>
-      <h3 class="h5">Tu propio vocabulario</h3>
-      <p>Sube tus palabras, organízalas por colecciones y repásalas cuando quieras.</p>
-      <a class="btn btn-primary" href="biblioteca.html">Ir a mi biblioteca</a>
+      <h3 class="h5">{{ __('lexi.app.vocabulary_title') }}</h3>
+      <p>{{ __('lexi.app.vocabulary_text') }}</p>
+      <a class="btn btn-primary" href="{{ route('biblioteca') }}">{{ __('lexi.app.go_to_library') }}</a>
     </article>
     <article class="home-card">
       <div class="home-card-icon"><i class="bi bi-lightning-charge"></i></div>
-      <h3 class="h5">Ejercicios personalizados</h3>
-      <p>Ejercicios de vocabulario adaptados a lo que has guardado.</p>
-      <a class="btn btn-primary" href="ejercicios.html">Elegir ejercicio</a>
+      <h3 class="h5">{{ __('lexi.app.exercises_title') }}</h3>
+      <p>{{ __('lexi.app.exercises_text') }}</p>
+      <a class="btn btn-primary" href="{{ route('ejercicios') }}">{{ __('lexi.app.choose_exercise') }}</a>
     </article>
     <article class="home-card">
       <div class="home-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
-      <h3 class="h5">Análisis de progreso</h3>
-      <p>Sigue tu evolución mediante gráficas y estadísticas claras.</p>
-      <a class="btn btn-primary" href="progreso.html">Ver tu progreso</a>
+      <h3 class="h5">{{ __('lexi.app.progress_title') }}</h3>
+      <p>{{ __('lexi.app.progress_text') }}</p>
+      <a class="btn btn-primary" href="{{ route('progreso') }}">{{ __('lexi.app.view_progress') }}</a>
     </article>
   </div>
 </section>
 
 <section class="container section-space how-it-works">
-  <h2>¿Cómo funciona?</h2>
+  <h2>{{ __('lexi.app.how_it_works') }}</h2>
   <div class="how-steps">
     <div class="how-step">
       <div class="how-step-num">1</div>
-      <h3>Busca palabras</h3>
-      <p>Explora el catálogo y encuentra las palabras que necesitas o sube tu propio vocabulario.</p>
+      <h3>{{ __('lexi.app.step_search_title') }}</h3>
+      <p>{{ __('lexi.app.step_search_text') }}</p>
     </div>
     <div class="how-step-divider" aria-hidden="true"></div>
     <div class="how-step">
       <div class="how-step-num">2</div>
-      <h3>Guárdalas</h3>
-      <p>Organízalas en colecciones personalizadas según tus temas o niveles.</p>
+      <h3>{{ __('lexi.app.step_save_title') }}</h3>
+      <p>{{ __('lexi.app.step_save_text') }}</p>
     </div>
     <div class="how-step-divider" aria-hidden="true"></div>
     <div class="how-step">
       <div class="how-step-num">3</div>
-      <h3>Ejercicios</h3>
-      <p>Repasa con ejercicios adaptados justo a lo que has guardado.</p>
+      <h3>{{ __('lexi.app.step_practice_title') }}</h3>
+      <p>{{ __('lexi.app.step_practice_text') }}</p>
     </div>
   </div>
 </section>
@@ -60,17 +60,17 @@
 <section class="container home-premium-section">
   <article class="home-card home-premium-card">
     <div class="home-card-icon"><i class="bi bi-gem"></i></div>
-    <h3 class="h5">Desbloquear premium</h3>
-    <p>Accede a más ejercicios personalizados y ejercicios guiados por profesores nativos.</p>
-    <a class="btn btn-success" href="producto.html">Ver planes premium</a>
+    <h3 class="h5">{{ __('lexi.app.premium_title') }}</h3>
+    <p>{{ __('lexi.app.premium_text') }}</p>
+    <a class="btn btn-success" href="{{ route('producto') }}">{{ __('lexi.app.view_premium_plans') }}</a>
   </article>
   <div class="home-premium-image">
-    <img src="images/premium_illustration.png" alt="Ilustración aprendizaje premium">
+    <img src="images/premium_illustration.png" alt="{{ __('lexi.app.premium_image_alt') }}">
   </div>
 </section>
 
 <div class="home-cta-banner">
-  <p>¡Listo para empezar!</p>
-  <a class="btn btn-warning" href="biblioteca.html">Explorar catálogo</a>
+  <p>{{ __('lexi.app.cta_title') }}</p>
+  <a class="btn btn-warning" href="{{ route('biblioteca') }}">{{ __('lexi.app.explore_catalog') }}</a>
 </div>
 @endsection

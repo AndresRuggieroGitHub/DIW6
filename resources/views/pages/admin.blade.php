@@ -1,17 +1,17 @@
-@extends('layouts.admin', ['title' => 'Lexi | Admin', 'description' => 'Panel de administración de Lexi.'])
+@extends('layouts.admin', ['title' => __('lexi.admin.dashboard.meta_title'), 'description' => __('lexi.admin.dashboard.meta_description')])
 
 @section('content')
 <section class="admin-page-head">
 	<div>
-		<h1>Panel</h1>
-		<p>Resumen general del panel de administración.</p>
+		<h1>{{ __('lexi.admin.dashboard.heading') }}</h1>
+		<p>{{ __('lexi.admin.dashboard.intro') }}</p>
 	</div>
 </section>
 
 <section class="admin-overview-grid">
 	@foreach ($cards as $card)
 	<article class="admin-card">
-		<div class="admin-card__inner admin-entity-card">
+		<a class="admin-card__inner admin-entity-card admin-entity-card--selectable" href="{{ $card['href'] }}" aria-label="{{ __('lexi.admin.dashboard.open_aria', ['title' => $card['title']]) }}">
 			<div class="admin-entity-card__icon"><i class="bi {{ $card['icon'] }}"></i></div>
 			<div>
 				<h3>{{ $card['title'] }}</h3>
@@ -22,9 +22,10 @@
 				<span class="admin-status {{ $card['statusClass'] }}">{{ $card['status'] }}</span>
 			</div>
 			<div class="admin-entity-card__footer">
-				<a class="admin-inline-link" href="{{ $card['href'] }}">Ver todo</a>
+				<span class="admin-inline-link">{{ __('lexi.admin.dashboard.open_section') }}</span>
+				<i class="bi bi-arrow-right-short admin-entity-card__arrow" aria-hidden="true"></i>
 			</div>
-		</div>
+		</a>
 	</article>
 	@endforeach
 </section>

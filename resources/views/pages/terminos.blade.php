@@ -179,7 +179,7 @@
         </section>
       </div>
       <div class="legal-actions-bar">
-        <a class="legal-link" href="{{ url('/privacidad.html') }}"><i class="bi bi-arrow-right"></i> Ver política de privacidad</a>
+        <a class="legal-link" href="{{ route('privacidad') }}"><i class="bi bi-arrow-right"></i> Ver política de privacidad</a>
         <a class="legal-link" href="{{ route('login') }}"><i class="bi bi-arrow-left"></i> Volver al acceso</a>
       </div>
     </article>
