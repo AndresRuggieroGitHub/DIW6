@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Recupera el acceso a tu cuenta Lexi.">
+  <meta name="description" content="{{ __('lexi.meta.login.description') }}">
   <meta name="robots" content="noindex">
-  <title>Lexi | Recuperar contraseña</title>
+  <title>{{ __('lexi.auth.forgot_title') }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,6 +18,6 @@
   </style>
 </head>
 <body>
-<main class="recovery-page"><section class="recovery-card" aria-label="Recuperación de contraseña en Lexi"><aside class="recovery-brand-panel"><div class="recovery-brand-content"><h1 class="recovery-brand-headline">Recupera tu acceso <i class="bi bi-key" aria-hidden="true"></i></h1><p class="recovery-brand-desc">Te enviaremos instrucciones por correo.</p></div></aside><div class="recovery-form-panel"><div class="recovery-form-wrap"><h2 class="recovery-form-title">¿Olvidaste tu contraseña?</h2><p class="recovery-form-sub">Introduce tu correo para poder recuperar tu cuenta.</p>@if ($errors->any())<div class="recovery-alert recovery-alert--error" role="alert">{{ $errors->first() }}</div>@endif @if (session('status'))<div class="recovery-alert recovery-alert--success" role="alert">{{ session('status') }}</div>@endif <form method="POST" action="{{ route('password.email') }}" novalidate>@csrf<div class="recovery-field"><label for="recoveryEmail">Correo electrónico</label><div class="recovery-input-wrap"><i class="bi bi-envelope"></i><input type="email" id="recoveryEmail" name="email" class="recovery-input" placeholder="tu@ejemplo.com" value="{{ old('email') }}" autocomplete="email" required></div></div><button type="submit" class="recovery-btn-primary">Enviar enlace</button></form><p class="recovery-back-note">¿Quieres volver a intentarlo? <a href="{{ route('login') }}">Inicia sesión</a></p></div></div></section></main>
+<main class="recovery-page"><section class="recovery-card" aria-label="{{ __('lexi.auth.forgot_aria') }}"><aside class="recovery-brand-panel"><div class="recovery-brand-content"><h1 class="recovery-brand-headline">{{ __('lexi.auth.forgot_brand_title') }} <i class="bi bi-key" aria-hidden="true"></i></h1><p class="recovery-brand-desc">{{ __('lexi.auth.forgot_brand_text') }}</p></div></aside><div class="recovery-form-panel"><div class="recovery-form-wrap"><h2 class="recovery-form-title">{{ __('lexi.auth.forgot_heading') }}</h2><p class="recovery-form-sub">{{ __('lexi.auth.forgot_subtitle') }}</p>@if ($errors->any())<div class="recovery-alert recovery-alert--error" role="alert">{{ $errors->first() }}</div>@endif @if (session('status'))<div class="recovery-alert recovery-alert--success" role="alert">{{ session('status') }}</div>@endif <form method="POST" action="{{ route('password.email') }}" novalidate>@csrf<div class="recovery-field"><label for="recoveryEmail">{{ __('lexi.auth.email') }}</label><div class="recovery-input-wrap"><i class="bi bi-envelope"></i><input type="email" id="recoveryEmail" name="email" class="recovery-input" placeholder="{{ __('lexi.auth.email_placeholder') }}" value="{{ old('email') }}" autocomplete="email" required></div></div><button type="submit" class="recovery-btn-primary">{{ __('lexi.auth.forgot_submit') }}</button></form><p class="recovery-back-note">{{ __('lexi.auth.forgot_back_prompt') }} <a href="{{ route('login') }}">{{ __('lexi.auth.sign_in_link') }}</a></p></div></div></section></main>
 </body>
 </html>

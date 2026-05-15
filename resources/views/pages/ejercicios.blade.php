@@ -500,7 +500,7 @@
     return items
       .map(item => ({
         type: 'translate',
-        prompt: 'Traduce al español:',
+        prompt: t('js.exercise_runtime.translate_to_spanish'),
         sentence: item.text || item.word || '',
         answer: item.translation || item.meaning || '',
       }))

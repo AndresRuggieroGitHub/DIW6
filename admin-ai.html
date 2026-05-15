@@ -1,32 +1,22 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Gestión de generaciones IA en Lexi Admin.">
-  <meta name="robots" content="noindex,follow">
-  <title>Lexi | Admin AI</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="admin.css">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Lexi | Redirigiendo</title>
+  <script>
+    (function () {
+      var fileName = window.location.pathname.split('/').pop() || 'admin-ai.html';
+      var target = new URL('public/' + fileName + window.location.search + window.location.hash, window.location.href);
+      window.location.replace(target.toString());
+    })();
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=public/admin-ai.html">
+  </noscript>
 </head>
-<body class="admin-body">
-  <div class="admin-shell">
-    <aside class="admin-sidebar">
-      <div class="admin-brand"><span class="admin-brand__name">Lexi Admin</span><span class="admin-brand__sub">Control panel</span></div>
-      <div class="admin-sidebar-footer">
-        <a href="app.html"><i class="bi bi-house-door"></i> Abrir app</a>
-        <a href="login.html"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
-      </div>
-    </aside>
-    <main id="adminMain" class="admin-main">
-      <section class="admin-page-head"><div><h1>AI generations</h1><p>Supervisa prompts, contenidos generados y revisión editorial de IA.</p></div><div class="admin-page-actions"><a class="admin-btn admin-btn--ghost" href="admin.html"><i class="bi bi-arrow-left"></i> Panel</a></div></section>
-      <section class="admin-stats"><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--violet">Generated</span><div class="admin-stat__icon"><i class="bi bi-robot"></i></div></div><p class="admin-stat__value">1,340</p><p class="admin-stat__label">Generaciones este mes</p><span class="admin-stat__meta"><i class="bi bi-stars"></i> Contenido IA</span></article><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--green">Approved</span><div class="admin-stat__icon"><i class="bi bi-patch-check"></i></div></div><p class="admin-stat__value">1,112</p><p class="admin-stat__label">Aprobadas por revisión</p><span class="admin-stat__meta"><i class="bi bi-check2-circle"></i> 83% pass rate</span></article><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--amber">Flagged</span><div class="admin-stat__icon"><i class="bi bi-flag"></i></div></div><p class="admin-stat__value">47</p><p class="admin-stat__label">Marcadas para revisar</p><span class="admin-stat__meta"><i class="bi bi-exclamation-circle"></i> Editorial queue</span></article></section>
-      <section class="admin-card"><div class="admin-card__inner"><div class="admin-card__head"><div><h2>Generation log</h2><p>Estado editorial de las generaciones IA registradas.</p></div><span class="admin-chip admin-chip--violet">Moderación</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Type</th><th>Model</th><th>Output</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td>Exercise draft</td><td>GPT-5.4</td><td>Travel vocabulary set</td><td><span class="admin-status admin-status--active">Aprobada</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Marcar</button></div></td></tr><tr><td>Word explanation</td><td>GPT-5.4</td><td>House vs home note</td><td><span class="admin-status admin-status--review">Revisión</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Aprobar</button></div></td></tr><tr><td>Collection suggestions</td><td>GPT-5.4</td><td>Business starter pack</td><td><span class="admin-status admin-status--draft">Borrador</span></td><td><div class="admin-actions-inline"><button type="button">Ver</button><button type="button">Descartar</button></div></td></tr></tbody></table></div></div></section>
-    </main>
-  </div>
+<body>
+  <p>Redirecting to the app...</p>
 </body>
 </html>

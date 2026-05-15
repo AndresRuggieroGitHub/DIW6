@@ -1,180 +1,22 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Lexi, prototipo de aprendizaje de idiomas centrado en vocabulario, ejercicios y progreso, con MVP priorizado para español e inglés.">
-  <meta name="robots" content="noindex,follow">
-  <title>Lexi | Inicio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="style.css">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Lexi | Redirigiendo</title>
+  <script>
+    (function () {
+      var fileName = window.location.pathname.split('/').pop() || 'app.html';
+      var target = new URL('public/' + fileName + window.location.search + window.location.hash, window.location.href);
+      window.location.replace(target.toString());
+    })();
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=public/app.html">
+  </noscript>
 </head>
 <body>
-<a href="#mainContent" class="skip-link">Saltar al contenido</a>
-
-<header class="header">
-  <div class="header-left">
-    <div class="logo">
-      <img src="icons/logo.svg" alt="Logo Lexi">
-    </div>
-    <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
-      <i class="bi bi-list"></i>
-    </button>
-    <nav class="nav-left" id="mainNav">
-      <a class="active" href="app.html">Inicio</a>
-      <a href="biblioteca.html">Biblioteca</a>
-      <a href="ejercicios.html">Ejercicios</a>
-    </nav>
-  </div>
-
-  <div class="header-right">
-    <button class="icon-btn" type="button" aria-label="Tu progreso" data-progress-trigger>
-      <i class="bi bi-rocket-takeoff"></i>
-    </button>
-    <div class="lang-dropdown-wrap" data-lang-wrap>
-      <button class="icon-btn" type="button" aria-label="Seleccionar idioma" data-lang-trigger aria-haspopup="true" aria-expanded="false">
-        <img src="" alt="Idioma seleccionado" id="activeLangFlag">
-      </button>
-      <div class="lang-dropdown" id="langDropdown" hidden></div>
-    </div>
-    <script>(function(){var f={en:"icons/flags/united_kingdom_flag.svg",fr:"icons/flags/france_flag.svg",de:"icons/flags/germany_flag.svg",es:"icons/flags/spain_flag.svg",it:"icons/flags/italy_flag.svg",pt:"icons/flags/brazil_flag.svg",no:"icons/flags/norway_flag.svg",sv:"icons/flags/sweden_flag.svg",dk:"icons/flags/denmark_flag.svg",fi:"icons/flags/finland_flag.svg",ko:"icons/flags/south_korea_flag.svg",ja:"icons/flags/japan_flag.svg",zh:"icons/flags/china_flag.svg",ru:"icons/flags/russia_flag.svg",ua:"icons/flags/ukraine_flag.svg",bg:"icons/flags/bulgaria_flag.svg",ro:"icons/flags/romania_flag.svg",cs:"icons/flags/czech_republic_flag.svg",sk:"icons/flags/slovakia_flag.svg",hu:"icons/flags/hungary_flag.svg",gr:"icons/flags/greece_flag.svg",ar:"icons/flags/saudi_arabia_flag.svg",vi:"icons/flags/vietnam_flag.svg",pl:"icons/flags/poland_flag.svg",tr:"icons/flags/turkey_flag.svg",id:"icons/flags/indonesia_flag.svg",he:"icons/flags/israel_flag.svg",hi:"icons/flags/india_flag.svg",th:"icons/flags/thailand_flag.svg",nl:"icons/flags/netherlands_flag.svg"};var img=document.getElementById("activeLangFlag");if(img)img.src=f[localStorage.getItem("lexiLang")||"en"]||f.en;})();</script>
-    <a href="perfil.html" class="icon-btn" aria-label="Perfil">
-      <img src="icons/profile.svg" alt="Perfil">
-    </a>
-    <button class="icon-btn utility-trigger" type="button" data-utility-trigger aria-label="Abrir menu secundario" aria-expanded="false">
-      <img src="icons/menu.svg" alt="" aria-hidden="true">
-    </button>
-  </div>
-</header>
-
-<main id="mainContent" class="hero">
-  <div class="hero-text scroll-animado">
-    <h1>Aprende idiomas a tu ritmo</h1>
-    <p class="hero-sub">Tu vocabulario, tus ejercicios, tu progreso.</p>
-  </div>
-</main>
-
-<div class="hero-divider" aria-hidden="true"></div>
-
-<section class="container section-space home-cards">
-  <h2>¿Qué puedes hacer con Lexi?</h2>
-  <div class="home-card-grid">
-    <article class="home-card">
-      <div class="home-card-icon"><i class="bi bi-journals"></i></div>
-      <h3 class="h5">Tu propio vocabulario</h3>
-      <p>Sube tus palabras, organízalas por colecciones y repásalas cuando quieras.</p>
-      <a class="btn btn-primary" href="biblioteca.html">Ir a mi biblioteca</a>
-    </article>
-    <article class="home-card">
-      <div class="home-card-icon"><i class="bi bi-lightning-charge"></i></div>
-      <h3 class="h5">Ejercicios personalizados</h3>
-      <p>Ejercicios de vocabulario adaptados a lo que has guardado.</p>
-      <a class="btn btn-primary" href="ejercicios.html">Elegir ejercicio</a>
-    </article>
-    <article class="home-card">
-      <div class="home-card-icon"><i class="bi bi-graph-up-arrow"></i></div>
-      <h3 class="h5">Análisis de progreso</h3>
-      <p>Sigue tu evolución mediante gráficas y estadísticas claras.</p>
-      <a class="btn btn-primary" href="progreso.html">Ver tu progreso</a>
-    </article>
-  </div>
-</section>
-
-<section class="container section-space how-it-works">
-  <h2>¿Cómo funciona?</h2>
-  <div class="how-steps">
-    <div class="how-step">
-      <div class="how-step-num">1</div>
-      <h3>Busca palabras</h3>
-      <p>Explora el catálogo y encuentra las palabras que necesitas o sube tu propio vocabulario.</p>
-    </div>
-    <div class="how-step-divider" aria-hidden="true"></div>
-    <div class="how-step">
-      <div class="how-step-num">2</div>
-      <h3>Guárdalas</h3>
-      <p>Organízalas en colecciones personalizadas según tus temas o niveles.</p>
-    </div>
-    <div class="how-step-divider" aria-hidden="true"></div>
-    <div class="how-step">
-      <div class="how-step-num">3</div>
-      <h3>Ejercicios</h3>
-      <p>Repasa con ejercicios adaptados justo a lo que has guardado.</p>
-    </div>
-  </div>
-</section>
-
-<section class="container home-premium-section">
-  <article class="home-card home-premium-card">
-    <div class="home-card-icon"><i class="bi bi-gem"></i></div>
-    <h3 class="h5">Desbloquear premium</h3>
-    <p>Accede a más ejercicios personalizados y ejercicios guiados por profesores nativos.</p>
-    <a class="btn btn-success" href="producto.html">Ver planes premium</a>
-  </article>
-  <div class="home-premium-image">
-    <img src="images/premium_illustration.png" alt="Ilustración aprendizaje premium">
-  </div>
-</section>
-
-<div class="home-cta-banner">
-  <p>¡Listo para empezar!</p>
-  <a class="btn btn-warning" href="biblioteca.html">Explorar catálogo</a>
-</div>
-
-<footer class="footer">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <a href="app.html" class="footer-logo" aria-label="Inicio">Lexi</a>
-      <p class="footer-tagline">Vocabulario personalizado, ejercicios prácticos y seguimiento claro de tu progreso.</p>
-    </div>
-    <nav class="footer-nav" aria-label="Plataforma">
-      <h3 class="footer-heading">Plataforma</h3>
-      <ul>
-        <li><a href="app.html">Inicio</a></li>
-        <li><a href="biblioteca.html">Biblioteca</a></li>
-        <li><a href="ejercicios.html">Ejercicios</a></li>
-        <li><a href="progreso.html">Progreso</a></li>
-      </ul>
-    </nav>
-    <nav class="footer-nav" aria-label="Cuenta">
-      <h3 class="footer-heading">Cuenta</h3>
-      <ul>
-        <li><a href="perfil.html">Perfil</a></li>
-        <li><a href="producto.html">Premium</a></li>
-        <li><a href="carrito.html">Carrito</a></li>
-      </ul>
-    </nav>
-    <nav class="footer-nav" aria-label="Soporte">
-      <h3 class="footer-heading">Soporte</h3>
-      <ul>
-        <li><a href="contacto.html">Contacto</a></li>
-        <li><a href="info.html">Información</a></li>
-        <li><a href="terminos.html">Términos</a></li>
-        <li><a href="privacidad.html">Privacidad</a></li>
-      </ul>
-    </nav>
-    <div class="footer-stats" aria-label="Resumen del prototipo">
-      <div class="footer-stat">
-        <span class="footer-stat-num">30</span>
-        <span class="footer-stat-label">idiomas<br>disponibles</span>
-      </div>
-      <div class="footer-stat">
-        <span class="footer-stat-num">2</span>
-        <span class="footer-stat-label">idiomas<br>funcionales</span>
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; 2026 Lexi. Todos los derechos reservados.</p>
-  </div>
-</footer>
-
-<button id="btnSubir" type="button" aria-label="Subir arriba">&uarr;</button>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js"></script>
+  <p>Redirecting to the app...</p>
 </body>
 </html>

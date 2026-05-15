@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Política de privacidad de Lexi.">
+  <meta name="description" content="{{ __('lexi.legal_privacy.meta_description') }}">
   <meta name="robots" content="noindex">
-  <title>Lexi | Política de privacidad</title>
+  <title>{{ __('lexi.legal_privacy.meta_title') }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -134,57 +134,57 @@
 </head>
 <body>
   <main class="legal-page">
-    <article class="legal-card" aria-label="Política de privacidad de Lexi">
+    <article class="legal-card" aria-label="{{ __('lexi.legal_privacy.aria') }}">
       <header class="legal-hero">
-        <p class="legal-kicker"><i class="bi bi-lock"></i> Documento legal</p>
-        <h1 class="legal-title">Política de privacidad</h1>
-        <p class="legal-subtitle">Este texto describe de forma general cómo se tratan los datos personales dentro del entorno actual de Lexi y con qué finalidad se utilizan en el contexto del prototipo.</p>
-        <p class="legal-meta">Última actualización: 9 de mayo de 2026</p>
+        <p class="legal-kicker"><i class="bi bi-lock"></i> {{ __('lexi.legal_privacy.kicker') }}</p>
+        <h1 class="legal-title">{{ __('lexi.legal_privacy.title') }}</h1>
+        <p class="legal-subtitle">{{ __('lexi.legal_privacy.subtitle') }}</p>
+        <p class="legal-meta">{{ __('lexi.legal_privacy.updated') }}</p>
       </header>
 
       <div class="legal-content">
         <section class="legal-section">
-          <h2>1. Datos que pueden solicitarse</h2>
-          <p>Lexi puede recoger datos básicos de identificación y uso, como nombre, correo electrónico, idioma materno, idioma objetivo u otra información necesaria para personalizar la experiencia de aprendizaje.</p>
+          <h2>{{ __('lexi.legal_privacy.data_title') }}</h2>
+          <p>{{ __('lexi.legal_privacy.data_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>2. Finalidad del tratamiento</h2>
-          <p>La información facilitada se utiliza para gestionar el acceso, adaptar la experiencia del usuario, mostrar contenido relevante y mejorar el funcionamiento del producto.</p>
+          <h2>{{ __('lexi.legal_privacy.purpose_title') }}</h2>
+          <p>{{ __('lexi.legal_privacy.purpose_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>3. Base funcional del prototipo</h2>
-          <p>En esta fase de desarrollo, algunos datos pueden almacenarse únicamente con fines demostrativos o de prueba de interfaz. Esto no sustituye la política definitiva que se aplicará en producción.</p>
+          <h2>{{ __('lexi.legal_privacy.prototype_title') }}</h2>
+          <p>{{ __('lexi.legal_privacy.prototype_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>4. Conservación y acceso</h2>
-          <p>Los datos se conservarán solo durante el tiempo necesario para cumplir la finalidad prevista en el entorno en que esté operando la aplicación, especialmente durante pruebas o validaciones de producto.</p>
+          <h2>{{ __('lexi.legal_privacy.retention_title') }}</h2>
+          <p>{{ __('lexi.legal_privacy.retention_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>5. Derechos del usuario</h2>
+          <h2>{{ __('lexi.legal_privacy.rights_title') }}</h2>
           <ul>
-            <li>Solicitar información sobre el tratamiento de sus datos.</li>
-            <li>Pedir la rectificación o eliminación cuando corresponda.</li>
-            <li>Retirar el consentimiento cuando el tratamiento dependa de él.</li>
+            <li>{{ __('lexi.legal_privacy.rights_item_1') }}</li>
+            <li>{{ __('lexi.legal_privacy.rights_item_2') }}</li>
+            <li>{{ __('lexi.legal_privacy.rights_item_3') }}</li>
           </ul>
         </section>
 
         <section class="legal-section">
-          <h2>6. Seguridad</h2>
-          <p>Lexi adoptará medidas razonables para proteger la información tratada. En cualquier caso, la política definitiva de seguridad y privacidad se concretará en la versión funcional desarrollada sobre backend real.</p>
+          <h2>{{ __('lexi.legal_privacy.security_title') }}</h2>
+          <p>{{ __('lexi.legal_privacy.security_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>7. Contacto</h2>
-          <p>Si necesitas información adicional sobre el tratamiento de datos o sobre el contenido de esta política, Lexi podrá facilitar un canal de contacto específico en la versión final del servicio.</p>
+          <h2>{{ __('lexi.legal_privacy.contact_title') }}</h2>
+          <p>{{ __('lexi.legal_privacy.contact_text') }}</p>
         </section>
       </div>
       <div class="legal-actions-bar">
-        <a class="legal-link" href="{{ route('terminos') }}"><i class="bi bi-arrow-right"></i> Ver términos de uso</a>
-        <a class="legal-link" href="{{ route('login') }}"><i class="bi bi-arrow-left"></i> Volver al acceso</a>
+        <a class="legal-link" href="{{ route('terminos') }}"><i class="bi bi-arrow-right"></i> {{ __('lexi.nav.terms') }}</a>
+        <a class="legal-link" href="{{ route('login') }}"><i class="bi bi-arrow-left"></i> {{ __('lexi.auth.sign_in_link') }}</a>
       </div>
     </article>
   </main>

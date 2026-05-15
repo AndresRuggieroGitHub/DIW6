@@ -1,32 +1,22 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Analítica y progreso en Lexi Admin.">
-  <meta name="robots" content="noindex,follow">
-  <title>Lexi | Admin Analytics</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="admin.css">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Lexi | Redirigiendo</title>
+  <script>
+    (function () {
+      var fileName = window.location.pathname.split('/').pop() || 'admin-analytics.html';
+      var target = new URL('public/' + fileName + window.location.search + window.location.hash, window.location.href);
+      window.location.replace(target.toString());
+    })();
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=public/admin-analytics.html">
+  </noscript>
 </head>
-<body class="admin-body">
-  <div class="admin-shell">
-    <aside class="admin-sidebar">
-      <div class="admin-brand"><span class="admin-brand__name">Lexi Admin</span><span class="admin-brand__sub">Control panel</span></div>
-      <div class="admin-sidebar-footer">
-        <a href="app.html"><i class="bi bi-house-door"></i> Abrir app</a>
-        <a href="login.html"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a>
-      </div>
-    </aside>
-    <main id="adminMain" class="admin-main">
-      <section class="admin-page-head"><div><h1>Analytics & progress</h1><p>Seguimiento de `user_words`, intentos de ejercicios y actividad del aprendizaje.</p></div><div class="admin-page-actions"><a class="admin-btn admin-btn--ghost" href="admin.html"><i class="bi bi-arrow-left"></i> Panel</a></div></section>
-      <section class="admin-stats"><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--violet">Registrado</span><div class="admin-stat__icon"><i class="bi bi-graph-up-arrow"></i></div></div><p class="admin-stat__value">92,400</p><p class="admin-stat__label">Registros de progreso</p><span class="admin-stat__meta"><i class="bi bi-activity"></i> user_words + attempts</span></article><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--green">Finalización</span><div class="admin-stat__icon"><i class="bi bi-trophy"></i></div></div><p class="admin-stat__value">68%</p><p class="admin-stat__label">Ratio medio de finalización</p><span class="admin-stat__meta"><i class="bi bi-lightning-charge"></i> Sesiones activas</span></article><article class="admin-card admin-stat"><div class="admin-stat__row"><span class="admin-chip admin-chip--amber">Repaso</span><div class="admin-stat__icon"><i class="bi bi-arrow-repeat"></i></div></div><p class="admin-stat__value">4,120</p><p class="admin-stat__label">Palabras en repaso</p><span class="admin-stat__meta"><i class="bi bi-clock-history"></i> Últimos 7 días</span></article></section>
-      <section class="admin-card"><div class="admin-card__inner"><div class="admin-card__head"><div><h2>Progress overview</h2><p>Indicadores agregados de actividad y rendimiento.</p></div><span class="admin-chip admin-chip--amber">Informes</span></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Metric</th><th>Value</th><th>Window</th><th>Status</th></tr></thead><tbody><tr><td>Words learned</td><td>12,840</td><td>30 days</td><td><span class="admin-status admin-status--active">En objetivo</span></td></tr><tr><td>Exercise attempts</td><td>38,520</td><td>30 days</td><td><span class="admin-status admin-status--active">Estable</span></td></tr><tr><td>Drop-off after first session</td><td>22%</td><td>30 days</td><td><span class="admin-status admin-status--review">Mejorable</span></td></tr></tbody></table></div></div></section>
-    </main>
-  </div>
+<body>
+  <p>Redirecting to the app...</p>
 </body>
 </html>

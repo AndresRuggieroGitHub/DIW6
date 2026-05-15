@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Términos de uso de Lexi.">
+  <meta name="description" content="{{ __('lexi.legal_terms.meta_description') }}">
   <meta name="robots" content="noindex">
-  <title>Lexi | Términos de uso</title>
+  <title>{{ __('lexi.legal_terms.meta_title') }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -134,53 +134,53 @@
 </head>
 <body>
   <main class="legal-page">
-    <article class="legal-card" aria-label="Términos de uso de Lexi">
+    <article class="legal-card" aria-label="{{ __('lexi.legal_terms.aria') }}">
       <header class="legal-hero">
-        <p class="legal-kicker"><i class="bi bi-shield-check"></i> Documento legal</p>
-        <h1 class="legal-title">Términos de uso</h1>
-        <p class="legal-subtitle">Estas condiciones regulan el acceso y uso del prototipo de Lexi. Su finalidad es dejar claro el marco básico de uso de la plataforma mientras el producto sigue en fase de desarrollo.</p>
-        <p class="legal-meta">Última actualización: 9 de mayo de 2026</p>
+        <p class="legal-kicker"><i class="bi bi-shield-check"></i> {{ __('lexi.legal_terms.kicker') }}</p>
+        <h1 class="legal-title">{{ __('lexi.legal_terms.title') }}</h1>
+        <p class="legal-subtitle">{{ __('lexi.legal_terms.subtitle') }}</p>
+        <p class="legal-meta">{{ __('lexi.legal_terms.updated') }}</p>
       </header>
 
       <div class="legal-content">
         <section class="legal-section">
-          <h2>1. Objeto del servicio</h2>
-          <p>Lexi es una aplicación orientada al aprendizaje de idiomas. En esta fase, el servicio puede incluir funciones de demostración, pantallas de prototipo y contenidos sujetos a cambios sin previo aviso.</p>
+          <h2>{{ __('lexi.legal_terms.service_title') }}</h2>
+          <p>{{ __('lexi.legal_terms.service_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>2. Uso adecuado</h2>
-          <p>El usuario se compromete a utilizar la plataforma de forma responsable, respetando la legislación aplicable y evitando cualquier uso fraudulento, abusivo o que perjudique el funcionamiento del servicio.</p>
+          <h2>{{ __('lexi.legal_terms.proper_use_title') }}</h2>
+          <p>{{ __('lexi.legal_terms.proper_use_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>3. Cuenta de usuario</h2>
-          <p>Cuando exista registro, cada usuario será responsable de la veracidad de los datos facilitados y de la confidencialidad de sus credenciales de acceso.</p>
+          <h2>{{ __('lexi.legal_terms.account_title') }}</h2>
+          <p>{{ __('lexi.legal_terms.account_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>4. Disponibilidad y cambios</h2>
-          <p>Lexi podrá modificar, suspender o actualizar cualquier parte del servicio, su diseño o sus funcionalidades como parte del proceso normal de evolución del producto.</p>
+          <h2>{{ __('lexi.legal_terms.availability_title') }}</h2>
+          <p>{{ __('lexi.legal_terms.availability_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>5. Propiedad intelectual</h2>
-          <p>Los elementos visuales, textos, estructura, marca y materiales del proyecto pertenecen a Lexi o se utilizan con base legítima. No está permitido reproducirlos o distribuirlos sin autorización.</p>
+          <h2>{{ __('lexi.legal_terms.intellectual_property_title') }}</h2>
+          <p>{{ __('lexi.legal_terms.intellectual_property_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>6. Limitación de responsabilidad</h2>
-          <p>Al tratarse de un entorno de prototipo o desarrollo, Lexi no garantiza ausencia de errores, disponibilidad continua ni conservación permanente de la información mostrada durante las pruebas.</p>
+          <h2>{{ __('lexi.legal_terms.liability_title') }}</h2>
+          <p>{{ __('lexi.legal_terms.liability_text') }}</p>
         </section>
 
         <section class="legal-section">
-          <h2>7. Contacto</h2>
-          <p>Para cualquier consulta relacionada con el uso de la plataforma, el contenido legal o el funcionamiento general del servicio, Lexi podrá habilitar un canal de contacto específico en su versión final.</p>
+          <h2>{{ __('lexi.legal_terms.contact_title') }}</h2>
+          <p>{{ __('lexi.legal_terms.contact_text') }}</p>
         </section>
       </div>
       <div class="legal-actions-bar">
-        <a class="legal-link" href="{{ route('privacidad') }}"><i class="bi bi-arrow-right"></i> Ver política de privacidad</a>
-        <a class="legal-link" href="{{ route('login') }}"><i class="bi bi-arrow-left"></i> Volver al acceso</a>
+        <a class="legal-link" href="{{ route('privacidad') }}"><i class="bi bi-arrow-right"></i> {{ __('lexi.nav.privacy') }}</a>
+        <a class="legal-link" href="{{ route('login') }}"><i class="bi bi-arrow-left"></i> {{ __('lexi.auth.sign_in_link') }}</a>
       </div>
     </article>
   </main>

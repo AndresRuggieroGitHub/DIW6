@@ -1028,7 +1028,7 @@
         if (removeId) {
           pendingRemoveId = removeId;
           if (bsModal) bsModal.show();
-          else if (confirm("Quieres eliminar este producto del carrito?")) removeFromCart(removeId);
+          else if (confirm(t("js.cart.confirm_body"))) removeFromCart(removeId);
         }
       });
     }
@@ -1823,7 +1823,7 @@
       importFileBtn.addEventListener("click", () => {
         const file = fileInput.files?.[0];
         if (!file) {
-          showAlert("Selecciona un archivo primero", "warning");
+          showAlert(t("js.library.select_file_first"), "warning");
           return;
         }
 
@@ -1831,7 +1831,7 @@
         reader.onload = () => {
           const words = parseWords(reader.result);
           const added = addWords(words, getActiveLang());
-          showAlert(`${added} palabras importadas`, added ? "success" : "warning");
+          showAlert(t(added === 1 ? "js.library.imported_words_one" : "js.library.imported_words_other", { count: added }), added ? "success" : "warning");
           window.dispatchEvent(new Event("lexi-library-updated"));
         };
         reader.readAsText(file);
@@ -1842,7 +1842,7 @@
       importPasteBtn.addEventListener("click", () => {
         const words = parseWords(pasteInput.value);
         const added = addWords(words, getActiveLang());
-        showAlert(`${added} palabras importadas`, added ? "success" : "warning");
+        showAlert(t(added === 1 ? "js.library.imported_words_one" : "js.library.imported_words_other", { count: added }), added ? "success" : "warning");
         if (added) pasteInput.value = "";
         window.dispatchEvent(new Event("lexi-library-updated"));
       });
@@ -2035,12 +2035,12 @@
 
   // ===== PANEL DE PROGRESO =====
   const CEFR_LEVELS = [
-    { key: "c2", label: "C2", min: 70, next: null,  desc: "Dominio pleno" },
-    { key: "c1", label: "C1", min: 55, next: 70,    desc: "Competencia profesional" },
-    { key: "b2", label: "B2", min: 40, next: 55,    desc: "Independiente avanzado" },
-    { key: "b1", label: "B1", min: 25, next: 40,    desc: "Independiente" },
-    { key: "a2", label: "A2", min: 10, next: 25,    desc: "Elemental" },
-    { key: "a1", label: "A1", min: 0,  next: 10,    desc: "Principiante" },
+    { key: "c2", label: "C2", min: 70, next: null,  desc: t("js.progress.cefr_desc_c2") },
+    { key: "c1", label: "C1", min: 55, next: 70,    desc: t("js.progress.cefr_desc_c1") },
+    { key: "b2", label: "B2", min: 40, next: 55,    desc: t("js.progress.cefr_desc_b2") },
+    { key: "b1", label: "B1", min: 25, next: 40,    desc: t("js.progress.cefr_desc_b1") },
+    { key: "a2", label: "A2", min: 10, next: 25,    desc: t("js.progress.cefr_desc_a2") },
+    { key: "a1", label: "A1", min: 0,  next: 10,    desc: t("js.progress.cefr_desc_a1") },
   ];
 
   const PALETTE = [
