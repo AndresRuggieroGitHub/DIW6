@@ -165,7 +165,7 @@
       const badgeClass = cefr ? `cefr-${cefr.toLowerCase()}` : "";
       const meta = [
         cefr ? `<span class="cefr-badge ${badgeClass}">${escapeHtml(cefr)}</span>` : "",
-        topic ? `<span class="topic-tag">${escapeHtml(topic)}</span>` : "",
+        topic ? `<span class="topic-tag">${t('categories.' + topic)}</span>` : "",
       ].filter(Boolean).join("");
 
       return `
@@ -2109,7 +2109,6 @@
       const level = state?.level || {
         key: "a1",
         label: "A1",
-        description: t("js.progress.level_starting"),
         progress_percent: 0,
         next_target: 10,
         next_label: "A2",
@@ -2140,7 +2139,6 @@
         <div class="pd-level-row">
           <div class="pd-level-badge cefr-${level.key}">${level.label}</div>
           <div class="pd-level-info">
-            <div class="pd-level-desc">${level.description}</div>
             <div class="pd-bar-wrap"><div class="pd-bar" style="width:${level.progress_percent || 0}%"></div></div>
             <p class="pd-bar-next">${level.next_target ? t("js.progress.words_to_next_level", { count: toNext, plural: toNext !== 1 ? "s" : "", level: level.next_label || "" }) : t("js.progress.max_level_reached_celebration")}</p>
           </div>
@@ -2296,7 +2294,6 @@
         document.getElementById("statLang").textContent = activeLanguage;
         document.getElementById("levelBadge").textContent = level.label || "A1";
         document.getElementById("levelBadge").className = `profile-level-badge cefr-${level.key || "a1"}`;
-        document.getElementById("levelDesc").textContent = level.description || t("js.progress.level_starting");
         document.getElementById("levelBar").style.width = `${level.progress_percent || 0}%`;
         document.getElementById("levelNext").textContent = level.next_target
           ? `${level.current_words || 0} / ${level.next_target} ${t("js.progress.saved_word_other")} ${level.next_label || "" ? `para ${level.next_label || ""}` : ""}`

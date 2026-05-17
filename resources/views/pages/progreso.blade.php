@@ -45,7 +45,6 @@
     <div class="profile-level-card">
       <div class="profile-level-badge" id="levelBadge">A1</div>
       <div class="profile-level-info">
-        <p class="profile-level-desc" id="levelDesc">{{ __('lexi.progress.level_starting') }}</p>
         <div class="profile-level-bar-wrap">
           <div class="profile-level-bar" id="levelBar" style="width:0%"></div>
         </div>

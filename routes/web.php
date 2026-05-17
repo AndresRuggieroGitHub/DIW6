@@ -39,6 +39,8 @@ $protectedStaticPages = [
     'progreso' => ['path' => 'progreso.html', 'view' => 'pages.progreso'],
 ];
 
+// Keep legacy .html URLs stable while serving Blade views as the source of truth.
+
 Route::get('/', function (Request $request) use ($publicStaticPages) {
     if ($request->user()) {
         return redirect('/app.html');

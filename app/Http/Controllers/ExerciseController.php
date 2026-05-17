@@ -149,6 +149,7 @@ class ExerciseController extends Controller
 
             $answerRows = collect($validated['answers'] ?? [])
                 ->map(function (array $answer) use ($attemptId, $now) {
+                    // Keep typed metadata for analytics even when item_id is null in compact runtime flows.
                     $payload = array_filter([
                         'item_type' => $answer['item_type'] ?? null,
                         'prompt' => $answer['prompt'] ?? null,

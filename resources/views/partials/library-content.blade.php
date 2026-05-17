@@ -124,7 +124,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">cultura</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">{{ __('lexi.categories.culture') }}</span></div>
           <h2 class="card-word">to preserve heritage</h2>
           <p class="card-translation">preservar el patrimonio</p>
         </div>
@@ -134,7 +134,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">business</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">{{ __('lexi.categories.business') }}</span></div>
           <h2 class="card-word">sustainable growth</h2>
           <p class="card-translation">crecimiento sostenible</p>
         </div>
@@ -144,7 +144,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">travel</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">{{ __('lexi.categories.travel') }}</span></div>
           <h2 class="card-word">check in at the hotel</h2>
           <p class="card-translation">hacer el check-in en el hotel</p>
         </div>
@@ -154,7 +154,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">science</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">{{ __('lexi.categories.science') }}</span></div>
           <h2 class="card-word">renewable energy sources</h2>
           <p class="card-translation">fuentes de energía renovable</p>
         </div>
@@ -164,7 +164,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">home</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">{{ __('lexi.categories.home') }}</span></div>
           <h2 class="card-word">la maison</h2>
           <p class="card-translation">la casa</p>
         </div>
@@ -174,7 +174,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">food</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">{{ __('lexi.categories.food') }}</span></div>
           <h2 class="card-word">have breakfast</h2>
           <p class="card-translation">desayunar</p>
         </div>
@@ -184,7 +184,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">health</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">{{ __('lexi.categories.health') }}</span></div>
           <h2 class="card-word">book an appointment</h2>
           <p class="card-translation">pedir una cita</p>
         </div>
@@ -194,7 +194,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">work</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">{{ __('lexi.categories.work') }}</span></div>
           <h2 class="card-word">meet a deadline</h2>
           <p class="card-translation">cumplir un plazo de entrega</p>
         </div>
@@ -204,7 +204,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">travel</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">{{ __('lexi.categories.travel') }}</span></div>
           <h2 class="card-word">la gare</h2>
           <p class="card-translation">la estación de tren</p>
         </div>
@@ -214,7 +214,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">education</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">{{ __('lexi.categories.education') }}</span></div>
           <h2 class="card-word">critical thinking</h2>
           <p class="card-translation">pensamiento crítico</p>
         </div>
@@ -224,7 +224,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">culture</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">{{ __('lexi.categories.culture') }}</span></div>
           <h2 class="card-word">art exhibition</h2>
           <p class="card-translation">exposición de arte</p>
         </div>
@@ -234,7 +234,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-c1">C1</span><span class="topic-tag">business</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-c1">C1</span><span class="topic-tag">{{ __('lexi.categories.business') }}</span></div>
           <h2 class="card-word">to negotiate terms</h2>
           <p class="card-translation">negociar las condiciones</p>
         </div>
@@ -244,7 +244,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-c1">C1</span><span class="topic-tag">science</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-c1">C1</span><span class="topic-tag">{{ __('lexi.categories.science') }}</span></div>
           <h2 class="card-word">protect biodiversity</h2>
           <p class="card-translation">proteger la biodiversidad</p>
         </div>
@@ -254,7 +254,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">work</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">{{ __('lexi.categories.work') }}</span></div>
           <h2 class="card-word">daily commute</h2>
           <p class="card-translation">desplazamiento diario</p>
         </div>
@@ -264,7 +264,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">education</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">{{ __('lexi.categories.education') }}</span></div>
           <h2 class="card-word">become fluent</h2>
           <p class="card-translation">llegar a tener fluidez</p>
         </div>
@@ -274,7 +274,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">food</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">{{ __('lexi.categories.food') }}</span></div>
           <h2 class="card-word">follow a recipe</h2>
           <p class="card-translation">seguir una receta</p>
         </div>
@@ -284,7 +284,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">education</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">{{ __('lexi.categories.education') }}</span></div>
           <h2 class="card-word">public library</h2>
           <p class="card-translation">biblioteca pública</p>
         </div>
@@ -294,7 +294,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-c1">C1</span><span class="topic-tag">politics</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-c1">C1</span><span class="topic-tag">{{ __('lexi.categories.politics') }}</span></div>
           <h2 class="card-word">sign a treaty</h2>
           <p class="card-translation">firmar un tratado</p>
         </div>
@@ -304,7 +304,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">work</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">{{ __('lexi.categories.work') }}</span></div>
           <h2 class="card-word">freelance designer</h2>
           <p class="card-translation">diseñador freelance</p>
         </div>
@@ -314,7 +314,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">food</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">{{ __('lexi.categories.food') }}</span></div>
           <h2 class="card-word">la boulangerie</h2>
           <p class="card-translation">la panadería</p>
         </div>
@@ -324,7 +324,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-c2">C2</span><span class="topic-tag">culture</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-c2">C2</span><span class="topic-tag">{{ __('lexi.categories.culture') }}</span></div>
           <h2 class="card-word">capture the zeitgeist</h2>
           <p class="card-translation">capturar el espíritu de la época</p>
         </div>
@@ -334,7 +334,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">health</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b2">B2</span><span class="topic-tag">{{ __('lexi.categories.health') }}</span></div>
           <h2 class="card-word">show empathy</h2>
           <p class="card-translation">mostrar empatía</p>
         </div>
@@ -344,7 +344,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">home</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-a1">A1</span><span class="topic-tag">{{ __('lexi.categories.home') }}</span></div>
           <h2 class="card-word">das Haus</h2>
           <p class="card-translation">la casa</p>
         </div>
@@ -354,7 +354,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">work</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-a2">A2</span><span class="topic-tag">{{ __('lexi.categories.work') }}</span></div>
           <h2 class="card-word">die Arbeit</h2>
           <p class="card-translation">el trabajo</p>
         </div>
@@ -364,7 +364,7 @@
         <div class="card-accent"></div>
         <div class="word-save-split"><button class="word-save-split__main" type="button" data-save-word aria-label="Guardar en Guardado"><i class="bi bi-bookmark"></i></button></div>
         <div class="card-body-inner">
-          <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">travel</span></div>
+          <div class="card-meta"><span class="cefr-badge cefr-b1">B1</span><span class="topic-tag">{{ __('lexi.categories.travel') }}</span></div>
           <h2 class="card-word">die Reise</h2>
           <p class="card-translation">el viaje</p>
         </div>

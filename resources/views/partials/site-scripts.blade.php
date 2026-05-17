@@ -1,6 +1,7 @@
 <script>
 	window.lexiTranslations = {!! json_encode([
 		'languages' => __('lexi.languages'),
+		'categories' => __('lexi.categories'),
 		'js' => __('lexi.js'),
 	], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!};
 </script>

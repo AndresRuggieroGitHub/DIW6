@@ -173,12 +173,12 @@ class ProgressController extends Controller
     private function levelData(int $wordCount): array
     {
         $levels = [
-            ['key' => 'a1', 'label' => 'A1', 'min' => 0, 'next' => 10, 'desc' => 'Estás empezando. ¡Cada palabra cuenta!'],
-            ['key' => 'a2', 'label' => 'A2', 'min' => 10, 'next' => 25, 'desc' => 'Buen comienzo. Sigue ampliando tu vocabulario.'],
-            ['key' => 'b1', 'label' => 'B1', 'min' => 25, 'next' => 40, 'desc' => 'Nivel intermedio. Ya manejas el idioma en situaciones cotidianas.'],
-            ['key' => 'b2', 'label' => 'B2', 'min' => 40, 'next' => 55, 'desc' => 'Nivel alto. Puedes comunicarte con fluidez en la mayoría de contextos.'],
-            ['key' => 'c1', 'label' => 'C1', 'min' => 55, 'next' => 70, 'desc' => 'Nivel avanzado. Dominas el idioma con precisión.'],
-            ['key' => 'c2', 'label' => 'C2', 'min' => 70, 'next' => null, 'desc' => '¡Nivel máximo! Dominio completo del idioma.'],
+            ['key' => 'a1', 'label' => 'A1', 'min' => 0, 'next' => 10],
+            ['key' => 'a2', 'label' => 'A2', 'min' => 10, 'next' => 25],
+            ['key' => 'b1', 'label' => 'B1', 'min' => 25, 'next' => 40],
+            ['key' => 'b2', 'label' => 'B2', 'min' => 40, 'next' => 55],
+            ['key' => 'c1', 'label' => 'C1', 'min' => 55, 'next' => 70],
+            ['key' => 'c2', 'label' => 'C2', 'min' => 70, 'next' => null],
         ];
 
         $level = collect($levels)->reverse()->first(function (array $item) use ($wordCount) {
@@ -196,7 +196,6 @@ class ProgressController extends Controller
         return [
             'key' => $level['key'],
             'label' => $level['label'],
-            'description' => $level['desc'],
             'progress_percent' => $progressPercent,
             'next_target' => $level['next'],
             'next_label' => $nextLevel['label'] ?? null,

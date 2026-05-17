@@ -11,7 +11,7 @@ Lexi ya funciona como aplicación web real:
 - SQLite sigue disponible como base de desarrollo simple.
 - MySQL/MariaDB local ya tiene flujo completo de bootstrap, smoke test y arranque sin tocar `.env`.
 - El frontend conserva el prototipo original, pero ya reutiliza layouts Blade y endpoints reales.
-- Las páginas principales públicas, privadas y admin del prototipo ya resuelven Blade directamente desde Laravel; los `.html` raíz quedan como compatibilidad heredada en disco, no como render activo de esas rutas.
+- Las páginas principales públicas, privadas y admin del prototipo ya resuelven Blade directamente desde Laravel, manteniendo URLs `.html` por routing.
 - Auth, perfil, biblioteca y panel admin ya están migrados a Blade.
 
 ## Estado operativo de base de datos
@@ -39,14 +39,12 @@ Ahora mismo no está "todo pasado a MySQL" por defecto.
 
 ### Routing y renderizado
 
-- Las páginas principales del prototipo siguen existiendo como archivos `.html` en la raíz.
-- Laravel resuelve primero las vistas Blade en [routes/web.php](routes/web.php) y, si no existen, cae al `.html` raíz para conservar URLs y migrar de forma incremental.
+- Laravel mantiene las rutas públicas y privadas con sufijo `.html`, pero el render real se hace desde vistas Blade y controladores.
 - Las páginas privadas y administrativas principales ya usan vistas reales en `resources/views`.
 
 ### Frontend
 
 - `public/style.css` y `public/js/script.js` son la fuente de verdad de estilos y comportamiento.
-- Los archivos raíz `style.css` y `js/script.js` quedan como wrappers de compatibilidad para no romper el prototipo.
 - `biblioteca.html` ya mezcla render estático heredado con catálogo cargado desde `/api/library/state` cuando la base de datos tiene contenido.
 
 ### Base de datos
@@ -159,7 +157,7 @@ Regla práctica para Lexi:
 - páginas y formularios con auth, sesión, permisos o datos: Blade
 - APIs: controladores + JSON
 - estilos y comportamiento cliente: `public/style.css` y `public/js/script.js`
-- los `.html` raíz no tienen por qué desaparecer ya, pero tampoco deben seguir siendo la fuente real de render cuando la ruta ya está migrada
+- mantener URLs `.html` en rutas no implica conservar archivos HTML estáticos en la raíz del proyecto
 
 La prioridad técnica no es “todo a Blade” por sí solo, sino:
 
